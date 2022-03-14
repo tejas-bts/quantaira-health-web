@@ -1,0 +1,45 @@
+.quantaira-date-time-picker-wrapper {
+  .quantaira-date-time-picker {
+    background-color: #07203c;
+    border: none;
+    border-radius: 0.3rem;
+    width: unset;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $green-text1;
+    padding: 0.4rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.sm {
+      padding: 0.15rem 0rem;
+      font-size: 95%;
+    }
+  }
+  .react-datepicker__header {
+    background-color: #323756;
+
+    .react-datepicker__current-month,
+    .react-datepicker__day-name {
+      color: white;
+    }
+  }
+
+  .react-datepicker__day--selected,
+  .react-datepicker__day--in-selecting-range,
+  .react-datepicker__day--in-range,
+  .react-datepicker__month-text--selected,
+  .react-datepicker__month-text--in-selecting-range,
+  .react-datepicker__month-text--in-range,
+  .react-datepicker__quarter-text--selected,
+  .react-datepicker__quarter-text--in-selecting-range,
+  .react-datepicker__quarter-text--in-range,
+  .react-datepicker__year-text--selected,
+  .react-datepicker__year-text--in-selecting-range,
+  .react-datepicker__year-text--in-range {
+    background-color: unset;
+    background: linear-gradient($gradient-start, $gradient-end);
+  }
+}

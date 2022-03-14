@@ -1,0 +1,29 @@
+.main-container {
+  background-color: #02162c;
+  width: 100%;
+  flex: 1;
+  display: grid;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
+  background-color: $background5;
+  gap: 1px;
+  padding: 1px;
+  & > div {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: $background2;
+  }
+}
+
+.controls-box {
+  position: relative;
+  background-color: $background8;
+  display: flex;
+}

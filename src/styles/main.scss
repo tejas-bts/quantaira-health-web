@@ -1,0 +1,29 @@
+@import 'colors.scss';
+@import 'gradients.scss';
+@import 'bottom-nav-bar.scss';
+@import 'header.scss';
+@import 'chart.scss';
+@import 'notes.scss';
+@import 'medication.scss';
+@import 'alarm.scss';
+@import 'kpi.scss';
+@import 'core.scss';
+@import 'home.scss';
+@import 'dropdown.scss';
+@import 'button.scss';
+@import 'breadcrumbs.scss';
+@import 'mods.scss';
+@import 'date-time-picker.scss';
+@import '~bootstrap/scss/bootstrap.scss';
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+body,
+html,
+#root {
+  height: 100%;
+  margin: 0px;
+  font-family: 'Barlow', sans-serif;
+  font-family: 'Barlow Condensed', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

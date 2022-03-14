@@ -1,0 +1,424 @@
+.flex-1 {
+  flex: 1;
+}
+.flex-2 {
+  flex: 2;
+}
+.flex-3 {
+  flex: 3;
+}
+.flex-4 {
+  flex: 4;
+}
+.flex-5 {
+  flex: 5;
+}
+.flex-6 {
+  flex: 6;
+}
+.flex-7 {
+  flex: 7;
+}
+
+.quantaira-text-area {
+  height: 100%;
+  width: 100%;
+  border-radius: 0.3rem;
+  background-color: #274167;
+  color: white;
+  font-size: medium;
+  padding: 0.5rem;
+  outline: none;
+  border: none;
+}
+
+.title {
+  font-size: 1.7rem;
+  font-weight: 500;
+}
+
+.badge {
+  background-color: $background2;
+  color: $green-text1 !important;
+  font-weight: 500 !important;
+}
+
+/* Navbar Css */
+.navbar__wrapper {
+  background-color: #323756;
+}
+.tabs__wrapper li {
+  margin: 7px 3px;
+}
+.tabs__wrapper li a {
+  color: #cfcfcf;
+}
+
+.time__wrapper {
+  background-color: #07203c;
+  padding: 7px 8px;
+  border-radius: 4px;
+  color: #31ac75;
+}
+
+.navbar__input {
+  position: relative;
+}
+.navbar__input__box {
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  padding: 0.4rem 3rem 0.4rem 0.8rem;
+  margin-left: 10px;
+  background-color: #274167;
+  color: #cfcfcf;
+  font-size: 14px;
+}
+
+.edit_icon {
+  position: absolute;
+  top: 37%;
+  left: 59%;
+  transform: translate(-18%, -50%);
+}
+
+/* XL DEVICES */
+@media only screen and (min-width: 1450px) {
+  .tabs__wrapper {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .edit_icon {
+    position: absolute;
+    top: 41%;
+    left: 86%;
+    transform: translate(40%, -35%);
+    background-color: #0e86f9;
+    padding: 0px 4px 3px 6px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 13px;
+  }
+  .button__text {
+    font-size: 16px !important;
+  }
+  .tabs__wrapper li:after {
+    content: '\203A';
+    font-size: 18px;
+    font-weight: 300;
+    color: #fff;
+    /* left: 13px; */
+  }
+}
+
+/* Large Devices */
+
+@media only screen and (min-width: 1145px) and (max-width: 1449px) {
+  .tabs__wrapper {
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .navbar__text {
+    font-size: 12px;
+  }
+  .edit_icon {
+    position: absolute;
+    top: 15px;
+    transform: translate(-18%, -42%);
+    background-color: #0e86f9;
+    padding: 0px 4px 3px 6px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 13px;
+    right: -45px;
+    left: unset;
+  }
+  .tabs__wrapper li:after {
+    content: '\203A';
+    font-size: 15px;
+    font-weight: 300;
+    color: #fff;
+    /* left: 13px; */
+  }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1144px) {
+  .tabs__wrapper {
+    font-size: 9px;
+    font-weight: 600;
+  }
+  .navbar__text {
+    font-size: 10px;
+  }
+  .edit_icon {
+    position: absolute;
+    top: 41%;
+    left: 74%;
+    transform: translate(-33%, -41%);
+    background-color: #0e86f9;
+    padding: 0px 4px 3px 6px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 13px;
+  }
+  .tabs__wrapper li:after {
+    content: '\203A';
+    font-size: 11px;
+    font-weight: 300;
+    color: #fff;
+    /* left: 13px; */
+  }
+}
+
+/* Button Css Start */
+.btn {
+  position: relative;
+  height: 49px;
+}
+.btn input {
+  position: relative;
+  width: 141px;
+  height: 35px;
+  border-radius: 25px;
+  outline: none;
+  cursor: none;
+  appearance: none;
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+  background-color: #f6f4f4;
+  box-shadow: 5px 10px 6px rgb(27 26 26 / 17%) inset;
+}
+
+.btn input:before,
+.btn input:after {
+  z-index: 2;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #111;
+}
+
+.btn input:before {
+  content: 'Real Time';
+  font-size: 10px;
+  left: 13px;
+}
+
+.btn input:after {
+  content: 'Cloud Data';
+  font-size: 10px;
+  right: 9px;
+}
+
+.btn label {
+  z-index: 1;
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  border-radius: 20px;
+}
+
+.btn.btn-1 input {
+  transition: 0.2s -0.1s;
+}
+
+.btn.btn-1 input:checked {
+  background: #07203c;
+}
+.btn.btn-1 input:checked:before {
+  color: #fffcfc;
+  transition: color 0.5s 0.2s;
+}
+.btn.btn-1 input:checked:after {
+  color: #cfcfcf;
+  transition: color 0.5s;
+}
+
+.btn.btn-1 input:checked + label {
+  left: 14px;
+  right: 79px;
+  background: #0d84f6;
+  transition: left 0.5s, right 0.4s 0.2s;
+}
+
+.btn.btn-1 input:not(:checked) {
+  background: #07203c;
+  transition: background 0.5s -0.1s;
+}
+
+.btn.btn-1 input:not(:checked):before {
+  color: #cfcfcf;
+  transition: color 0.5s;
+}
+
+.btn.btn-1 input:not(:checked):after {
+  color: #ffffff;
+  transition: color 0.5s 0.2s;
+}
+
+.btn.btn-1 input:not(:checked) + label {
+  left: 79px;
+  right: 14px;
+  background: #0d84f6;
+  transition: left 0.4s 0.2s, right 0.5s, backgraound 0.35s -0.1s;
+}
+/* Button Css End */
+
+/* Graph Layouts  start*/
+.graph__wrapper {
+  background-color: #02162c;
+  padding: 0;
+  height: 41vh;
+}
+
+.graph__container1 {
+  border-right: 1px solid #cfcfcf;
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.graph__container2 {
+  background-color: #282d4b;
+  border-bottom: 1px solid #cfcfcf;
+}
+.graph__container3 {
+  border-right: 1px solid #cfcfcf;
+}
+
+/* Graph Layout End */
+
+/* Buttons Wrapper Start*/
+.buttons__wrapper {
+  padding: 0;
+  background-color: #1a1c29;
+  height: 10vh;
+}
+.button__group {
+  background-color: #323756;
+  padding: 1px 0px 10px 0px;
+  border-radius: 8px;
+  color: #8e8e99;
+}
+.button__text {
+  font-size: 11px;
+  font-weight: bold;
+  color: inherit;
+}
+
+.button__group:hover {
+  background-color: #0b7eef;
+  color: #fff;
+  cursor: pointer;
+}
+
+.icon__size {
+  font-size: 28px;
+  color: inherit;
+}
+
+/* Button Wrapper End */
+
+/* Selecter Graph Start */
+.select__option {
+  width: 40vw;
+  margin-top: 1rem;
+  padding: 10px 15px 10px 16px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  color: #cfcfcf;
+  background-color: #274167;
+}
+
+/* Selector Graph End */
+
+/* on Graph Buttons  */
+.graph__btn {
+  padding: 10px 14px 9px 15px;
+  background-color: #07203c;
+  outline: none;
+  border: none;
+  border-radius: 0px 0px 16px 16px;
+  color: #fff;
+}
+.graph__btn__icon {
+  background-color: #009423;
+  color: #fff;
+  padding: 4px 7px 7px 7px;
+  border-radius: 50%;
+}
+.graph__btn__text {
+  font-size: 13px;
+}
+/* End Graph Button */
+
+/* On Graph Text start*/
+.on__graph__text {
+  ont-size: 19px;
+  font-weight: 600;
+  margin: 0.5rem;
+  color: rgb(174 229 186);
+}
+.on__graph__icon {
+  font-size: 22px;
+  color: rgb(174 229 186);
+}
+.on__graph__text1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: rgb(174 229 186);
+}
+.on__graph__text3 {
+  font-size: 32px;
+  font-weight: 700;
+  color: rgb(207, 177, 113);
+}
+
+.graph__text__group {
+  text-align: start;
+  margin-top: 20px;
+  margin-left: 5px;
+}
+.on__graph__para {
+  padding: 0;
+  margin: 0;
+  color: #cfcfcf;
+}
+/* OnGraph Text End */
+
+.button_pill {
+  color: white;
+  text-align: left;
+  padding: 0.5rem;
+  border: 1px solid white;
+  margin-top: 0.3rem;
+  border-radius: 0.3rem;
+  display: flex;
+  justify-content: space-between;
+  background-color: transparent;
+  flex: 1;
+}
+
+.btn_pill_remove {
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+  border: none;
+}
+
+@media only screen and (max-width: 1300px) {
+  .zoom-buttons button {
+    height: 2rem;
+    width: 2rem;
+  }
+  .chart-navigation-button {
+    height: 3rem !important;
+    width: 3rem !important;
+  }
+  .chart-title {
+    font-size: 1.5rem !important;
+  }
+  .chart-icon {
+    height: 1.5rem !important;
+    width: 1.5rem !important;
+  }
+}

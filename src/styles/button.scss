@@ -1,0 +1,49 @@
+.quantaira-button {
+  display: flex;
+  justify-content: center;
+  border: none;
+  align-items: center;
+
+  div {
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  &.primary {
+    background: linear-gradient($gradient-start, $gradient-end);
+    color: $light-text1;
+  }
+
+  &.secondary {
+    color: $secondary;
+    background-color: transparent;
+    border: 1px solid $secondary;
+  }
+
+  &.rectangular {
+    border-radius: 0.3rem;
+  }
+
+  &.rounded {
+    border-radius: 100rem !important;
+  }
+
+  &.lg {
+    padding: 0.25rem 1.25rem 0.5rem;
+    font-size: larger;
+    div {
+      height: 1.5rem;
+      width: 1.5rem;
+    }
+  }
+
+  &.md {
+    padding: 0.05rem 1rem 0.25rem;
+    font-size: medium;
+    div {
+      height: 1rem;
+      width: 1rem;
+      margin-right: 0.3rem;
+    }
+  }
+}
