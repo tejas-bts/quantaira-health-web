@@ -15,9 +15,11 @@ import AppContext from '../contexts/AppContext';
 const Home = ({
   biometricData,
   onChartSelectionChange,
+  notesAndMedicationData,
 }: {
   biometricData: BiometricData[];
   onChartSelectionChange?: any;
+  notesAndMedicationData: any;
 }) => {
   const navigate = useNavigate();
   const vitalId = 1;
@@ -54,6 +56,7 @@ const Home = ({
   };
 
   useEffect(() => {
+    console.log('New DATA :::::::::', biometricData);
     const availableCharts: any = [];
     biometricData.map((item: BiometricData) =>
       availableCharts.push(item.label)
@@ -96,6 +99,7 @@ const Home = ({
             onClick={(time: number) =>
               navigateTo(`/app/charts/notes/add/${time}`)
             }
+            notesAndMedicationData={notesAndMedicationData}
           />
         )}
       </div>
@@ -136,6 +140,7 @@ const Home = ({
             onClick={(time: number) =>
               navigateTo(`/app/charts/notes/add/${time}`)
             }
+            notesAndMedicationData={notesAndMedicationData}
           />
         )}
       </div>
@@ -157,6 +162,7 @@ const Home = ({
             onClick={(time: number) =>
               navigateTo(`/app/charts/notes/add/${time}`)
             }
+            notesAndMedicationData={notesAndMedicationData}
           />
         )}
       </div>

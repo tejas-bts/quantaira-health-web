@@ -39,6 +39,7 @@ const AddNote = () => {
         categoryId: '2',
         inputTime: selectedTime,
       });
+      toast('Your note was saved successfully!');
       goBack();
     } catch (e) {
       //Handle the error

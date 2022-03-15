@@ -13,6 +13,7 @@
 @import 'button.scss';
 @import 'breadcrumbs.scss';
 @import 'mods.scss';
+@import 'auth.scss';
 @import 'date-time-picker.scss';
 @import '~bootstrap/scss/bootstrap.scss';
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap');
@@ -26,4 +27,5 @@ html,
   font-family: 'Barlow Condensed', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: $background2;
 }

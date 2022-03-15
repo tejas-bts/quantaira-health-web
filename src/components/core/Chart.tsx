@@ -32,6 +32,7 @@ const Chart = ({
   idealMax,
   unit,
   values,
+  notesAndMedicationData,
   onClick,
 }: ChartPropsType) => {
   const [isLive, setLive] = useState(true);
@@ -61,6 +62,9 @@ const Chart = ({
   };
 
   const options: ApexOptions = {
+    legend: {
+      show: false,
+    },
     chart: {
       redrawOnParentResize: true,
       toolbar: {
@@ -79,9 +83,11 @@ const Chart = ({
         enabled: false,
       },
       events: {
-        click: function (event, chartContext, config) {
-          if (onClick) onClick(dataFrame[0].data[config.dataPointIndex][0]);
-        },
+        click: onClicker,
+        //  function (event, chartContext, config) {
+        //   console.log('Event Click');
+        //   if (onClick) onClick(dataFrame[0].data[config.dataPointIndex][0]);
+        // },
 
         beforeZoom: (e) => {
           console.log('EVENT : Before zoom', e);
@@ -96,6 +102,16 @@ const Chart = ({
       },
     },
     markers: {
+      discrete: [
+        {
+          seriesIndex: 10,
+          dataPointIndex: 7,
+          fillColor: 'red',
+          strokeColor: '#fff',
+          size: 50,
+          shape: 'circle',
+        },
+      ],
       size: 2,
       strokeWidth: 2,
       // onClick: (e) => console.log('Hello', e),
@@ -108,6 +124,7 @@ const Chart = ({
       colors: [color],
       show: true,
       lineCap: 'square',
+      width: [5, 0],
     },
     fill: {
       colors: [color],
@@ -208,6 +225,7 @@ const Chart = ({
   };
 
   useEffect(() => {
+    console.log('Notes and Medics', notesAndMedicationData);
     if (values.length) {
       /*
        *     Variable "values" holds the data coming from props
@@ -433,6 +451,3 @@ const Chart = ({
 };
 
 export default Chart;
-function e(arg0: string, e: any) {
-  throw new Error('Function not implemented.');
-}

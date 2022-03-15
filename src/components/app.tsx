@@ -10,9 +10,13 @@ import { BiometricData } from '../types/WebsocketData';
 import BiometricKpi from '../pages/BiometricKpi';
 import AppContext from '../contexts/AppContext';
 import { ToastContainer, toast } from 'react-toastify';
+import { fetchNotes } from '../services/notes.services';
+// import { Provider } from 'react-redux';
+// import store from './store';
 
 const App = () => {
   const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
+  const [notesAndMedicationData, setNotesAndMedicationData] = useState<any>([]);
   const [patient, setPatient] = useState({
     hospitalId: 1,
     floorNumber: 2,
@@ -23,10 +27,31 @@ const App = () => {
   const [dateTime, setDateTime] = useState(new Date());
   const [chartSelections, setChartSelection] = useState<Array<string>>([]);
 
+  const loadNotesAndMedications = async () => {
+    try {
+      const notes: any = await fetchNotes({
+        pid: '1234',
+        device: '123',
+      });
+      setNotesAndMedicationData(
+        notes.map((item: any) => {
+          return [item.input_time, 10];
+        })
+      );
+    } catch (e) {
+      toast('There was a problem fetching notes and medication data!');
+      console.log('There was an error', e);
+    }
+  };
+
   useEffect(
     () => console.log('Chart Selection Changed', chartSelections),
     [chartSelections]
   );
+
+  useEffect(() => {
+    loadNotesAndMedications();
+  }, []);
 
   useEffect(() => {
     // const socket = Client('http://40.76.196.190:3001');
@@ -76,6 +101,7 @@ const App = () => {
                 element={
                   <BiometricCharts
                     biometricData={biometricData}
+                    notesAndMedicationData={notesAndMedicationData}
                     onChartSelectionChange={setChartSelection}
                   />
                 }
