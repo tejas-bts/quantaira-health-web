@@ -38,8 +38,8 @@ const QuantairaDropdown = ({
           </div>
         </button>
         <div className={`drop-container ${showDrop ? 'shown' : 'hidden'}`}>
-          {showDrop && options.length
-            ? options.map((item, index) => (
+          {showDrop && options.length ? (
+            options.map((item, index) => (
               <label
                 htmlFor={`chekbox-${index}`}
                 key={index}
@@ -73,7 +73,9 @@ const QuantairaDropdown = ({
                 </div>
               </label>
             ))
-            : 'No items to show'}
+          ) : (
+            <p className="text-center m-0">No items to show</p>
+          )}
         </div>
       </div>
     </div>

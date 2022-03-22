@@ -9,6 +9,11 @@ import { BiometricParameters } from '../utils/constants';
 import QTInterval from '../components/kpi-items/QTInterval';
 import STsegment from '../components/kpi-items/STsegment';
 import NIBP from '../components/kpi-items/NIBP';
+import { Slider } from '@mui/material';
+import DateTimePicker from '../components/core/DateTimePicker';
+import { fetchKpi } from '../services/kpi.services';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const colors = [
   '#94d699',
@@ -21,10 +26,14 @@ const colors = [
 ];
 
 const BiometricKpi = ({
-  biometricData,
+  biometricDataProps,
 }: {
-  biometricData: BiometricData[];
+  biometricDataProps: BiometricData[];
 }) => {
+  const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
+
+  const [slider, setSlider] = useState(0);
+
   const [temp, setTemp] = useState(
     new BioMetricDataObj(BiometricParameters.Temp)
   );
@@ -64,12 +73,36 @@ const BiometricKpi = ({
   );
 
   const [latestTimestamp, setLatestTimeStamp] = useState(-Infinity);
+  const [pastKpiData, setPastKpiData] = useState<any>([]);
+  const [isLive, setLive] = useState(true);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('Temp', temp);
+  }, [temp]);
+
+  useEffect(() => {
+    if (isLive) {
+      setBiometricData(biometricDataProps);
+    }
+  }, [biometricDataProps]);
+
+  useEffect(() => {
+    fetchKpi().then((data: any) => {
+      console.log('Fetched Past DAta', data);
+      setPastKpiData(() => Object.keys(data).map((value) => data[value]));
+    });
+  }, []);
 
   useEffect(() => {
     for (const biometric of biometricData) {
-      if (biometric.values) {
-        for (const [time, data] of biometric.values) {
-          if (time > latestTimestamp) setLatestTimeStamp(time);
+      if (biometric && biometric.values) {
+        console.log('Biometric Values', biometric.values);
+        if (biometric.values.length) {
+          for (const [time, data] of biometric.values) {
+            if (time > latestTimestamp) setLatestTimeStamp(time);
+          }
         }
       }
     }
@@ -380,8 +413,54 @@ const BiometricKpi = ({
     console.log('Biometric Data', biometricData);
   }, [biometricData]);
 
+  const [time, setTime] = useState(new Date().getTime());
+
+  const fetchNotes = async () => {
+    return new Promise<void>((resolve, rej) => {
+      setTimeout(() => {
+        console.log('Fetch Notes');
+        resolve();
+      }, 500);
+    });
+  };
+
+  useEffect(() => {
+    console.log('Time', time);
+    const timeOut = setTimeout(() => {
+      fetchNotes();
+    }, 500);
+
+    return () => clearTimeout(timeOut);
+  }, [time]);
+
+  useEffect(() => {
+    console.log('Slider Change', slider, pastKpiData);
+    if (pastKpiData[slider]) setBiometricData(pastKpiData[slider]);
+  }, [slider]);
+
+  const bed: any = useSelector((state: any) => state.patient.bed);
+  if (!bed) {
+    navigate('/app/patient', { replace: true });
+  }
+
   return (
     <div className="kpi-container">
+      <div className="kpi-badge">
+        {time && <DateTimePicker defaultDate={new Date(time)} size="lg" />}
+        <Slider
+          size="small"
+          defaultValue={70}
+          aria-label="Small"
+          // valueLabelDisplay="auto"
+          className="quant-slider"
+          onChange={({ target }: any) => {
+            console.log('Slider', target);
+            setTime((time) => new Date(time + target.value * 1000).getTime());
+            setSlider(() => target.value);
+            // setLive(false);
+          }}
+        />
+      </div>
       <GenericKpiItem
         title={'HR'}
         color={colors[0]}

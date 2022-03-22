@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '../../../components/core/Button';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { saveNote } from '../../../services/notes.services';
 import DateTimePicker from '../../../components/core/DateTimePicker';
@@ -10,8 +10,7 @@ const AddNote = () => {
   let selectedTime = new Date().getTime();
   const urlParams = useParams();
   if (urlParams.selectedTime) selectedTime = parseInt(urlParams.selectedTime);
-  console.log('Selected Date', urlParams, selectedTime, new Date(selectedTime));
-  // console.log('Selected Date Obj', new Date(selectedTime || '').toDateString());
+
   const navigate = useNavigate();
   const [note, setNote] = useState('');
   const [isSaving, setSaving] = useState(false);
@@ -69,26 +68,34 @@ const AddNote = () => {
         />
       </div>
       <div className="add-notes-buttons">
-        <Button
-          // icon={'/images/notes-icon.svg'}
-          label={'Cancel'}
-          orientation={'horizontle'}
-          size={'md'}
-          type={'secondary'}
-          shape={'rounded'}
-          cssWidth={'6rem'}
-          onClick={goBack}
-        />
-        <Button
-          // icon={'/images/notes-icon.svg'}
-          label={isSaving ? 'Saving' : 'Save'}
-          orientation={'horizontle'}
-          size={'md'}
-          type={'primary'}
-          onClick={handleSave}
-          shape={'rounded'}
-          cssWidth={'6rem'}
-        />
+        <Link
+          to={`/app/charts/medications/add/${selectedTime}`}
+          className="add-pointer-option-link"
+        >
+          Add a medication
+        </Link>
+        <div className="d-flex gap-2">
+          <Button
+            // icon={'/images/notes-icon.svg'}
+            label={'Cancel'}
+            orientation={'horizontle'}
+            size={'md'}
+            type={'secondary'}
+            shape={'rounded'}
+            cssWidth={'6rem'}
+            onClick={goBack}
+          />
+          <Button
+            // icon={'/images/notes-icon.svg'}
+            label={isSaving ? 'Saving' : 'Save'}
+            orientation={'horizontle'}
+            size={'md'}
+            type={'primary'}
+            onClick={handleSave}
+            shape={'rounded'}
+            cssWidth={'6rem'}
+          />
+        </div>
       </div>
     </div>
   );

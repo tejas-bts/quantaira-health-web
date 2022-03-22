@@ -11,12 +11,16 @@ import BiometricKpi from '../pages/BiometricKpi';
 import AppContext from '../contexts/AppContext';
 import { ToastContainer, toast } from 'react-toastify';
 import { fetchNotes } from '../services/notes.services';
-// import { Provider } from 'react-redux';
-// import store from './store';
+import { fetchMedications } from '../services/medications.services';
+import { fetchHospitalData } from '../services/hospital.services';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectHospital } from '../reducers/patient';
+import { addToNotes } from '../reducers/notes';
+import { addToMedications } from '../reducers/medications';
 
 const App = () => {
   const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
-  const [notesAndMedicationData, setNotesAndMedicationData] = useState<any>([]);
+  const [medicationData, setMedicationData] = useState<any>([]);
   const [patient, setPatient] = useState({
     hospitalId: 1,
     floorNumber: 2,
@@ -27,22 +31,38 @@ const App = () => {
   const [dateTime, setDateTime] = useState(new Date());
   const [chartSelections, setChartSelection] = useState<Array<string>>([]);
 
+  const bed: any = useSelector((state: any) => state.patient.bed);
+
+  const dispatch = useDispatch();
+
   const loadNotesAndMedications = async () => {
     try {
       const notes: any = await fetchNotes({
         pid: '1234',
         device: '123',
       });
-      setNotesAndMedicationData(
-        notes.map((item: any) => {
-          return [item.input_time, 10];
-        })
-      );
+      const medications: any = await fetchMedications({
+        pid: '1234',
+        device: '123',
+      });
+
+      dispatch(addToNotes({ notes }));
+      dispatch(addToMedications({ medications }));
+      setMedicationData(medications.map((item: any) => item.input_time));
     } catch (e) {
-      toast('There was a problem fetching notes and medication data!');
+      // toast('There was a problem fetching notes and medication data!');
       console.log('There was an error', e);
     }
   };
+
+  const loadHospitalData = async () => {
+    const hospitalData = await fetchHospitalData(1);
+    dispatch(selectHospital(hospitalData));
+  };
+
+  useEffect(() => {
+    loadHospitalData();
+  }, []);
 
   useEffect(
     () => console.log('Chart Selection Changed', chartSelections),
@@ -50,30 +70,33 @@ const App = () => {
   );
 
   useEffect(() => {
-    loadNotesAndMedications();
+    const interval = setInterval(() => loadNotesAndMedications(), 3000);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
     // const socket = Client('http://40.76.196.190:3001');
     const socket = Client('http://192.168.1.29:3001');
-
-    socket.on('connect', () => {
-      console.log(socket.id);
-      console.log(socket.connected); // true
-      toast('Successfully connected to server');
-      socket.on('bed007', ({ data }) => {
-        setBiometricData(data);
+    if (bed !== undefined) {
+      socket.on('connect', () => {
+        toast('Successfully connected to server');
+        socket.on(bed.bedId, ({ data }: any) => {
+          setBiometricData(data);
+        });
       });
-    });
 
-    socket.on('disconnect', () => {
-      console.log(socket.id);
-      console.log(socket.connected); // true
-    });
+      socket.on('disconnect', () => {
+        console.log(socket.id);
+        console.log(socket.connected); // true
+      });
+    }
+
     return () => {
       socket.removeAllListeners();
     };
-  }, []);
+  }, [bed]);
 
   return (
     <>
@@ -101,14 +124,14 @@ const App = () => {
                 element={
                   <BiometricCharts
                     biometricData={biometricData}
-                    notesAndMedicationData={notesAndMedicationData}
+                    medicationData={medicationData}
                     onChartSelectionChange={setChartSelection}
                   />
                 }
               />
               <Route
                 path="kpi"
-                element={<BiometricKpi biometricData={biometricData} />}
+                element={<BiometricKpi biometricDataProps={biometricData} />}
               />
               <Route path="/" element={<Navigate to="patient" />} />
             </Routes>

@@ -16,3 +16,17 @@
   color: $primary1 !important;
   opacity: 1 !important;
 }
+
+.react-datepicker-popper {
+  .react-datepicker {
+    box-shadow: 0px 10px 15px #02162c;
+  }
+  &[data-placement^='bottom'] {
+    z-index: 9999999999999999999999999;
+  }
+}
+
+.form-check-input {
+  background: #282d4b;
+  border: 1px solid white;
+}

@@ -1,9 +1,18 @@
 /* eslint-disable indent */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { hostname } from 'os';
 import React, { useEffect, useState } from 'react';
 import { BsChevronRight } from 'react-icons/bs';
-import { data } from './testData';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import {
+  selectBed,
+  selectBuilding,
+  selectFloor,
+  selectHospital,
+  selectRoom,
+} from '../../reducers/patient';
 
 const BreadCrumbItem = ({
   title,
@@ -13,16 +22,24 @@ const BreadCrumbItem = ({
 }: {
   title: string;
   options: Array<{ id: number | string; label: string }>;
-  onSelect: any;
+  onSelect?: any;
   value: any;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>(undefined);
   const [showDrop, setShow] = useState(false);
 
   useEffect(() => {
-    console.log('Selected Option', selectedOption);
-    if (selectedOption) onSelect(selectedOption);
+    if (selectedOption && typeof onSelect == 'function')
+      onSelect(selectedOption);
   }, [selectedOption]);
+
+  // useEffect(() => {
+  //   if (options.length === 1) {
+  //     setSelectedOption(options[0]);
+  //   }
+  // }, [options]);
+
+  const hospital = useSelector((state: any) => state.patient.hospital);
 
   return (
     <div
@@ -54,62 +71,54 @@ const BreadCrumbItem = ({
 };
 
 const BreadCrumbs = ({
-  hospitalName,
-  buildingName,
-  floorNumber,
-  roomNumber,
-  patientId,
+  hospital,
+  building,
+  floor,
+  room,
+  bed,
+  patient,
   onChange,
 }: {
-  hospitalName: string;
-  buildingName: string;
-  floorNumber: string;
-  roomNumber: string;
-  patientId: string;
-  onChange: any;
+  hospital?: any | undefined;
+  building?: any;
+  floor?: any;
+  room?: any;
+  patient?: any;
+  bed?: any;
+  onChange?: any;
 }) => {
-  const [hospital, setHospital] = useState<any>(undefined);
-  const [building, setBuilding] = useState<any>(undefined);
-  const [floor, setFloor] = useState<any>(undefined);
-  const [room, setRoom] = useState<any>(undefined);
-  const [bedId, setBedId] = useState<any>(undefined);
-  const [patient, setPatient] = useState<any>(undefined);
-
-  useEffect(() => {
-    setFloor(undefined);
-    setRoom(undefined);
-    setPatient(undefined);
-    setBedId(undefined);
-  }, [building]);
-
-  useEffect(() => {
-    setRoom(undefined);
-    setPatient(undefined);
-    setBedId(undefined);
-  }, [floor]);
-
-  useEffect(() => {
-    setPatient(undefined);
-    setBedId(undefined);
-  }, [room]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   return (
     <div className="quantaira-breadcrumbs">
       <BreadCrumbItem
         title="Select Hospital"
-        options={[{ id: 1, label: 'Hospital 1' }]}
-        onSelect={setHospital}
-        value={hospital}
+        options={
+          hospital
+            ? [
+                {
+                  id: hospital.hospitalId,
+                  label: hospital.hospitalName,
+                  ...hospital,
+                },
+              ]
+            : []
+        }
+        onSelect={(hospital: any) => dispatch(selectHospital(hospital))}
+        value={hospital ? { label: hospital.hospitalName } : undefined}
       />
 
       {hospital && (
         <BreadCrumbItem
           title="Select Building"
-          options={data.buildings.map((item) => {
-            return { id: item.buildingId, label: item.buildingName, ...item };
-          })}
-          onSelect={setBuilding}
-          value={building}
+          options={hospital.buildings.map(
+            (item: { buildingId: any; buildingName: any }) => {
+              return { id: item.buildingId, label: item.buildingName, ...item };
+            }
+          )}
+          onSelect={(building: any) => dispatch(selectBuilding(building))}
+          value={building ? { label: building.buildingName } : undefined}
         />
       )}
 
@@ -125,8 +134,8 @@ const BreadCrumbs = ({
               };
             }
           )}
-          onSelect={setFloor}
-          value={floor}
+          onSelect={(floor: any) => dispatch(selectFloor(floor))}
+          value={floor ? { label: floor.floorName } : undefined}
         />
       )}
 
@@ -143,24 +152,25 @@ const BreadCrumbs = ({
               };
             }
           )}
-          onSelect={setRoom}
-          value={room}
+          onSelect={(room: any) => dispatch(selectRoom(room))}
+          value={room ? { label: room.roomName } : undefined}
         />
       )}
 
-      {/* {room && (
+      {room && (
         <BreadCrumbItem
-          title="Select Patient"
-          options={[
-            'Patient 1',
-            'Patient 2',
-            'Patient 3',
-            'Patient 4',
-            'Patient 5',
-          ]}
-          onSelect={setPatient}
+          title="Select Bed"
+          options={room.beds.map((item: { bedId: any; bedNumber: any }) => {
+            return {
+              id: item.bedId,
+              label: item.bedNumber,
+              ...item,
+            };
+          })}
+          value={bed ? { label: bed.bedNumber } : undefined}
+          onSelect={(bed: any) => dispatch(selectBed(bed))}
         />
-      )} */}
+      )}
     </div>
   );
 };

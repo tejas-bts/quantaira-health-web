@@ -13,6 +13,7 @@ const Button = ({
   cssWidth,
   cssBorder,
   backgroundColor,
+  disabled,
 }: {
   icon?: string;
   label?: string;
@@ -24,6 +25,7 @@ const Button = ({
   cssWidth?: string;
   cssBorder?: string;
   backgroundColor?: string;
+  disabled?: boolean;
 }) => {
   const style: { width?: string; border?: string; backgroundColor?: string } = {
     width: cssWidth,
@@ -34,9 +36,11 @@ const Button = ({
   return (
     <button
       className={`quantaira-button ${orientation} ${size} ${type} ${shape} ${
-        !label && 'p-1'
-      }`}
-      onClick={onClick}
+        disabled ? 'disabled' : ''
+      } ${!label && 'p-1'}`}
+      onClick={() => {
+        if (!disabled) onClick();
+      }}
       style={style}
     >
       {icon && <div style={{ backgroundImage: `url(${icon})` }} />}

@@ -7,6 +7,10 @@ export interface ChartPropsType {
   idealMax: number | string;
   unit: string;
   values: Array<[number, number]>;
-  notesAndMedicationData: Array<[number, number]>;
+  notes: any;
+  medications: any;
+  medicationData: any;
   onClick?: any;
+  onNoteClick?: any;
+  onMedicationClick?: any;
 }

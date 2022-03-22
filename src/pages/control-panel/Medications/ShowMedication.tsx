@@ -1,9 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
 import Button from '../../../components/core/Button';
 
 const ShowNotes = () => {
   const navigate = useNavigate();
+  const medications = useSelector((state: any) => state.medications.data);
+  console.log('Medication', medications);
   return (
     <div className="show-notes-page">
       <div className="notes-page-header">
@@ -20,7 +24,7 @@ const ShowNotes = () => {
         <Button
           label="Add Medication"
           onClick={() => {
-            navigate('/app/charts/notes/add', {
+            navigate('/app/charts/medications/add', {
               replace: true,
             });
           }}
@@ -31,6 +35,11 @@ const ShowNotes = () => {
           shape={'rectangular'}
           cssWidth="14rem"
         />
+      </div>
+      <div className="notes-list">
+        {medications.length > 0 && (
+          <AccordionInDropdown show={true} data={medications} />
+        )}
       </div>
     </div>
   );

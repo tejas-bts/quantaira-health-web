@@ -1,9 +1,18 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { logOut } from '../../reducers/auth';
 
 const BottomNavigationBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogOut = () => {
+    // Logic for destroying session here
+    dispatch(logOut());
+    navigate('/', { replace: true });
+  };
 
   return (
     <div className="bottom-nav-bar">
@@ -59,10 +68,10 @@ const BottomNavigationBar = () => {
           });
         }}
       >
-        <div
+        {/* <div
           style={{ backgroundImage: 'url("/images/navbar/alarm-setup.svg")' }}
         />
-        Alarm Setup
+        Alarm Setup */}
       </button>
       <button
         onClick={() => {
@@ -98,17 +107,23 @@ const BottomNavigationBar = () => {
         />
         Combine View */}
       </button>
-      <button>
-        {/* <div
+      <button
+        onClick={() => {
+          navigate('/app/patient', {
+            replace: false,
+          });
+        }}
+      >
+        <div
           style={{ backgroundImage: 'url("/images/navbar/select-graph.svg")' }}
         />
-        Select Graph */}
+        Select Graph
       </button>
       <button>
         {/* <div style={{ backgroundImage: 'url("/images/navbar/setting.svg")' }} /> */}
         {/* Settings */}
       </button>
-      <button>
+      <button onClick={handleLogOut}>
         <div style={{ backgroundImage: 'url("/images/navbar/log-out.svg")' }} />
         Logout
       </button>

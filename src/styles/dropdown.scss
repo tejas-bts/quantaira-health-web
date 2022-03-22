@@ -19,6 +19,15 @@
 
 .quantaira-dropdown {
   width: 100%;
+  & > .dropdown-container {
+    position: relative;
+
+    & > .drop-container {
+      position: absolute;
+      box-shadow: 0px 3px 10px #02162c;
+      width: 100%;
+    }
+  }
 }
 
 .selected-options {
@@ -60,12 +69,12 @@
   border-radius: 0.3rem;
   padding: 0.3rem;
   transition: 0.2s;
-  max-height: 10rem;
   overflow-y: scroll;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   z-index: 1;
+  height: 15rem;
 
   &::-webkit-scrollbar {
     width: 0.3rem;
@@ -121,7 +130,7 @@
 .drop-item {
   background: #02162c4a;
   padding: 0rem 0.4rem;
-  margin: 0.3rem;
+  margin-top: 0.3rem;
   border-radius: 0.2rem;
   cursor: pointer;
   display: flex;
@@ -138,6 +147,8 @@
     height: 1rem;
     background-size: contain;
     margin: 0 0.6rem 0 0.4rem;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
   .drop-item-header {
@@ -156,10 +167,19 @@
     margin: 0.3rem 0rem;
   }
 
+  .drop-item-content-preview {
+    max-width: 3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 0.5rem;
+  }
+
   .drop-item-description {
     margin-bottom: 0.5rem;
     margin-top: 0.3rem;
     padding: 0rem 1rem;
+    width: 100%;
   }
 }
 

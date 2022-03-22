@@ -11,15 +11,16 @@ import Notes from '../pages/control-panel/Notes';
 import Medications from '../pages/control-panel/Medications';
 import Alarms from '../pages/control-panel/Alarms';
 import AppContext from '../contexts/AppContext';
+import { useSelector } from 'react-redux';
 
 const Home = ({
   biometricData,
   onChartSelectionChange,
-  notesAndMedicationData,
+  medicationData,
 }: {
   biometricData: BiometricData[];
   onChartSelectionChange?: any;
-  notesAndMedicationData: any;
+  medicationData: any;
 }) => {
   const navigate = useNavigate();
   const vitalId = 1;
@@ -45,7 +46,6 @@ const Home = ({
   const [bufferData, setBuffer] = useState<any>({});
 
   const { chartSelections } = useContext(AppContext);
-  console.log('chartSelections', chartSelections);
   const [availableCharts, setAvailableCharts] = useState<any>([]);
   //   const [pageNumber, setPageNumber] = useState<number>(0);
 
@@ -56,7 +56,6 @@ const Home = ({
   };
 
   useEffect(() => {
-    console.log('New DATA :::::::::', biometricData);
     const availableCharts: any = [];
     biometricData.map((item: BiometricData) =>
       availableCharts.push(item.label)
@@ -70,14 +69,18 @@ const Home = ({
     );
   }, [biometricData]);
 
-  useEffect(() => {
-    console.log('Chart Selections Changed', chartSelections);
-  }, [chartSelections]);
-
   const getIndex = (label: string) => {
     const index = biometricData.findIndex((item) => item.label === label);
     return index;
   };
+
+  const notes = useSelector((state: any) => state.notes.data);
+  const medications = useSelector((state: any) => state.medications.data);
+
+  const bed: any = useSelector((state: any) => state.patient.bed);
+  if (!bed) {
+    navigate('/app/patient', { replace: true });
+  }
 
   return (
     <div className="chart-grid">
@@ -97,17 +100,30 @@ const Home = ({
             }
             values={bufferData[getIndex(chartSelections[0])] || []}
             onClick={(time: number) =>
-              navigateTo(`/app/charts/notes/add/${time}`)
+              navigateTo(`/app/charts/medications/add/${time}`)
             }
-            notesAndMedicationData={notesAndMedicationData}
+            onNoteClick={(time: number) => {
+              console.log('Note Clicked');
+              navigateTo(`/app/charts/notes/view/${time}`);
+            }}
+            onMedicationClick={(time: number) => {
+              console.log('Medicine Clicked');
+              navigateTo(`/app/charts/medications/view/${time}`);
+            }}
+            notes={notes}
+            medications={medications}
+            medicationData={medicationData}
           />
         )}
       </div>
       <div>
         <div className="h-100 w-100 p-3 controls-box">
           <Routes>
-            <Route path="/notes/*" element={<Notes />} />
-            <Route path="/medications/*" element={<Medications />} />
+            <Route path="/notes/*" element={<Notes notes={notes} />} />
+            <Route
+              path="/medications/*"
+              element={<Medications medicationData={medicationData} />}
+            />
             <Route path="/alarms/*" element={<Alarms />} />
             <Route
               path="/"
@@ -140,7 +156,17 @@ const Home = ({
             onClick={(time: number) =>
               navigateTo(`/app/charts/notes/add/${time}`)
             }
-            notesAndMedicationData={notesAndMedicationData}
+            onNoteClick={(time: number) => {
+              console.log('Note Clicked');
+              navigateTo(`/app/charts/notes/view/${time}`);
+            }}
+            onMedicationClick={(time: number) => {
+              console.log('Medicine Clicked');
+              navigateTo(`/app/charts/medications/view/${time}`);
+            }}
+            notes={notes}
+            medications={medications}
+            medicationData={medicationData}
           />
         )}
       </div>
@@ -162,7 +188,17 @@ const Home = ({
             onClick={(time: number) =>
               navigateTo(`/app/charts/notes/add/${time}`)
             }
-            notesAndMedicationData={notesAndMedicationData}
+            onNoteClick={(time: number) => {
+              console.log('Note Clicked');
+              navigateTo(`/app/charts/notes/view/${time}`);
+            }}
+            onMedicationClick={(time: number) => {
+              console.log('Medicine Clicked');
+              navigateTo(`/app/charts/medications/view/${time}`);
+            }}
+            notes={notes}
+            medications={medications}
+            medicationData={medicationData}
           />
         )}
       </div>

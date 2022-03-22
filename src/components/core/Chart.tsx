@@ -13,6 +13,7 @@ import { useGesture } from '@use-gesture/react';
 import { ChartPropsType } from '../../types/Chart.propsType';
 import { ApexChartData } from '../../types/ChartAttributes';
 import { FaLightbulb } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const ADDING_DATA_INTERVAL_IN_SECONDS = 1000;
 const MAX_ZOOM_LEVEL = 200;
@@ -32,8 +33,12 @@ const Chart = ({
   idealMax,
   unit,
   values,
-  notesAndMedicationData,
+  notes,
+  medications,
+  medicationData,
   onClick,
+  onNoteClick,
+  onMedicationClick,
 }: ChartPropsType) => {
   const [isLive, setLive] = useState(true);
   const [chartHeight] = useState(180);
@@ -51,15 +56,10 @@ const Chart = ({
 
   const target = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // console.log('Chart Props', title, values);
-  }, [values, title]);
+  const notesDirectory = notes.map((item: any) => item.inputTime);
+  const medicationsDirectory = medications.map((item: any) => item.inputTime);
 
   const zoomStep = 4;
-
-  const onClicker = (e?: any) => {
-    console.log('Hi There', e);
-  };
 
   const options: ApexOptions = {
     legend: {
@@ -83,11 +83,20 @@ const Chart = ({
         enabled: false,
       },
       events: {
-        click: onClicker,
-        //  function (event, chartContext, config) {
-        //   console.log('Event Click');
-        //   if (onClick) onClick(dataFrame[0].data[config.dataPointIndex][0]);
-        // },
+        click: function (event, chartContext, config) {
+          if (config.seriesIndex === 1 && onNoteClick) {
+            const timeStamp = dataFrame[1].data[config.dataPointIndex][0];
+            const targetNote = notes.find(
+              (item: any) => item.inputTime == timeStamp
+            );
+            console.log('Click', targetNote);
+            onNoteClick(targetNote.row_id);
+          } else if (config.seriesIndex === 2 && onMedicationClick) {
+            onMedicationClick(dataFrame[2].data[config.dataPointIndex][0]);
+          } else if (onClick) {
+            onClick(dataFrame[0].data[config.dataPointIndex][0]);
+          }
+        },
 
         beforeZoom: (e) => {
           console.log('EVENT : Before zoom', e);
@@ -112,8 +121,10 @@ const Chart = ({
           shape: 'circle',
         },
       ],
-      size: 2,
-      strokeWidth: 2,
+      size: [5, 15, 15],
+      strokeWidth: 1,
+      colors: [color, 'orange', 'green'],
+      shape: ['circle', 'square', 'square'],
       // onClick: (e) => console.log('Hello', e),
     },
     dataLabels: {
@@ -124,16 +135,17 @@ const Chart = ({
       colors: [color],
       show: true,
       lineCap: 'square',
-      width: [5, 0],
+      width: [5, 0, 0],
     },
     fill: {
       colors: [color],
+      opacity: 0,
       type: 'gradient',
       gradient: {
         shadeIntensity: 1,
         inverseColors: false,
-        opacityFrom: 0.45,
-        opacityTo: 0.05,
+        opacityFrom: 0,
+        opacityTo: 0,
         stops: [20, 100, 100, 100],
       },
     },
@@ -225,7 +237,6 @@ const Chart = ({
   };
 
   useEffect(() => {
-    console.log('Notes and Medics', notesAndMedicationData);
     if (values.length) {
       /*
        *     Variable "values" holds the data coming from props
@@ -245,6 +256,24 @@ const Chart = ({
           {
             name: title,
             data: values.slice(start, end),
+            // .filter((item) => {
+            //   return (
+            //     !notesData.includes(item[0]) &&
+            //     !medicationData.includes(item[0])
+            //   );
+            // }),
+          },
+          {
+            name: 'Notes',
+            data: values
+              .slice(start, end)
+              .filter((item) => notesDirectory.includes(item[0])),
+          },
+          {
+            name: 'Medication',
+            data: values
+              .slice(start, end)
+              .filter((item) => medicationsDirectory.includes(item[0])),
           },
         ]);
       }

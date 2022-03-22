@@ -20,6 +20,12 @@
     border: 1px solid $secondary;
   }
 
+  &.disabled {
+    color: grey;
+    background-color: $background4;
+    border: 1px solid $background8;
+  }
+
   &.rectangular {
     border-radius: 0.3rem;
   }

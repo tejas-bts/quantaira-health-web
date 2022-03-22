@@ -20,6 +20,18 @@
   flex: 7;
 }
 
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
 .quantaira-text-area {
   height: 100%;
   width: 100%;
@@ -181,7 +193,7 @@
   height: 35px;
   border-radius: 25px;
   outline: none;
-  cursor: none;
+  cursor: not-allowed;
   appearance: none;
   font-family: 'Raleway', sans-serif;
   font-weight: bold;
@@ -421,4 +433,30 @@
     height: 1.5rem !important;
     width: 1.5rem !important;
   }
+}
+
+.kpi-badge {
+  position: fixed;
+  top: 60px;
+  background: #323756;
+  border-radius: 0rem 0rem 1rem 1rem;
+  display: flex;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 0.5rem;
+  width: 40rem;
+  opacity: 0;
+  height: 0px;
+  transition: 0.3s;
+
+  &:hover {
+    opacity: 1;
+    height: unset;
+  }
+}
+
+.quant-slider {
+  width: 10rem;
 }

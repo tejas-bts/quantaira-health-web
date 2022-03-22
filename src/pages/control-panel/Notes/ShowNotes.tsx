@@ -1,9 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
 import Button from '../../../components/core/Button';
 
 const ShowNotes = () => {
   const navigate = useNavigate();
+  const notes = useSelector((state: any) => state.notes.data);
+
   return (
     <div className="show-notes-page">
       <div className="notes-page-header">
@@ -31,6 +35,9 @@ const ShowNotes = () => {
           shape={'rectangular'}
           cssWidth="12rem"
         />
+      </div>
+      <div className="notes-list">
+        {notes.length > 0 && <AccordionInDropdown show={true} data={notes} />}
       </div>
     </div>
   );
