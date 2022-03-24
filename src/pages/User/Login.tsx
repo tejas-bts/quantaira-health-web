@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import MultiLingualLabel from '../../components/core/MultiLingualLabel';
 import { logIn } from '../../reducers/auth';
 import { selectHospital } from '../../reducers/patient';
 import { loginUser } from '../../services/auth.services';
@@ -12,10 +13,17 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [userName, setUserName] = useState<string>(
-    'adityadoe@hospitaldomain.com'
-  );
+  const [userName, setUserName] = useState<string>('adityadoe@hospitaldomain.com');
   const [password, setPassword] = useState<string>('qwerty@123');
+
+  useEffect(() => {
+    const user: any = localStorage.getItem('user');
+    if (user) {
+      const userObj = JSON.parse(user);
+      dispatch(logIn(userObj));
+      navigate('/app', { replace: true });
+    }
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -27,6 +35,8 @@ const Login = () => {
       console.log('User Data', userData);
       dispatch(logIn({ userName: 'tejas', permissions: [1, 2, 3, 4] }));
       dispatch(selectHospital(userData.userAccess));
+      localStorage.setItem('user', JSON.stringify(userData));
+
       navigate('/app', { replace: true });
     } catch (e) {
       // console.error('Error loging in', e);
@@ -42,17 +52,15 @@ const Login = () => {
       <div className="column-center flex-4">
         {/* <form onSubmit={handleLogin}> */}
         <div className="login-card">
-          <div className="login-card-header">Login to Your Account</div>
-          <p className="field-label">Select who you are?</p>
+          <div className="login-card-header">
+            <MultiLingualLabel id="LOGIN_TO_YOUR_ACCOUNT" />
+          </div>
+          <p className="field-label">
+            <MultiLingualLabel id="SELECT_WHO_YOU_ARE" />
+          </p>
           <div className="user-role">
             <div className="user-role-item">
-              <input
-                type="radio"
-                name="role"
-                value="doctors"
-                id="doctors"
-                checked
-              />
+              <input type="radio" name="role" value="doctors" id="doctors" checked />
               <label htmlFor="doctors">
                 <div
                   className="role-icon"
@@ -60,17 +68,13 @@ const Login = () => {
                     backgroundImage: 'url("/images/login/doctors.svg")',
                   }}
                 />
-                <span>Doctors</span>
+                <span>
+                  <MultiLingualLabel id="ROLE_DOCTOR" />
+                </span>
               </label>
             </div>
             <div className="user-role-item">
-              <input
-                type="radio"
-                name="role"
-                value="nurses"
-                id="nurses"
-                checked
-              />
+              <input type="radio" name="role" value="nurses" id="nurses" checked />
               <label htmlFor="nurses">
                 <div
                   className="role-icon"
@@ -78,17 +82,13 @@ const Login = () => {
                     backgroundImage: 'url("/images/login/nurses.svg")',
                   }}
                 />
-                <span>Nurses</span>
+                <span>
+                  <MultiLingualLabel id="ROLE_NURSE" />
+                </span>
               </label>
             </div>
             <div className="user-role-item">
-              <input
-                type="radio"
-                name="role"
-                value="clinicians"
-                id="clinicians"
-                checked
-              />
+              <input type="radio" name="role" value="clinicians" id="clinicians" checked />
               <label htmlFor="clinicians">
                 <div
                   className="role-icon"
@@ -96,24 +96,24 @@ const Login = () => {
                     backgroundImage: 'url("/images/login/clinicians.svg")',
                   }}
                 />
-                <span>Clinicians</span>
+                <span>
+                  <MultiLingualLabel id="ROLE_CLINICIAN" />
+                </span>
               </label>
             </div>
           </div>
-          <p className="field-label">Log in into</p>
+          <p className="field-label">
+            <MultiLingualLabel id="LOG_IN_INTO" />
+          </p>
           <div className="justify-content-start">
             <span className="btn btn-1" style={{ marginLeft: '-15px' }}>
-              <input
-                type="checkbox"
-                name=""
-                id="switch"
-                checked={true}
-                readOnly
-              />
+              <input type="checkbox" name="" id="switch" checked={true} readOnly />
               <label htmlFor="switch"></label>
             </span>
           </div>
-          <p className="field-label">Email Address</p>
+          <p className="field-label">
+            <MultiLingualLabel id="EMAIL_ADDRESS" />
+          </p>
           <div>
             <input
               type="text"
@@ -122,9 +122,13 @@ const Login = () => {
             />
           </div>
           <div className="d-flex">
-            <p className="field-label">Password</p>
+            <p className="field-label">
+              <MultiLingualLabel id="PASSWORD" />
+            </p>
             <p className="field-label text-right">
-              <Link to="reset-password">Forgot Password?</Link>
+              <Link to="reset-password">
+                <MultiLingualLabel id="FORGOT_PASSWORD" />
+              </Link>
             </p>
           </div>
           <div>
@@ -141,15 +145,17 @@ const Login = () => {
               id="terms-condition"
             />
             <label className="field-label m-0" htmlFor="terms-condition">
-              Accept the terms and conditions
+              <MultiLingualLabel id="ACCEPT_TERMS_CONDITIONS" />
             </label>
           </div>
           <button className="login-btn w-100 mt-3" onClick={handleLogin}>
-            {loading ? 'Loging in...' : 'Log in'}
+            <MultiLingualLabel id={loading ? 'LOGING_IN' : 'LOG_IN'} />
           </button>
         </div>
         {/* </form> */}
-        <div className="footer-links">Privacy Policy | Terms of Use</div>
+        <div className="footer-links">
+          <MultiLingualLabel id="PRIVACY_POLICY" /> | <MultiLingualLabel id="TERMS_OF_USE" />
+        </div>
       </div>
       <div className="column-right flex-3"></div>
     </div>

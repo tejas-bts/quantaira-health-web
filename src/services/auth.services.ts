@@ -1,9 +1,9 @@
 import axios from 'axios';
+import { baseURLhttp } from '../utils/constants';
 
-const baseURL = 'http://192.168.1.29:7071/api';
 
 
-const login = `${baseURL}/LoginUser`;
+const login = `${baseURLhttp}/LoginUser`;
 
 export const loginUser = async (params: any) => {
   return new Promise<void>((resolve, reject) => {

@@ -27,7 +27,7 @@ export const patientState = createSlice({
   reducers: {
     selectHospital: (state, action) => {
       const currentHospital: any = current(state).hospital;
-      if (currentHospital) {
+      if (currentHospital && action.payload) {
         if (currentHospital.hospitalId === action.payload.hospitalId) {
           return state;
         }
@@ -43,7 +43,7 @@ export const patientState = createSlice({
     },
     selectBuilding: (state, action) => {
       const currentBuilding: any = current(state).building;
-      if (currentBuilding) {
+      if (currentBuilding && action.payload) {
         if (currentBuilding.buildingId === action.payload.buildingId) {
           return state;
         }
@@ -58,7 +58,7 @@ export const patientState = createSlice({
     },
     selectFloor: (state, action) => {
       const currentFloor: any = current(state).floor;
-      if (currentFloor) {
+      if (currentFloor && action.payload) {
         if (currentFloor.floorId === action.payload.floorId) {
           return state;
         }
@@ -73,7 +73,7 @@ export const patientState = createSlice({
 
     selectRoom: (state, action) => {
       const currentRoom: any = current(state).room;
-      if (currentRoom) {
+      if (currentRoom && action.payload) {
         if (currentRoom.roomNumber === action.payload.roomNumber) {
           return state;
         }
@@ -87,7 +87,7 @@ export const patientState = createSlice({
 
     selectBed: (state, action) => {
       const currentBed: any = current(state).bed;
-      if (currentBed) {
+      if (currentBed && action.payload) {
         if (currentBed.bedmId === action.payload.bedId) {
           return state;
         }

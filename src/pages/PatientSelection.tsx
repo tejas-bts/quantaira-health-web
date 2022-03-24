@@ -21,8 +21,6 @@ const PatientSelection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  
-
   return (
     <div className="chart-grid">
       <div />
@@ -31,6 +29,7 @@ const PatientSelection = () => {
           <QuantairaDropdown
             options={hospital ? [hospital.hospitalName] : []}
             onChange={() => {
+              localStorage.setItem('hospital', JSON.stringify(hospital));
               dispatch(selectHospital(hospital));
             }}
             value={hospital && hospital.hospitalName}
@@ -39,36 +38,30 @@ const PatientSelection = () => {
         </div>
         <div className="patient-selection-row">
           <QuantairaDropdown
-            options={
-              hospital
-                ? hospital.buildings.map((item: any) => item.buildingName)
-                : []
-            }
-            onChange={(selectedOption: any, index: any) =>
-              dispatch(
-                selectBuilding(hospital ? hospital.buildings[index] : undefined)
-              )
-            }
+            options={hospital ? hospital.buildings.map((item: any) => item.buildingName) : []}
+            onChange={(selectedOption: any, index: any) => {
+              if (hospital)
+                localStorage.setItem('building', JSON.stringify(hospital.buildings[index]));
+              dispatch(selectBuilding(hospital ? hospital.buildings[index] : undefined));
+            }}
             value={building && building.buildingName}
             title={'Select Building'}
           />
           <QuantairaDropdown
-            options={
-              building ? building.floors.map((item: any) => item.floorName) : []
-            }
-            onChange={(selectedOption: any, index: any) =>
-              dispatch(
-                selectFloor(building ? building.floors[index] : undefined)
-              )
-            }
+            options={building ? building.floors.map((item: any) => item.floorName) : []}
+            onChange={(selectedOption: any, index: any) => {
+              if (building) localStorage.setItem('floor', JSON.stringify(building.floors[index]));
+              dispatch(selectFloor(building ? building.floors[index] : undefined));
+            }}
             value={floor && floor.floorName}
             title={'Select Floor'}
           />
           <QuantairaDropdown
             options={floor ? floor.rooms.map((item: any) => item.roomName) : []}
-            onChange={(selectedOption: any, index: any) =>
-              dispatch(selectRoom(floor ? floor.rooms[index] : undefined))
-            }
+            onChange={(selectedOption: any, index: any) => {
+              if (floor) localStorage.setItem('room', JSON.stringify(floor.rooms[index]));
+              dispatch(selectRoom(floor ? floor.rooms[index] : undefined));
+            }}
             value={room && room.roomName}
             title={'Select Room'}
           />
@@ -76,18 +69,20 @@ const PatientSelection = () => {
         <div className="patient-selection-row">
           <QuantairaDropdown
             options={room ? room.beds.map((item: any) => item.bedNumber) : []}
-            onChange={(selectedOption: any, index: any) =>
-              dispatch(selectBed(room ? room.beds[index] : undefined))
-            }
+            onChange={(selectedOption: any, index: any) => {
+              if (room) localStorage.setItem('bed', JSON.stringify(room.beds[index]));
+              dispatch(selectBed(room ? room.beds[index] : undefined));
+            }}
             value={bed && bed.bedNumber}
             title={'Select Bed No.'}
           />
           <span>OR</span>
           <QuantairaDropdown
             options={room ? room.beds.map((item: any) => item.patientID) : []}
-            onChange={(selectedOption: any, index: any) =>
-              dispatch(selectBed(room ? room.beds[index] : undefined))
-            }
+            onChange={(selectedOption: any, index: any) => {
+              if (room) localStorage.setItem('bed', JSON.stringify(room.beds[index]));
+              dispatch(selectBed(room ? room.beds[index] : undefined));
+            }}
             title={'Select Patient Id'}
             value={bed && bed.patientID}
           />

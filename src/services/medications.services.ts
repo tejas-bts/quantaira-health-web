@@ -1,10 +1,9 @@
 import axios from 'axios';
+import { baseURLhttp } from '../utils/constants';
 
-const baseURL = 'http://192.168.1.29:7071/api';
-
-const saveMedications = `${baseURL}/AddMedication`;
-const getNotesAndMedications = `${baseURL}/FetchNotesMedication`;
-const searchAvailableMedicines = `${baseURL}/SearchMedicines`;
+const saveMedications = `${baseURLhttp}/AddMedication`;
+const getNotesAndMedications = `${baseURLhttp}/FetchNotesMedication`;
+const searchAvailableMedicines = `${baseURLhttp}/SearchMedicines`;
 
 
 

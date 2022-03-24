@@ -16,15 +16,12 @@ const PatientIdInput = ({ value, ...props }: { value?: string }) => {
     <span className="patient-id-input-wrapper" {...props}>
       <input
         type="text"
-        className="patient-id-input"
+        className="patient-id-input text-center"
         disabled={isDisabled}
         ref={inputRef}
         value={value}
       />
-      <button
-        className="patient-id-input-edit-btn"
-        onClick={() => setDisabled(false)}
-      />
+      <button className="patient-id-input-edit-btn d-none" onClick={() => setDisabled(false)} />
     </span>
   );
 };

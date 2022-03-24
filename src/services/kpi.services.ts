@@ -1,9 +1,8 @@
 import axios from 'axios';
+import { baseURLhttp } from '../utils/constants';
 
-const baseURL = 'http://192.168.1.29:7071/api';
 
-
-const getKPIdata = `${baseURL}/FetchKPIPastData`;
+const getKPIdata = `${baseURLhttp}/FetchKPIPastData`;
 
 axios.defaults.headers.common = {
   'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInVzZXJuYW1lIjoiYWRpdHlhZG9lQGhvc3BpdGFsZG9tYWluLmNvbSIsImlhdCI6MTY0Njc0NDY4OX0.5_6N_XGCfmYMBpqUNIKgrnsYaTiTJVV9cydzlNfUHpg',
@@ -11,19 +10,15 @@ axios.defaults.headers.common = {
 
 
 
-export const fetchKpi = async () => {
+export const fetchKpi = async ({ bedId, patientId, fromDate, limit }: { bedId: string | number, patientId: string | number, fromDate: string | number, limit: number }) => {
   console.log('Fetching KPI data');
   return new Promise<void>((resolve, reject) => {
     axios.get(getKPIdata, {
       params: {
-        'bed_id': '1',
-        'pid': '1234',
-        'fromDate': '1646793279000',
-        'limit': '100'
+        bed_id: bedId, pid: patientId, fromDate, limit
       }
     })
       .then((response) => {
-        console.log('Fetch KPI Response', response);
         resolve(response.data.data.data);
       })
       .catch((e) => {

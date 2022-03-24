@@ -11,6 +11,7 @@ const BottomNavigationBar = () => {
   const handleLogOut = () => {
     // Logic for destroying session here
     dispatch(logOut());
+    localStorage.clear();
     navigate('/', { replace: true });
   };
 
@@ -18,27 +19,19 @@ const BottomNavigationBar = () => {
     <div className="bottom-nav-bar">
       <button
         onClick={() => {
-          navigate(
-            location.pathname.toLowerCase().includes('charts')
-              ? 'kpi'
-              : 'charts',
-            {
-              replace: true,
-            }
-          );
+          navigate(location.pathname.toLowerCase().includes('charts') ? 'kpi' : 'charts', {
+            replace: true,
+          });
         }}
       >
         <div
           style={{
             backgroundImage: `url('/images/navbar/${
-              location.pathname.toLowerCase().includes('charts')
-                ? 'kpi.svg'
-                : 'chart.svg'
+              location.pathname.toLowerCase().includes('charts') ? 'kpi.svg' : 'chart.svg'
             }')`,
           }}
         />
-        Show{' '}
-        {location.pathname.toLowerCase().includes('charts') ? 'KPIs' : 'Charts'}
+        Show {location.pathname.toLowerCase().includes('charts') ? 'KPIs' : 'Charts'}
       </button>
 
       <button>
@@ -50,15 +43,11 @@ const BottomNavigationBar = () => {
         Previous Screen
       </button>
       <button>
-        <div
-          style={{ backgroundImage: 'url("/images/navbar/next-screen.svg")' }}
-        />
+        <div style={{ backgroundImage: 'url("/images/navbar/next-screen.svg")' }} />
         Next Screen
       </button>
       <button>
-        <div
-          style={{ backgroundImage: 'url("/images/navbar/lock-screen.svg")' }}
-        />
+        <div style={{ backgroundImage: 'url("/images/navbar/lock-screen.svg")' }} />
         Lock Screen
       </button>
       <button
@@ -90,9 +79,7 @@ const BottomNavigationBar = () => {
           });
         }}
       >
-        <div
-          style={{ backgroundImage: 'url("/images/navbar/medication.svg")' }}
-        />
+        <div style={{ backgroundImage: 'url("/images/navbar/medication.svg")' }} />
         Medication
       </button>
       <button>
@@ -109,14 +96,12 @@ const BottomNavigationBar = () => {
       </button>
       <button
         onClick={() => {
-          navigate('/app/patient', {
-            replace: false,
+          navigate('/app/charts', {
+            replace: true,
           });
         }}
       >
-        <div
-          style={{ backgroundImage: 'url("/images/navbar/select-graph.svg")' }}
-        />
+        <div style={{ backgroundImage: 'url("/images/navbar/select-graph.svg")' }} />
         Select Graph
       </button>
       <button>

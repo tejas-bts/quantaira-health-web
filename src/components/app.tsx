@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectHospital } from '../reducers/patient';
 import { addToNotes } from '../reducers/notes';
 import { addToMedications } from '../reducers/medications';
+import { baseURLws } from '../utils/constants';
+// import { setLive, setTime } from '../reducers/time';
 
 const App = () => {
   const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
@@ -56,18 +58,15 @@ const App = () => {
   };
 
   const loadHospitalData = async () => {
-    const hospitalData = await fetchHospitalData(1);
+    let userData: any = localStorage.getItem('user');
+    if (userData) userData = JSON.parse(userData);
+    const hospitalData = userData ? userData.userAccess : await fetchHospitalData(1);
     dispatch(selectHospital(hospitalData));
   };
 
   useEffect(() => {
     loadHospitalData();
   }, []);
-
-  useEffect(
-    () => console.log('Chart Selection Changed', chartSelections),
-    [chartSelections]
-  );
 
   useEffect(() => {
     const interval = setInterval(() => loadNotesAndMedications(), 3000);
@@ -77,8 +76,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // const socket = Client('http://40.76.196.190:3001');
-    const socket = Client('http://192.168.1.29:3001');
+    const socket = Client(baseURLws);
     if (bed !== undefined) {
       socket.on('connect', () => {
         toast('Successfully connected to server');
@@ -129,10 +127,7 @@ const App = () => {
                   />
                 }
               />
-              <Route
-                path="kpi"
-                element={<BiometricKpi biometricDataProps={biometricData} />}
-              />
+              <Route path="kpi" element={<BiometricKpi biometricDataProps={biometricData} />} />
               <Route path="/" element={<Navigate to="patient" />} />
             </Routes>
           </AppContext.Provider>

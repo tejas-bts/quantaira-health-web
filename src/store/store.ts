@@ -3,6 +3,8 @@ import authReducer from '../reducers/auth';
 import patientReducer from '../reducers/patient';
 import notesReducer from '../reducers/notes';
 import medicationsReducer from '../reducers/medications';
+import timeReducer from '../reducers/time';
+
 
 export default configureStore({
   reducer: {
@@ -10,5 +12,6 @@ export default configureStore({
     patient: patientReducer,
     notes: notesReducer,
     medications: medicationsReducer,
+    time: timeReducer,
   },
 });

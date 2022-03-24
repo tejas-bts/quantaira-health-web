@@ -15,35 +15,17 @@ import { fetchKpi } from '../services/kpi.services';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-const colors = [
-  '#94d699',
-  '#e7d57d',
-  '#c0f7ff',
-  '#fff59d',
-  '#FFAB91',
-  '#CE93D8',
-  '#80CBC4',
-];
+const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
-const BiometricKpi = ({
-  biometricDataProps,
-}: {
-  biometricDataProps: BiometricData[];
-}) => {
+const BiometricKpi = ({ biometricDataProps }: { biometricDataProps: BiometricData[] }) => {
   const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
 
   const [slider, setSlider] = useState(0);
 
-  const [temp, setTemp] = useState(
-    new BioMetricDataObj(BiometricParameters.Temp)
-  );
-  const [spo2, setSpO2] = useState(
-    new BioMetricDataObj(BiometricParameters.SpO2)
-  );
+  const [temp, setTemp] = useState(new BioMetricDataObj(BiometricParameters.Temp));
+  const [spo2, setSpO2] = useState(new BioMetricDataObj(BiometricParameters.SpO2));
 
-  const [nibp, setNiBP] = useState(
-    new BioMetricDataObj(BiometricParameters.NIBP)
-  );
+  const [nibp, setNiBP] = useState(new BioMetricDataObj(BiometricParameters.NIBP));
 
   const [hr, setHr] = useState(new BioMetricDataObj(BiometricParameters.HR));
   const [rr, setRr] = useState(new BioMetricDataObj(BiometricParameters.RR));
@@ -53,34 +35,25 @@ const BiometricKpi = ({
   const [st2, setST2] = useState(new BioMetricDataObj(BiometricParameters.ST2));
   const [st3, setST3] = useState(new BioMetricDataObj(BiometricParameters.ST3));
 
-  const [staVR, setSTaVR] = useState(
-    new BioMetricDataObj(BiometricParameters.STaVR)
-  );
-  const [staVF, setSTaVF] = useState(
-    new BioMetricDataObj(BiometricParameters.STaVF)
-  );
-  const [staVL, setSTaVL] = useState(
-    new BioMetricDataObj(BiometricParameters.STaVL)
-  );
-  const [staV, setSTV] = useState(
-    new BioMetricDataObj(BiometricParameters.STV)
-  );
+  const [staVR, setSTaVR] = useState(new BioMetricDataObj(BiometricParameters.STaVR));
+  const [staVF, setSTaVF] = useState(new BioMetricDataObj(BiometricParameters.STaVF));
+  const [staVL, setSTaVL] = useState(new BioMetricDataObj(BiometricParameters.STaVL));
+  const [staV, setSTV] = useState(new BioMetricDataObj(BiometricParameters.STV));
 
   const [qt, setQT] = useState(new BioMetricDataObj(BiometricParameters.QT));
   const [qtc, setQTc] = useState(new BioMetricDataObj(BiometricParameters.QTc));
-  const [deltaQtc, setDeltaQTc] = useState(
-    new BioMetricDataObj(BiometricParameters.DeltaQTc)
-  );
+  const [deltaQtc, setDeltaQTc] = useState(new BioMetricDataObj(BiometricParameters.DeltaQTc));
 
   const [latestTimestamp, setLatestTimeStamp] = useState(-Infinity);
   const [pastKpiData, setPastKpiData] = useState<any>([]);
-  const [isLive, setLive] = useState(true);
+  const [pastKpiTime, setPastKpiTime] = useState<any>([]);
+
+  const [selectedPastTime, setPastTime] = useState(new Date().getTime());
+
+  const isLive = useSelector((state: any) => state.time.isLive);
+  const time = useSelector((state: any) => state.time.currentTime);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log('Temp', temp);
-  }, [temp]);
 
   useEffect(() => {
     if (isLive) {
@@ -89,16 +62,26 @@ const BiometricKpi = ({
   }, [biometricDataProps]);
 
   useEffect(() => {
-    fetchKpi().then((data: any) => {
-      console.log('Fetched Past DAta', data);
-      setPastKpiData(() => Object.keys(data).map((value) => data[value]));
-    });
-  }, []);
+    console.log('Selected Time sadasd', time, isLive);
+    if (!isLive) {
+      setPastTime(time);
+      fetchKpi({
+        bedId: 1,
+        patientId: 1234,
+        fromDate: time, //new Date().getTime(),
+        limit: 100,
+      }).then((data: any) => {
+        if (data) {
+          setPastKpiTime(() => Object.keys(data).map((time) => parseInt(time)));
+          setPastKpiData(() => Object.keys(data).map((value) => data[value]));
+        }
+      });
+    }
+  }, [isLive, time]);
 
   useEffect(() => {
     for (const biometric of biometricData) {
       if (biometric && biometric.values) {
-        console.log('Biometric Values', biometric.values);
         if (biometric.values.length) {
           for (const [time, data] of biometric.values) {
             if (time > latestTimestamp) setLatestTimeStamp(time);
@@ -109,293 +92,183 @@ const BiometricKpi = ({
 
     //Getting Temperature from incoming data
     setTemp((oldTemp) => {
-      const newTemp = biometricData.find(
-        (item) => item.label === BiometricParameters.Temp
-      );
+      const newTemp = biometricData.find((item) => item.label === BiometricParameters.Temp);
       return {
         ...oldTemp,
         ...newTemp,
         lastTimeStamp:
-          newTemp && newTemp.values.length
-            ? newTemp.values[0][0]
-            : oldTemp.lastTimeStamp,
+          newTemp && newTemp.values.length ? newTemp.values[0][0] : oldTemp.lastTimeStamp,
         currentValue:
-          newTemp && newTemp.values.length
-            ? newTemp.values[0][1]
-            : oldTemp.currentValue,
+          newTemp && newTemp.values.length ? newTemp.values[0][1] : oldTemp.currentValue,
       };
     });
 
     //Getting SpO2 from incoming data
     setSpO2((oldSpO2) => {
-      const newSpo2 = biometricData.find(
-        (item) => item.label === BiometricParameters.SpO2
-      );
+      const newSpo2 = biometricData.find((item) => item.label === BiometricParameters.SpO2);
       return {
         ...oldSpO2,
         ...newSpo2,
         lastTimeStamp:
-          newSpo2 && newSpo2.values.length
-            ? newSpo2.values[0][0]
-            : oldSpO2.lastTimeStamp,
+          newSpo2 && newSpo2.values.length ? newSpo2.values[0][0] : oldSpO2.lastTimeStamp,
         currentValue:
-          newSpo2 && newSpo2.values.length
-            ? newSpo2.values[0][1]
-            : oldSpO2.currentValue,
+          newSpo2 && newSpo2.values.length ? newSpo2.values[0][1] : oldSpO2.currentValue,
       };
     });
 
     setNiBP((oldNiBP) => {
-      const newNiBP = biometricData.find(
-        (item) => item.label === BiometricParameters.NIBP
-      );
+      const newNiBP = biometricData.find((item) => item.label === BiometricParameters.NIBP);
       return {
         ...oldNiBP,
         ...newNiBP,
         lastTimeStamp:
-          newNiBP && newNiBP.values.length
-            ? newNiBP.values[0][0]
-            : oldNiBP.lastTimeStamp,
+          newNiBP && newNiBP.values.length ? newNiBP.values[0][0] : oldNiBP.lastTimeStamp,
         currentValue:
-          newNiBP && newNiBP.values.length
-            ? newNiBP.values[0][1]
-            : oldNiBP.currentValue,
+          newNiBP && newNiBP.values.length ? newNiBP.values[0][1] : oldNiBP.currentValue,
       };
     });
 
     //Getting HR from incoming data
     setHr((oldHR) => {
-      const newHR = biometricData.find(
-        (item) => item.label === BiometricParameters.HR
-      );
+      const newHR = biometricData.find((item) => item.label === BiometricParameters.HR);
       return {
         ...oldHR,
         ...newHR,
-        lastTimeStamp:
-          newHR && newHR.values.length
-            ? newHR.values[0][0]
-            : oldHR.lastTimeStamp,
-        currentValue:
-          newHR && newHR.values.length
-            ? newHR.values[0][1]
-            : oldHR.currentValue,
+        lastTimeStamp: newHR && newHR.values.length ? newHR.values[0][0] : oldHR.lastTimeStamp,
+        currentValue: newHR && newHR.values.length ? newHR.values[0][1] : oldHR.currentValue,
       };
     });
 
     //Getting PR from incoming data
     setPr((oldPR) => {
-      const newPR = biometricData.find(
-        (item) => item.label === BiometricParameters.PR
-      );
+      const newPR = biometricData.find((item) => item.label === BiometricParameters.PR);
       return {
         ...oldPR,
         ...newPR,
-        lastTimeStamp:
-          newPR && newPR.values.length
-            ? newPR.values[0][0]
-            : oldPR.lastTimeStamp,
-        currentValue:
-          newPR && newPR.values.length
-            ? newPR.values[0][1]
-            : oldPR.currentValue,
+        lastTimeStamp: newPR && newPR.values.length ? newPR.values[0][0] : oldPR.lastTimeStamp,
+        currentValue: newPR && newPR.values.length ? newPR.values[0][1] : oldPR.currentValue,
       };
     });
 
     //Getting RR from incoming data
     setRr((oldRR) => {
-      const newRR = biometricData.find(
-        (item) => item.label === BiometricParameters.RR
-      );
+      const newRR = biometricData.find((item) => item.label === BiometricParameters.RR);
       return {
         ...oldRR,
         ...newRR,
-        lastTimeStamp:
-          newRR && newRR.values.length
-            ? newRR.values[0][0]
-            : oldRR.lastTimeStamp,
-        currentValue:
-          newRR && newRR.values.length
-            ? newRR.values[0][1]
-            : oldRR.currentValue,
+        lastTimeStamp: newRR && newRR.values.length ? newRR.values[0][0] : oldRR.lastTimeStamp,
+        currentValue: newRR && newRR.values.length ? newRR.values[0][1] : oldRR.currentValue,
       };
     });
 
     //Getting ST1 from incoming data
     setST1((oldST1) => {
-      const newST1 = biometricData.find(
-        (item) => item.label === BiometricParameters.ST1
-      );
+      const newST1 = biometricData.find((item) => item.label === BiometricParameters.ST1);
       return {
         ...oldST1,
         ...newST1,
-        lastTimeStamp:
-          newST1 && newST1.values.length
-            ? newST1.values[0][0]
-            : oldST1.lastTimeStamp,
-        currentValue:
-          newST1 && newST1.values.length
-            ? newST1.values[0][1]
-            : oldST1.currentValue,
+        lastTimeStamp: newST1 && newST1.values.length ? newST1.values[0][0] : oldST1.lastTimeStamp,
+        currentValue: newST1 && newST1.values.length ? newST1.values[0][1] : oldST1.currentValue,
       };
     });
 
     //Getting ST2 from incoming data
     setST2((oldST2) => {
-      const newST2 = biometricData.find(
-        (item) => item.label === BiometricParameters.ST2
-      );
+      const newST2 = biometricData.find((item) => item.label === BiometricParameters.ST2);
       return {
         ...oldST2,
         ...newST2,
-        lastTimeStamp:
-          newST2 && newST2.values.length
-            ? newST2.values[0][0]
-            : oldST2.lastTimeStamp,
-        currentValue:
-          newST2 && newST2.values.length
-            ? newST2.values[0][1]
-            : oldST2.currentValue,
+        lastTimeStamp: newST2 && newST2.values.length ? newST2.values[0][0] : oldST2.lastTimeStamp,
+        currentValue: newST2 && newST2.values.length ? newST2.values[0][1] : oldST2.currentValue,
       };
     });
 
     //Getting ST3 from incoming data
     setST3((oldST3) => {
-      const newST3 = biometricData.find(
-        (item) => item.label === BiometricParameters.ST3
-      );
+      const newST3 = biometricData.find((item) => item.label === BiometricParameters.ST3);
       return {
         ...oldST3,
         ...newST3,
-        lastTimeStamp:
-          newST3 && newST3.values.length
-            ? newST3.values[0][0]
-            : oldST3.lastTimeStamp,
-        currentValue:
-          newST3 && newST3.values.length
-            ? newST3.values[0][1]
-            : oldST3.currentValue,
+        lastTimeStamp: newST3 && newST3.values.length ? newST3.values[0][0] : oldST3.lastTimeStamp,
+        currentValue: newST3 && newST3.values.length ? newST3.values[0][1] : oldST3.currentValue,
       };
     });
 
     //Getting STaVR from incoming data
     setSTaVR((oldSTaVR) => {
-      const newSTaVR = biometricData.find(
-        (item) => item.label === BiometricParameters.STaVR
-      );
+      const newSTaVR = biometricData.find((item) => item.label === BiometricParameters.STaVR);
       return {
         ...oldSTaVR,
         ...newSTaVR,
         lastTimeStamp:
-          newSTaVR && newSTaVR.values.length
-            ? newSTaVR.values[0][0]
-            : oldSTaVR.lastTimeStamp,
+          newSTaVR && newSTaVR.values.length ? newSTaVR.values[0][0] : oldSTaVR.lastTimeStamp,
         currentValue:
-          newSTaVR && newSTaVR.values.length
-            ? newSTaVR.values[0][1]
-            : oldSTaVR.currentValue,
+          newSTaVR && newSTaVR.values.length ? newSTaVR.values[0][1] : oldSTaVR.currentValue,
       };
     });
 
     //Getting STaVL from incoming data
     setSTaVL((oldSTaVL) => {
-      const newSTaVL = biometricData.find(
-        (item) => item.label === BiometricParameters.STaVL
-      );
+      const newSTaVL = biometricData.find((item) => item.label === BiometricParameters.STaVL);
       return {
         ...oldSTaVL,
         ...newSTaVL,
         lastTimeStamp:
-          newSTaVL && newSTaVL.values.length
-            ? newSTaVL.values[0][0]
-            : oldSTaVL.lastTimeStamp,
+          newSTaVL && newSTaVL.values.length ? newSTaVL.values[0][0] : oldSTaVL.lastTimeStamp,
         currentValue:
-          newSTaVL && newSTaVL.values.length
-            ? newSTaVL.values[0][1]
-            : oldSTaVL.currentValue,
+          newSTaVL && newSTaVL.values.length ? newSTaVL.values[0][1] : oldSTaVL.currentValue,
       };
     });
 
     //Getting STaVF from incoming data
     setSTaVF((oldSTaVF) => {
-      const newSTaVF = biometricData.find(
-        (item) => item.label === BiometricParameters.STaVF
-      );
+      const newSTaVF = biometricData.find((item) => item.label === BiometricParameters.STaVF);
       return {
         ...oldSTaVF,
         ...newSTaVF,
         lastTimeStamp:
-          newSTaVF && newSTaVF.values.length
-            ? newSTaVF.values[0][0]
-            : oldSTaVF.lastTimeStamp,
+          newSTaVF && newSTaVF.values.length ? newSTaVF.values[0][0] : oldSTaVF.lastTimeStamp,
         currentValue:
-          newSTaVF && newSTaVF.values.length
-            ? newSTaVF.values[0][1]
-            : oldSTaVF.currentValue,
+          newSTaVF && newSTaVF.values.length ? newSTaVF.values[0][1] : oldSTaVF.currentValue,
       };
     });
 
     //Getting STV from incoming data
     setSTV((oldSTV) => {
-      const newSTV = biometricData.find(
-        (item) => item.label === BiometricParameters.STV
-      );
+      const newSTV = biometricData.find((item) => item.label === BiometricParameters.STV);
       return {
         ...oldSTV,
         ...newSTV,
-        lastTimeStamp:
-          newSTV && newSTV.values.length
-            ? newSTV.values[0][0]
-            : oldSTV.lastTimeStamp,
-        currentValue:
-          newSTV && newSTV.values.length
-            ? newSTV.values[0][1]
-            : oldSTV.currentValue,
+        lastTimeStamp: newSTV && newSTV.values.length ? newSTV.values[0][0] : oldSTV.lastTimeStamp,
+        currentValue: newSTV && newSTV.values.length ? newSTV.values[0][1] : oldSTV.currentValue,
       };
     });
 
     //Getting QT from incoming data
     setQT((oldQT) => {
-      const newQT = biometricData.find(
-        (item) => item.label === BiometricParameters.QT
-      );
+      const newQT = biometricData.find((item) => item.label === BiometricParameters.QT);
       return {
         ...oldQT,
         ...newQT,
-        lastTimeStamp:
-          newQT && newQT.values.length
-            ? newQT.values[0][0]
-            : oldQT.lastTimeStamp,
-        currentValue:
-          newQT && newQT.values.length
-            ? newQT.values[0][1]
-            : oldQT.currentValue,
+        lastTimeStamp: newQT && newQT.values.length ? newQT.values[0][0] : oldQT.lastTimeStamp,
+        currentValue: newQT && newQT.values.length ? newQT.values[0][1] : oldQT.currentValue,
       };
     });
 
     //Getting QTc from incoming data
     setQTc((oldQTc) => {
-      const newQTc = biometricData.find(
-        (item) => item.label === BiometricParameters.QTc
-      );
+      const newQTc = biometricData.find((item) => item.label === BiometricParameters.QTc);
       return {
         ...oldQTc,
         ...newQTc,
-        lastTimeStamp:
-          newQTc && newQTc.values.length
-            ? newQTc.values[0][0]
-            : oldQTc.lastTimeStamp,
-        currentValue:
-          newQTc && newQTc.values.length
-            ? newQTc.values[0][1]
-            : oldQTc.currentValue,
+        lastTimeStamp: newQTc && newQTc.values.length ? newQTc.values[0][0] : oldQTc.lastTimeStamp,
+        currentValue: newQTc && newQTc.values.length ? newQTc.values[0][1] : oldQTc.currentValue,
       };
     });
 
     //Getting delta QTc from incoming data
     setDeltaQTc((oldDeltaQTc) => {
-      const newDeltaQTc = biometricData.find(
-        (item) => item.label === BiometricParameters.DeltaQTc
-      );
+      const newDeltaQTc = biometricData.find((item) => item.label === BiometricParameters.DeltaQTc);
       return {
         ...oldDeltaQTc,
         ...newDeltaQTc,
@@ -412,8 +285,6 @@ const BiometricKpi = ({
 
     console.log('Biometric Data', biometricData);
   }, [biometricData]);
-
-  const [time, setTime] = useState(new Date().getTime());
 
   const fetchNotes = async () => {
     return new Promise<void>((resolve, rej) => {
@@ -434,8 +305,13 @@ const BiometricKpi = ({
   }, [time]);
 
   useEffect(() => {
-    console.log('Slider Change', slider, pastKpiData);
-    if (pastKpiData[slider]) setBiometricData(pastKpiData[slider]);
+    console.log('Slider Change', slider, pastKpiTime);
+    if (pastKpiData[slider]) {
+      pastKpiData[slider];
+      console.log('Past KPI data sadasd', new Date(pastKpiTime[slider]), pastKpiData[slider]);
+      setPastTime(pastKpiTime[slider]);
+      setBiometricData(pastKpiData[slider]);
+    }
   }, [slider]);
 
   const bed: any = useSelector((state: any) => state.patient.bed);
@@ -445,22 +321,22 @@ const BiometricKpi = ({
 
   return (
     <div className="kpi-container">
-      <div className="kpi-badge">
-        {time && <DateTimePicker defaultDate={new Date(time)} size="lg" />}
-        <Slider
-          size="small"
-          defaultValue={70}
-          aria-label="Small"
-          // valueLabelDisplay="auto"
-          className="quant-slider"
-          onChange={({ target }: any) => {
-            console.log('Slider', target);
-            setTime((time) => new Date(time + target.value * 1000).getTime());
-            setSlider(() => target.value);
-            // setLive(false);
-          }}
-        />
-      </div>
+      {!isLive && (
+        <div className="kpi-badge">
+          {time && <DateTimePicker defaultDate={new Date(selectedPastTime)} size="lg" />}
+          <Slider
+            size="small"
+            defaultValue={0}
+            min={0}
+            max={pastKpiTime.length}
+            className="quant-slider"
+            onChange={({ target }: any) => {
+              console.log('Slider', target);
+              setSlider(() => target.value);
+            }}
+          />
+        </div>
+      )}
       <GenericKpiItem
         title={'HR'}
         color={colors[0]}
@@ -468,7 +344,7 @@ const BiometricKpi = ({
         idealMin={hr.idealMin ?? undefined}
         idealMax={hr.idealMax ?? undefined}
         unit={hr.unit ?? undefined}
-        isLive={hr.lastTimeStamp === latestTimestamp}
+        isLive={hr.lastTimeStamp === latestTimestamp && isLive}
       />
       <GenericKpiItem
         title={'PR'}
@@ -477,7 +353,7 @@ const BiometricKpi = ({
         idealMin={pr.idealMin ?? undefined}
         idealMax={pr.idealMax ?? undefined}
         unit={pr.unit ?? undefined}
-        isLive={pr.lastTimeStamp === latestTimestamp}
+        isLive={pr.lastTimeStamp === latestTimestamp && isLive}
       />
       <QTInterval
         color={colors[6]}
@@ -491,11 +367,8 @@ const BiometricKpi = ({
         idealQt={qt.idealMax}
         qtUnit={qt.unit}
         isLive={
-          Math.max(
-            qtc.lastTimeStamp,
-            deltaQtc.lastTimeStamp,
-            qt.lastTimeStamp
-          ) === latestTimestamp
+          Math.max(qtc.lastTimeStamp, deltaQtc.lastTimeStamp, qt.lastTimeStamp) ===
+            latestTimestamp && isLive
         }
       />
       <GenericKpiItem
@@ -506,7 +379,7 @@ const BiometricKpi = ({
         idealMin={temp.idealMin ?? undefined}
         idealMax={temp.idealMax ?? undefined}
         unit={temp.unit ?? undefined}
-        isLive={temp.lastTimeStamp === latestTimestamp}
+        isLive={temp.lastTimeStamp === latestTimestamp && isLive}
       />
       <GenericKpiItem
         title={'SpO2'}
@@ -515,7 +388,7 @@ const BiometricKpi = ({
         idealMin={spo2.idealMin ?? undefined}
         idealMax={spo2.idealMax ?? undefined}
         unit={spo2.unit ?? undefined}
-        isLive={spo2.lastTimeStamp === latestTimestamp}
+        isLive={spo2.lastTimeStamp === latestTimestamp && isLive}
       />
       <GenericKpiItem
         title={BiometricParameters.RR}
@@ -524,7 +397,7 @@ const BiometricKpi = ({
         idealMin={rr.idealMin ?? undefined}
         idealMax={rr.idealMax ?? undefined}
         unit={rr.unit ?? undefined}
-        isLive={rr.lastTimeStamp === latestTimestamp}
+        isLive={rr.lastTimeStamp === latestTimestamp && isLive}
       />
       <NIBP
         isLive={false}
@@ -553,7 +426,7 @@ const BiometricKpi = ({
             staVR.lastTimeStamp,
             staVL.lastTimeStamp,
             staVF.lastTimeStamp
-          ) === latestTimestamp
+          ) === latestTimestamp && isLive
         }
       />
     </div>

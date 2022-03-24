@@ -1,5 +1,6 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLive, setTime } from '../../reducers/time';
 import BreadCrumbs from './BreadCrumbs';
 import DateTimePicker from './DateTimePicker';
 import PatientIdInput from './PatientIdInput';
@@ -12,6 +13,33 @@ const Header = ({ onPatientChange, onDateTimeChange }: any) => {
   const bed = useSelector((state: any) => state.patient.bed);
   const patient = useSelector((state: any) => state.patient.patient);
 
+  const dispatch = useDispatch();
+
+  const isLive = useSelector((state: any) => state.time.isLive);
+  const time = useSelector((state: any) => state.time.currentTime);
+
+  const handleGoLive = () => {
+    dispatch(setLive(true));
+    dispatch(setTime({ time: new Date().getTime() }));
+  };
+
+  useEffect(() => {
+    if (isLive) {
+      const timeOut = setTimeout(() => {
+        dispatch(setTime({ time: new Date().getTime() }));
+      }, 1000);
+      return () => {
+        clearTimeout(timeOut);
+      };
+    }
+  }, [isLive, time]);
+
+  const onDateTimeChanged = (e: any) => {
+    dispatch(setLive(false));
+    dispatch(setTime({ time: new Date(e).getTime() }));
+    onDateTimeChange();
+  };
+
   return (
     <div className="header-container">
       <div className="m-2">
@@ -20,9 +48,7 @@ const Header = ({ onPatientChange, onDateTimeChange }: any) => {
             type="checkbox"
             name=""
             id="switch"
-            onChange={() =>
-              document.getElementById('root')?.requestFullscreen()
-            }
+            onChange={() => document.getElementById('root')?.requestFullscreen()}
             checked={true}
           />
           <label htmlFor="switch"></label>
@@ -38,12 +64,22 @@ const Header = ({ onPatientChange, onDateTimeChange }: any) => {
           patient={patient}
           onChange={onPatientChange}
         />
-        <div className="m-2">
-          {bed && <PatientIdInput value={bed.patientID} />}
-        </div>
+        <div className="m-2">{bed && <PatientIdInput value={bed.patientID} />}</div>
       </div>
+      {!isLive && (
+        <div>
+          <button className="go-live-button" onClick={handleGoLive}>
+            Go Live
+          </button>
+        </div>
+      )}
       <div className="m-3">
-        <DateTimePicker size="lg" onChange={onDateTimeChange} disableFuture />
+        <DateTimePicker
+          size="lg"
+          onChange={onDateTimeChanged}
+          defaultDate={new Date(time)}
+          disableFuture
+        />
       </div>
     </div>
   );

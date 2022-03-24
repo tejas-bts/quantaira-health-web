@@ -53,3 +53,11 @@
     }
   }
 }
+
+button.go-live-button {
+  border: 1px solid $green-text1;
+  border-radius: 0.3rem;
+  background-color: $background3;
+  color: $green-text1;
+  font-weight: 700;
+}
