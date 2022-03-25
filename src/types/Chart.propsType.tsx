@@ -9,7 +9,6 @@ export interface ChartPropsType {
   values: Array<[number, number]>;
   notes: any;
   medications: any;
-  medicationData: any;
   onClick?: any;
   onNoteClick?: any;
   onMedicationClick?: any;

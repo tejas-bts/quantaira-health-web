@@ -1,23 +1,40 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AddMedication from './AddMedication';
 import ShowMedication from './ShowMedication';
 import ViewMedication from './ViewMedication';
 
-const index = (props: any) => {
+import { fetchMedications } from '../../../services/medications.services';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToMedications } from '../../../reducers/medications';
+import { toast } from 'react-toastify';
+
+const index = () => {
+  const bed: any = useSelector((state: any) => state.patient.bed);
+  const dispatch = useDispatch();
+
+  const loadMedications = async () => {
+    try {
+      const medications: any = await fetchMedications({
+        pid: bed.patientId,
+        device: '123',
+      });
+      dispatch(addToMedications({ medications }));
+    } catch (e) {
+      toast('There was a problem fetching medication data!');
+    }
+  };
+
+  useEffect(() => {
+    loadMedications();
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<ShowMedication />} />
-      <Route path="/add/*" element={<AddMedication />} />
-      <Route path="/add/:selectedTime" element={<AddMedication />} />
-      <Route
-        path="/view/:selectedTime"
-        element={<ViewMedication {...props} />}
-      />
-      {/* <Route
-        path="/add/"
-        element={<Navigate to={`/add/${new Date().getTime()}`} />}
-      /> */}
+      <Route path="/add/*" element={<AddMedication onUpdate={loadMedications} />} />
+      <Route path="/add/:selectedTime" element={<AddMedication onUpdate={loadMedications} />} />
+      <Route path="/view/:selectedTime" element={<ViewMedication />} />
     </Routes>
   );
 };

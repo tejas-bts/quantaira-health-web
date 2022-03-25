@@ -7,14 +7,13 @@ import DateTimePicker from '../../../components/core/DateTimePicker';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 
-const AddNote = () => {
+const AddNote = ({ onUpdate }: { onUpdate: any }) => {
   let selectedTime = new Date().getTime();
   const urlParams = useParams();
   if (urlParams.selectedTime) selectedTime = parseInt(urlParams.selectedTime);
 
   const navigate = useNavigate();
   const bed: any = useSelector((state: any) => state.patient.bed);
-  console.log('Bed : : :  : :', bed);
 
   const [note, setNote] = useState('');
   const [isSaving, setSaving] = useState(false);
@@ -29,21 +28,22 @@ const AddNote = () => {
     setNote(e.target.value);
   };
 
-  const handleSave = async () => {
+  const handleSaveAndRefresh = async () => {
     try {
+      console.log('Bed dsdfds', bed.patientID);
       setSaving(true);
       await saveNote({
-        pid: bed.patientID,
+        patientId: bed.patientID,
         device: '123',
         content: note,
         ipType: '2',
         categoryId: '2',
         inputTime: selectedTime,
       });
+      await onUpdate();
       toast('Your note was saved successfully!');
       goBack();
     } catch (e) {
-      //Handle the error
       toast('Oops! There was an error trying to save this note');
     } finally {
       setSaving(false);
@@ -56,9 +56,6 @@ const AddNote = () => {
         <div className="title">Add Notes</div>
         {selectedTime && <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />}
       </div>
-      {/* <div className="add-notes-category">
-        <AccordionInDropdown show={false} />
-      </div> */}
       <div className="add-notes-text-area-input">
         <textarea
           className="quantaira-text-area"
@@ -91,7 +88,7 @@ const AddNote = () => {
             orientation={'horizontle'}
             size={'md'}
             type={'primary'}
-            onClick={handleSave}
+            onClick={handleSaveAndRefresh}
             shape={'rounded'}
             cssWidth={'6rem'}
           />

@@ -17,7 +17,9 @@ import { useSelector } from 'react-redux';
 
 const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
-const BiometricKpi = ({ biometricDataProps }: { biometricDataProps: BiometricData[] }) => {
+const BiometricKpi = () => {
+  const biometricDataProps: any = useSelector((state: any) => state.biometrics.biometricData);
+
   const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
 
   const [slider, setSlider] = useState(0);
@@ -289,8 +291,6 @@ const BiometricKpi = ({ biometricDataProps }: { biometricDataProps: BiometricDat
             : oldDeltaQTc.currentValue,
       };
     });
-
-    console.log('Biometric Data', biometricData);
   }, [biometricData]);
 
   const fetchNotes = async () => {

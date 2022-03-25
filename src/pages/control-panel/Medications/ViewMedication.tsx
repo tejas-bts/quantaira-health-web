@@ -3,14 +3,9 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 const ViewMedication = () => {
-  console.log('View Medication');
-
   const { selectedTime } = useParams();
   const medications = useSelector((state: any) => state.medications.data);
-  const targetMedication = medications.find(
-    (item: any) => item.inputTime == selectedTime
-  );
-  console.log('award Medication', targetMedication);
+  const targetMedication = medications.find((item: any) => item.inputTime == selectedTime);
 
   return targetMedication ? (
     <div className="d-flex flex-column align-items-center justify-content-center">

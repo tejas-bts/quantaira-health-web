@@ -10,7 +10,7 @@ axios.defaults.headers.common = {
 
 export const saveNote = async (params: any) => {
   return new Promise<void>((resolve, reject) => {
-    axios.post(saveNotesAndMedications, { ...params, ipType: 2, })
+    axios.post(saveNotesAndMedications, { ...params, ipType: 2, pid: params.patientId })
       .then(() => resolve())
       .catch((e) => reject(e));
   });
@@ -19,7 +19,7 @@ export const saveNote = async (params: any) => {
 
 export const fetchNotes = async (parameters: any) => {
   return new Promise<void>((resolve, reject) => {
-    axios.get(getNotesAndMedications, { params: { ...parameters, input_type_id: 2 } })
+    axios.get(getNotesAndMedications, { params: { ...parameters, input_type_id: 2, pid: parameters.patientId } })
       .then((response) => {
         resolve(response.data.data);
       })

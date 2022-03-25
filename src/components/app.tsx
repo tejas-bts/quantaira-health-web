@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Header from './core/Header';
 import { io as Client } from 'socket.io-client';
 import BottomNavigationBar from './core/BottomNavigationBar';
@@ -8,27 +6,21 @@ import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import BiometricCharts from '../pages/BiometricCharts';
 import PatientSelection from '../pages/PatientSelection';
 
-import { BiometricData } from '../types/WebsocketData';
 import BiometricKpi from '../pages/BiometricKpi';
 import { ToastContainer, toast } from 'react-toastify';
-import { fetchNotes } from '../services/notes.services';
-import { fetchMedications } from '../services/medications.services';
 import { fetchHospitalData } from '../services/hospital.services';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectHospital } from '../reducers/patient';
-import { addToNotes } from '../reducers/notes';
-import { addToMedications } from '../reducers/medications';
+import { appendToBiometricData } from '../reducers/biometrics';
 import { baseURLws } from '../utils/constants';
 // import { setLive, setTime } from '../reducers/time';
 
 const App = () => {
-  const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
-  const [medicationData, setMedicationData] = useState<any>([]);
-
   const user: any = useSelector((state: any) => state.auth);
   const bed: any = useSelector((state: any) => state.patient.bed);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   console.log('User', user);
 
@@ -36,28 +28,6 @@ const App = () => {
     console.log('User Not found', user);
     navigate('/user', { replace: true });
   }
-
-  const dispatch = useDispatch();
-
-  const loadNotesAndMedications = async () => {
-    try {
-      const notes: any = await fetchNotes({
-        pid: bed.patientId,
-        device: '123',
-      });
-      const medications: any = await fetchMedications({
-        pid: bed.patientId,
-        device: '123',
-      });
-
-      dispatch(addToNotes({ notes }));
-      dispatch(addToMedications({ medications }));
-      setMedicationData(medications.map((item: any) => item.input_time));
-    } catch (e) {
-      // toast('There was a problem fetching notes and medication data!');
-      console.log('There was an error', e);
-    }
-  };
 
   const loadHospitalData = async () => {
     let userData: any = localStorage.getItem('user');
@@ -71,21 +41,12 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (bed) {
-      const interval = setInterval(() => loadNotesAndMedications(), 3000);
-      return () => {
-        clearInterval(interval);
-      };
-    }
-  }, [bed]);
-
-  useEffect(() => {
     const socket = Client(baseURLws);
     if (bed !== undefined) {
       socket.on('connect', () => {
         toast('Successfully connected to server');
         socket.on(bed.bedId, ({ data }: any) => {
-          setBiometricData(data);
+          dispatch(appendToBiometricData({ data }));
         });
       });
 
@@ -125,13 +86,8 @@ const App = () => {
         <div className="main-container">
           <Routes>
             <Route path="patient" element={<PatientSelection />} />
-            <Route
-              path="charts/*"
-              element={
-                <BiometricCharts biometricData={biometricData} medicationData={medicationData} />
-              }
-            />
-            <Route path="kpi" element={<BiometricKpi biometricDataProps={biometricData} />} />
+            <Route path="charts/*" element={<BiometricCharts />} />
+            <Route path="kpi" element={<BiometricKpi />} />
             <Route path="/" element={<Navigate to="patient" />} />
           </Routes>
         </div>

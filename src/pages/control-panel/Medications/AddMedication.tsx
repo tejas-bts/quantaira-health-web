@@ -10,7 +10,7 @@ import { saveMedication, searchMedications } from '../../../services/medications
 import QuantairaAutoSuggest2 from '../../../components/core/QuantairaAutoSuggest.new';
 import { useSelector } from 'react-redux';
 
-const AddMedication = () => {
+const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   console.log('Add Medication');
   let selectedTime = new Date().getTime();
   const urlParams = useParams();
@@ -41,7 +41,7 @@ const AddMedication = () => {
       setSaving(true);
       console.log('Payload', medicationOptions);
       await saveMedication({
-        pid: bed.patientID,
+        patientId: bed.patientID,
         device: '123',
         content: note,
         categoryId: '2',
@@ -49,10 +49,10 @@ const AddMedication = () => {
         productName: inputValue,
         item_id: selectedOption.row_id,
       });
+      await onUpdate();
       toast('Your medication was saved successfully!');
       goBack();
     } catch (e) {
-      //Handle the error
       toast('Oops! There was an error trying to save this note');
     } finally {
       setSaving(false);

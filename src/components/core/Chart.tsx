@@ -2,13 +2,7 @@
 import { ApexOptions } from 'apexcharts';
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import ApexChart from 'react-apexcharts';
-import {
-  FiChevronsRight,
-  FiChevronsLeft,
-  FiZoomIn,
-  FiZoomOut,
-  FiClock,
-} from 'react-icons/fi';
+import { FiChevronsRight, FiChevronsLeft, FiZoomIn, FiZoomOut, FiClock } from 'react-icons/fi';
 import { useGesture } from '@use-gesture/react';
 import { ChartPropsType } from '../../types/Chart.propsType';
 import { ApexChartData } from '../../types/ChartAttributes';
@@ -35,7 +29,6 @@ const Chart = ({
   values,
   notes,
   medications,
-  medicationData,
   onClick,
   onNoteClick,
   onMedicationClick,
@@ -86,9 +79,7 @@ const Chart = ({
         click: function (event, chartContext, config) {
           if (config.seriesIndex === 1 && onNoteClick) {
             const timeStamp = dataFrame[1].data[config.dataPointIndex][0];
-            const targetNote = notes.find(
-              (item: any) => item.inputTime == timeStamp
-            );
+            const targetNote = notes.find((item: any) => item.inputTime == timeStamp);
             console.log('Click', targetNote);
             onNoteClick(targetNote.row_id);
           } else if (config.seriesIndex === 2 && onMedicationClick) {
@@ -213,9 +204,7 @@ const Chart = ({
 
   const handleMoveLeft = () => {
     if (values.length - leftOffset < zoomLevel) return;
-    setLeftOffset((offset: number) =>
-      Math.min(Math.ceil(1.1 * (offset || 1)), values.length)
-    );
+    setLeftOffset((offset: number) => Math.min(Math.ceil(1.1 * (offset || 1)), values.length));
   };
 
   const handleMoveRight = () => {
@@ -232,8 +221,7 @@ const Chart = ({
   };
 
   const handleZoomOut = () => {
-    if (zoomLevel < MAX_ZOOM_LEVEL)
-      setZoomLevel((zoomLevel) => zoomLevel + zoomStep);
+    if (zoomLevel < MAX_ZOOM_LEVEL) setZoomLevel((zoomLevel) => zoomLevel + zoomStep);
   };
 
   useEffect(() => {
@@ -265,15 +253,11 @@ const Chart = ({
           },
           {
             name: 'Notes',
-            data: values
-              .slice(start, end)
-              .filter((item) => notesDirectory.includes(item[0])),
+            data: values.slice(start, end).filter((item) => notesDirectory.includes(item[0])),
           },
           {
             name: 'Medication',
-            data: values
-              .slice(start, end)
-              .filter((item) => medicationsDirectory.includes(item[0])),
+            data: values.slice(start, end).filter((item) => medicationsDirectory.includes(item[0])),
           },
         ]);
       }
@@ -422,10 +406,7 @@ const Chart = ({
                   Delayed
                 </>
               ) : (
-                <button
-                  onClick={() => setLeftOffset(0)}
-                  className="go-live-button"
-                >
+                <button onClick={() => setLeftOffset(0)} className="go-live-button">
                   Go Live
                 </button>
               )}
@@ -436,17 +417,17 @@ const Chart = ({
           <div className="chart-header-col-5">
             <div className="chart-navigation">
               <button
-                className={`chart-navigation-button ${
-                  leftScroll > 0 ? 'is-active' : ''
-                } ${values.length - leftOffset < zoomLevel ? 'disabled' : ''}`}
+                className={`chart-navigation-button ${leftScroll > 0 ? 'is-active' : ''} ${
+                  values.length - leftOffset < zoomLevel ? 'disabled' : ''
+                }`}
                 onClick={handleMoveLeft}
               >
                 <FiChevronsLeft />
               </button>
               <button
-                className={`chart-navigation-button ${
-                  rightScroll > 0 ? 'is-active' : ''
-                } ${leftOffset == 0 ? 'disabled' : ''}`}
+                className={`chart-navigation-button ${rightScroll > 0 ? 'is-active' : ''} ${
+                  leftOffset == 0 ? 'disabled' : ''
+                }`}
                 onMouseDown={handleRightStart}
                 onMouseUp={handleRightStop}
                 onClick={handleMoveRight}

@@ -12,15 +12,8 @@ import Medications from '../pages/control-panel/Medications';
 import Alarms from '../pages/control-panel/Alarms';
 import { useSelector } from 'react-redux';
 
-const BiometricCharts = ({
-  biometricData,
-  medicationData,
-}: {
-  biometricData: BiometricData[];
-  medicationData: any;
-}) => {
+const BiometricCharts = () => {
   const navigate = useNavigate();
-
   const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
   const [bufferData, setBuffer] = useState<any>({});
@@ -28,6 +21,10 @@ const BiometricCharts = ({
 
   const chartSelections = useSelector((state: any) => state.chart.selectedCharts);
   const selectedScreen = useSelector((state: any) => state.chart.selectedScreen);
+  const bed: any = useSelector((state: any) => state.patient.bed);
+  const notes = useSelector((state: any) => state.notes.data);
+  const medications = useSelector((state: any) => state.medications.data);
+  const biometricData: any = useSelector((state: any) => state.biometrics.biometricData);
 
   const navigateTo = (address: To) => {
     navigate(address, {
@@ -49,18 +46,16 @@ const BiometricCharts = ({
     const availableCharts: any = [];
     biometricData.map((item: BiometricData) => availableCharts.push(item.label));
     setAvailableCharts(availableCharts);
-    setBuffer(biometricData.map((item, index) => [...(bufferData[index] || []), ...item.values]));
+    setBuffer(
+      biometricData.map((item: any, index: any) => [...(bufferData[index] || []), ...item.values])
+    );
   }, [biometricData]);
 
   const getIndex = (label: string) => {
-    const index = biometricData.findIndex((item) => item.label === label);
+    const index = biometricData.findIndex((item: any) => item.label === label);
     return index;
   };
 
-  const notes = useSelector((state: any) => state.notes.data);
-  const medications = useSelector((state: any) => state.medications.data);
-
-  const bed: any = useSelector((state: any) => state.patient.bed);
   if (!bed) {
     navigate('/app/patient', { replace: true });
   }
@@ -89,18 +84,14 @@ const BiometricCharts = ({
             }}
             notes={notes}
             medications={medications}
-            medicationData={medicationData}
           />
         )}
       </div>
       <div>
         <div className="h-100 w-100 p-3 controls-box">
           <Routes>
-            <Route path="/notes/*" element={<Notes notes={notes} />} />
-            <Route
-              path="/medications/*"
-              element={<Medications medicationData={medicationData} />}
-            />
+            <Route path="/notes/*" element={<Notes />} />
+            <Route path="/medications/*" element={<Medications />} />
             <Route path="/alarms/*" element={<Alarms />} />
             <Route path="/" element={<ChartSelector availableCharts={availableCharts} />} />
           </Routes>
@@ -128,7 +119,6 @@ const BiometricCharts = ({
             }}
             notes={notes}
             medications={medications}
-            medicationData={medicationData}
           />
         )}
       </div>
@@ -154,7 +144,6 @@ const BiometricCharts = ({
             }}
             notes={notes}
             medications={medications}
-            medicationData={medicationData}
           />
         )}
       </div>
