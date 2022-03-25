@@ -52,8 +52,15 @@ const BiometricKpi = ({ biometricDataProps }: { biometricDataProps: BiometricDat
 
   const isLive = useSelector((state: any) => state.time.isLive);
   const time = useSelector((state: any) => state.time.currentTime);
+  const bed: any = useSelector((state: any) => state.patient.bed);
 
   const navigate = useNavigate();
+
+  if (!bed) {
+    navigate('/app/patient', { replace: true });
+  }
+
+  console.log('Bed   ', bed);
 
   useEffect(() => {
     if (isLive) {
@@ -66,9 +73,9 @@ const BiometricKpi = ({ biometricDataProps }: { biometricDataProps: BiometricDat
     if (!isLive) {
       setPastTime(time);
       fetchKpi({
-        bedId: 1,
-        patientId: 1234,
-        fromDate: time, //new Date().getTime(),
+        bedId: bed.bedId,
+        patientId: bed.patientID,
+        fromDate: time,
         limit: 100,
       }).then((data: any) => {
         if (data) {
@@ -313,11 +320,6 @@ const BiometricKpi = ({ biometricDataProps }: { biometricDataProps: BiometricDat
       setBiometricData(pastKpiData[slider]);
     }
   }, [slider]);
-
-  const bed: any = useSelector((state: any) => state.patient.bed);
-  if (!bed) {
-    navigate('/app/patient', { replace: true });
-  }
 
   return (
     <div className="kpi-container">

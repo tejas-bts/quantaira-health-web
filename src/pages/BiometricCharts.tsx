@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import Chart from '../components/core/Chart';
 import { GiLungs, GiHeartOrgan, GiMedicalThermometer } from 'react-icons/gi';
 import { FaNotesMedical } from 'react-icons/fa';
@@ -10,44 +10,24 @@ import { Route, Routes, To, useNavigate } from 'react-router-dom';
 import Notes from '../pages/control-panel/Notes';
 import Medications from '../pages/control-panel/Medications';
 import Alarms from '../pages/control-panel/Alarms';
-import AppContext from '../contexts/AppContext';
 import { useSelector } from 'react-redux';
 
-const Home = ({
+const BiometricCharts = ({
   biometricData,
-  onChartSelectionChange,
   medicationData,
 }: {
   biometricData: BiometricData[];
-  onChartSelectionChange?: any;
   medicationData: any;
 }) => {
   const navigate = useNavigate();
-  const vitalId = 1;
-  const icons = [
-    GiHeartOrgan,
-    GiLungs,
-    FaNotesMedical,
-    GiMedicalThermometer,
-    FaNotesMedical,
-    BiPulse,
-    FaNotesMedical,
-  ];
-  const colors = [
-    '#94d699',
-    '#e7d57d',
-    '#c0f7ff',
-    '#fff59d',
-    '#FFAB91',
-    '#CE93D8',
-    '#80CBC4',
-  ];
+
+  const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
   const [bufferData, setBuffer] = useState<any>({});
-
-  const { chartSelections } = useContext(AppContext);
   const [availableCharts, setAvailableCharts] = useState<any>([]);
-  //   const [pageNumber, setPageNumber] = useState<number>(0);
+
+  const chartSelections = useSelector((state: any) => state.chart.selectedCharts);
+  const selectedScreen = useSelector((state: any) => state.chart.selectedScreen);
 
   const navigateTo = (address: To) => {
     navigate(address, {
@@ -55,18 +35,21 @@ const Home = ({
     });
   };
 
+  const getIcon = (label: string) => {
+    const icons: any = {
+      HR: GiHeartOrgan,
+      SpO2: GiLungs,
+      Temp: GiMedicalThermometer,
+      PR: BiPulse,
+    };
+    return icons[label] || FaNotesMedical;
+  };
+
   useEffect(() => {
     const availableCharts: any = [];
-    biometricData.map((item: BiometricData) =>
-      availableCharts.push(item.label)
-    );
+    biometricData.map((item: BiometricData) => availableCharts.push(item.label));
     setAvailableCharts(availableCharts);
-    setBuffer(
-      biometricData.map((item, index) => [
-        ...(bufferData[index] || []),
-        ...item.values,
-      ])
-    );
+    setBuffer(biometricData.map((item, index) => [...(bufferData[index] || []), ...item.values]));
   }, [biometricData]);
 
   const getIndex = (label: string) => {
@@ -85,23 +68,17 @@ const Home = ({
   return (
     <div className="chart-grid">
       <div>
-        {chartSelections[0] && (
+        {chartSelections[selectedScreen] && chartSelections[selectedScreen][0] && (
           <Chart
             color={colors[0]}
             curveType="smooth"
-            Icon={icons[vitalId]}
-            title={chartSelections[0]}
-            unit={biometricData[getIndex(chartSelections[0])].unit ?? ''}
-            idealMax={
-              biometricData[getIndex(chartSelections[0])].idealMax ?? ''
-            }
-            idealMin={
-              biometricData[getIndex(chartSelections[0])].idealMin ?? ''
-            }
-            values={bufferData[getIndex(chartSelections[0])] || []}
-            onClick={(time: number) =>
-              navigateTo(`/app/charts/medications/add/${time}`)
-            }
+            Icon={getIcon(chartSelections[selectedScreen][0])}
+            title={chartSelections[selectedScreen][0]}
+            unit={biometricData[getIndex(chartSelections[selectedScreen][0])].unit ?? ''}
+            idealMax={biometricData[getIndex(chartSelections[selectedScreen][0])].idealMax ?? ''}
+            idealMin={biometricData[getIndex(chartSelections[selectedScreen][0])].idealMin ?? ''}
+            values={bufferData[getIndex(chartSelections[selectedScreen][0])] || []}
+            onClick={(time: number) => navigateTo(`/app/charts/medications/add/${time}`)}
             onNoteClick={(time: number) => {
               console.log('Note Clicked');
               navigateTo(`/app/charts/notes/view/${time}`);
@@ -125,37 +102,22 @@ const Home = ({
               element={<Medications medicationData={medicationData} />}
             />
             <Route path="/alarms/*" element={<Alarms />} />
-            <Route
-              path="/"
-              element={
-                <ChartSelector
-                  availableCharts={availableCharts}
-                  onChange={onChartSelectionChange}
-                  value={chartSelections}
-                />
-              }
-            />
+            <Route path="/" element={<ChartSelector availableCharts={availableCharts} />} />
           </Routes>
         </div>
       </div>
       <div>
-        {chartSelections[1] && (
+        {chartSelections[selectedScreen] && chartSelections[selectedScreen][1] && (
           <Chart
             color={colors[1]}
             curveType="smooth"
-            Icon={icons[vitalId]}
-            title={chartSelections[1]}
-            unit={biometricData[getIndex(chartSelections[1])].unit ?? ''}
-            idealMax={
-              biometricData[getIndex(chartSelections[1])].idealMax ?? ''
-            }
-            idealMin={
-              biometricData[getIndex(chartSelections[1])].idealMin ?? ''
-            }
-            values={bufferData[getIndex(chartSelections[1])] || []}
-            onClick={(time: number) =>
-              navigateTo(`/app/charts/notes/add/${time}`)
-            }
+            Icon={getIcon(chartSelections[selectedScreen][1])}
+            title={chartSelections[selectedScreen][1]}
+            unit={biometricData[getIndex(chartSelections[selectedScreen][1])].unit ?? ''}
+            idealMax={biometricData[getIndex(chartSelections[selectedScreen][1])].idealMax ?? ''}
+            idealMin={biometricData[getIndex(chartSelections[selectedScreen][1])].idealMin ?? ''}
+            values={bufferData[getIndex(chartSelections[selectedScreen][1])] || []}
+            onClick={(time: number) => navigateTo(`/app/charts/notes/add/${time}`)}
             onNoteClick={(time: number) => {
               console.log('Note Clicked');
               navigateTo(`/app/charts/notes/view/${time}`);
@@ -171,23 +133,17 @@ const Home = ({
         )}
       </div>
       <div>
-        {chartSelections[2] && (
+        {chartSelections[selectedScreen] && chartSelections[selectedScreen][2] && (
           <Chart
             color={colors[2]}
             curveType="smooth"
-            Icon={icons[vitalId]}
-            title={chartSelections[2]}
-            unit={biometricData[getIndex(chartSelections[2])].unit ?? ''}
-            idealMax={
-              biometricData[getIndex(chartSelections[2])].idealMax ?? ''
-            }
-            idealMin={
-              biometricData[getIndex(chartSelections[2])].idealMin ?? ''
-            }
-            values={bufferData[getIndex(chartSelections[2])] || []}
-            onClick={(time: number) =>
-              navigateTo(`/app/charts/notes/add/${time}`)
-            }
+            Icon={getIcon(chartSelections[selectedScreen][2])}
+            title={chartSelections[selectedScreen][2]}
+            unit={biometricData[getIndex(chartSelections[selectedScreen][2])].unit ?? ''}
+            idealMax={biometricData[getIndex(chartSelections[selectedScreen][2])].idealMax ?? ''}
+            idealMin={biometricData[getIndex(chartSelections[selectedScreen][2])].idealMin ?? ''}
+            values={bufferData[getIndex(chartSelections[selectedScreen][2])] || []}
+            onClick={(time: number) => navigateTo(`/app/charts/notes/add/${time}`)}
             onNoteClick={(time: number) => {
               console.log('Note Clicked');
               navigateTo(`/app/charts/notes/view/${time}`);
@@ -206,4 +162,4 @@ const Home = ({
   );
 };
 
-export default Home;
+export default BiometricCharts;

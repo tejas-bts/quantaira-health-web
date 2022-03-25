@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { logOut } from '../../reducers/auth';
+import { nextScreen, previousScreen } from '../../reducers/charts';
 
 const BottomNavigationBar = () => {
   const location = useLocation();
@@ -34,7 +35,7 @@ const BottomNavigationBar = () => {
         Show {location.pathname.toLowerCase().includes('charts') ? 'KPIs' : 'Charts'}
       </button>
 
-      <button>
+      <button onClick={() => dispatch(previousScreen())}>
         <div
           style={{
             backgroundImage: 'url("/images/navbar/previous-screen.svg")',
@@ -42,7 +43,7 @@ const BottomNavigationBar = () => {
         />
         Previous Screen
       </button>
-      <button>
+      <button onClick={() => dispatch(nextScreen())}>
         <div style={{ backgroundImage: 'url("/images/navbar/next-screen.svg")' }} />
         Next Screen
       </button>

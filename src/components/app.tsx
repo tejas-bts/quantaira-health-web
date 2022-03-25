@@ -1,14 +1,15 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import Header from './core/Header';
 import { io as Client } from 'socket.io-client';
 import BottomNavigationBar from './core/BottomNavigationBar';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import BiometricCharts from '../pages/BiometricCharts';
 import PatientSelection from '../pages/PatientSelection';
 
 import { BiometricData } from '../types/WebsocketData';
 import BiometricKpi from '../pages/BiometricKpi';
-import AppContext from '../contexts/AppContext';
 import { ToastContainer, toast } from 'react-toastify';
 import { fetchNotes } from '../services/notes.services';
 import { fetchMedications } from '../services/medications.services';
@@ -23,28 +24,29 @@ import { baseURLws } from '../utils/constants';
 const App = () => {
   const [biometricData, setBiometricData] = useState<Array<BiometricData>>([]);
   const [medicationData, setMedicationData] = useState<any>([]);
-  const [patient, setPatient] = useState({
-    hospitalId: 1,
-    floorNumber: 2,
-    roomNumber: 2,
-    patientId: 1234,
-    bedId: 1,
-  });
-  const [dateTime, setDateTime] = useState(new Date());
-  const [chartSelections, setChartSelection] = useState<Array<string>>([]);
 
+  const user: any = useSelector((state: any) => state.auth);
   const bed: any = useSelector((state: any) => state.patient.bed);
+
+  const navigate = useNavigate();
+
+  console.log('User', user);
+
+  if (!user) {
+    console.log('User Not found', user);
+    navigate('/user', { replace: true });
+  }
 
   const dispatch = useDispatch();
 
   const loadNotesAndMedications = async () => {
     try {
       const notes: any = await fetchNotes({
-        pid: '1234',
+        pid: bed.patientId,
         device: '123',
       });
       const medications: any = await fetchMedications({
-        pid: '1234',
+        pid: bed.patientId,
         device: '123',
       });
 
@@ -69,11 +71,13 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => loadNotesAndMedications(), 3000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+    if (bed) {
+      const interval = setInterval(() => loadNotesAndMedications(), 3000);
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [bed]);
 
   useEffect(() => {
     const socket = Client(baseURLws);
@@ -111,26 +115,25 @@ const App = () => {
       />
       <div className="d-flex flex-column h-100">
         <div className="app-header">
-          <Header onPatientChange={setPatient} onDateTimeChange={setDateTime} />
+          <Header
+            onPatientChange={() => {
+              console.log('');
+            }}
+            onDateTimeChange={() => console.log('')}
+          />
         </div>
         <div className="main-container">
-          <AppContext.Provider value={{ patient, dateTime, chartSelections }}>
-            <Routes>
-              <Route path="patient" element={<PatientSelection />} />
-              <Route
-                path="charts/*"
-                element={
-                  <BiometricCharts
-                    biometricData={biometricData}
-                    medicationData={medicationData}
-                    onChartSelectionChange={setChartSelection}
-                  />
-                }
-              />
-              <Route path="kpi" element={<BiometricKpi biometricDataProps={biometricData} />} />
-              <Route path="/" element={<Navigate to="patient" />} />
-            </Routes>
-          </AppContext.Provider>
+          <Routes>
+            <Route path="patient" element={<PatientSelection />} />
+            <Route
+              path="charts/*"
+              element={
+                <BiometricCharts biometricData={biometricData} medicationData={medicationData} />
+              }
+            />
+            <Route path="kpi" element={<BiometricKpi biometricDataProps={biometricData} />} />
+            <Route path="/" element={<Navigate to="patient" />} />
+          </Routes>
         </div>
         <div className="bottom-nav-bar-container">
           <BottomNavigationBar />

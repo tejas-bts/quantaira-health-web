@@ -4,6 +4,7 @@ import patientReducer from '../reducers/patient';
 import notesReducer from '../reducers/notes';
 import medicationsReducer from '../reducers/medications';
 import timeReducer from '../reducers/time';
+import chartReducer from '../reducers/charts';
 
 
 export default configureStore({
@@ -13,5 +14,6 @@ export default configureStore({
     notes: notesReducer,
     medications: medicationsReducer,
     time: timeReducer,
+    chart: chartReducer,
   },
 });

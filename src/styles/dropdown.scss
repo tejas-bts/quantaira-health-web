@@ -33,7 +33,7 @@
 .selected-options {
   display: flex;
   justify-content: space-around;
-  flex-direction: row;
+  flex-direction: column;
   flex: 1 1;
   top: 3.5rem;
   left: 0px;
@@ -42,21 +42,43 @@
 
   & > .selection-container {
     display: flex;
-    width: 100%;
+    flex-direction: column;
+    cursor: pointer;
+    border: 2px solid #323756;
+    border-radius: 0.3rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #282d4b;
+
+    &.selected {
+      background-color: #183253;
+      border: 1px solid #076ede;
+      & > div {
+        & > div {
+          background-color: #274167;
+        }
+      }
+    }
+
     & > div {
-      background-color: #274167;
-      flex: 1 1;
-      margin: 0 1rem;
-      border-radius: 1rem;
-      line-height: 100%;
-      padding: 0.3rem 0.3rem 0.3rem 0.5rem;
       display: flex;
-      justify-content: space-between;
-      & > .remove-button {
-        line-height: 0rem;
-        color: $primary1;
-        float: right;
-        cursor: pointer;
+      width: 100%;
+      gap: 0.5rem;
+
+      & > div {
+        background-color: #323756;
+        flex: 1 1;
+        border-radius: 1rem;
+        line-height: 100%;
+        padding: 0.3rem 0.3rem 0.3rem 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        & > .remove-button {
+          line-height: 0rem;
+          color: $primary1;
+          float: right;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -241,17 +263,17 @@
   order: 0;
   padding: 6px 16px;
   cursor: pointer;
-  &::after {
-    content: '❯';
-    transform: rotate(90deg);
-    position: absolute;
-    height: 100%;
-    width: 21px;
-    right: 18px;
-    top: 8px;
-    transition: all 0.4s;
-    font-size: 13px;
-  }
+  // &::after {
+  //   content: '❯';
+  //   transform: rotate(90deg);
+  //   position: absolute;
+  //   height: 100%;
+  //   width: 21px;
+  //   right: 18px;
+  //   top: 8px;
+  //   transition: all 0.4s;
+  //   font-size: 13px;
+  // }
 }
 .option__container.active {
   max-height: 196px;

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { saveNote } from '../../../services/notes.services';
 import DateTimePicker from '../../../components/core/DateTimePicker';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 const AddNote = () => {
   let selectedTime = new Date().getTime();
@@ -12,6 +13,9 @@ const AddNote = () => {
   if (urlParams.selectedTime) selectedTime = parseInt(urlParams.selectedTime);
 
   const navigate = useNavigate();
+  const bed: any = useSelector((state: any) => state.patient.bed);
+  console.log('Bed : : :  : :', bed);
+
   const [note, setNote] = useState('');
   const [isSaving, setSaving] = useState(false);
 
@@ -21,9 +25,7 @@ const AddNote = () => {
     });
   };
 
-  const handleChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
+  const handleChange = (e: { target: { value: React.SetStateAction<string> } }) => {
     setNote(e.target.value);
   };
 
@@ -31,7 +33,7 @@ const AddNote = () => {
     try {
       setSaving(true);
       await saveNote({
-        pid: '1234',
+        pid: bed.patientID,
         device: '123',
         content: note,
         ipType: '2',
@@ -52,9 +54,7 @@ const AddNote = () => {
     <div className="add-notes-page">
       <div className="add-notes-heading">
         <div className="title">Add Notes</div>
-        {selectedTime && (
-          <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />
-        )}
+        {selectedTime && <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />}
       </div>
       {/* <div className="add-notes-category">
         <AccordionInDropdown show={false} />

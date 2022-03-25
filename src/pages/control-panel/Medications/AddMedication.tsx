@@ -5,12 +5,10 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
 import DateTimePicker from '../../../components/core/DateTimePicker';
 import { toast } from 'react-toastify';
-import {
-  saveMedication,
-  searchMedications,
-} from '../../../services/medications.services';
+import { saveMedication, searchMedications } from '../../../services/medications.services';
 // import QuantairaAutoSuggest from '../../../components/core/QuantairaAutoSuggest';
 import QuantairaAutoSuggest2 from '../../../components/core/QuantairaAutoSuggest.new';
+import { useSelector } from 'react-redux';
 
 const AddMedication = () => {
   console.log('Add Medication');
@@ -26,15 +24,15 @@ const AddMedication = () => {
   const [medicationOptions, setMedicationOptions] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<any>({});
 
+  const bed: any = useSelector((state: any) => state.patient.bed);
+
   const goBack = () => {
     navigate('/app/charts/medications', {
       replace: true,
     });
   };
 
-  const handleChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
+  const handleChange = (e: { target: { value: React.SetStateAction<string> } }) => {
     setNote(e.target.value);
   };
 
@@ -43,7 +41,7 @@ const AddMedication = () => {
       setSaving(true);
       console.log('Payload', medicationOptions);
       await saveMedication({
-        pid: '1234',
+        pid: bed.patientID,
         device: '123',
         content: note,
         categoryId: '2',
@@ -83,9 +81,7 @@ const AddMedication = () => {
     <div className="add-notes-page">
       <div className="add-notes-heading">
         <div className="title">Add Medications</div>
-        {selectedTime && (
-          <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />
-        )}
+        {selectedTime && <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />}
       </div>
       {/* <div
         className="add-notes-category"
@@ -132,10 +128,7 @@ const AddMedication = () => {
         />
       </div>
       <div className="add-notes-buttons">
-        <Link
-          to={`/app/charts/notes/add/${selectedTime}`}
-          className="add-pointer-option-link"
-        >
+        <Link to={`/app/charts/notes/add/${selectedTime}`} className="add-pointer-option-link">
           Add a note
         </Link>
         <div className="d-flex gap-2">
