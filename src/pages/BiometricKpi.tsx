@@ -11,9 +11,11 @@ import STsegment from '../components/kpi-items/STsegment';
 import NIBP from '../components/kpi-items/NIBP';
 import { Slider } from '@mui/material';
 import DateTimePicker from '../components/core/DateTimePicker';
+import MultiLingualLabel from '../components/core/MultiLingualLabel';
 import { fetchKpi } from '../services/kpi.services';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
@@ -42,6 +44,11 @@ const BiometricKpi = () => {
   const [staVL, setSTaVL] = useState(new BioMetricDataObj(BiometricParameters.STaVL));
   const [staV, setSTV] = useState(new BioMetricDataObj(BiometricParameters.STV));
 
+  const [nibpSys, setNiBPsys] = useState(new BioMetricDataObj(BiometricParameters.NIBPsys));
+  const [nibpDia, setNiBPdia] = useState(new BioMetricDataObj(BiometricParameters.NIBPdia));
+  const [nibpPr, setNiBpPr] = useState(new BioMetricDataObj(BiometricParameters.NiBPpr));
+  const [nibpMap, setNiBPmap] = useState(new BioMetricDataObj(BiometricParameters.NiBPmap));
+
   const [qt, setQT] = useState(new BioMetricDataObj(BiometricParameters.QT));
   const [qtc, setQTc] = useState(new BioMetricDataObj(BiometricParameters.QTc));
   const [deltaQtc, setDeltaQTc] = useState(new BioMetricDataObj(BiometricParameters.DeltaQTc));
@@ -63,6 +70,7 @@ const BiometricKpi = () => {
   }
 
   console.log('Bed   ', bed);
+  console.log('Biometric', biometricData);
 
   useEffect(() => {
     if (isLive) {
@@ -79,12 +87,18 @@ const BiometricKpi = () => {
         patientId: bed.patientID,
         fromDate: time,
         limit: 100,
-      }).then((data: any) => {
-        if (data) {
-          setPastKpiTime(() => Object.keys(data).map((time) => parseInt(time)));
-          setPastKpiData(() => Object.keys(data).map((value) => data[value]));
-        }
-      });
+      })
+        .then((data: any) => {
+          if (data) {
+            const kpiTimes = Object.keys(data).map((time) => parseInt(time));
+            setPastKpiTime(() => kpiTimes);
+            setPastKpiData(() => Object.keys(data).map((value) => data[value]));
+            if (kpiTimes.length) setPastTime(kpiTimes[0]);
+          }
+        })
+        .catch((e) => {
+          toast(<MultiLingualLabel id="ERROR_FETCHING_KPI_DATA" />);
+        });
     }
   }, [isLive, time]);
 
@@ -253,6 +267,69 @@ const BiometricKpi = () => {
       };
     });
 
+    //Getting NiBP Dia from incoming data
+    setNiBPdia((oldNiBPdia) => {
+      const newNiBPDia = biometricData.find((item) => item.label === BiometricParameters.NIBPdia);
+      return {
+        ...oldNiBPdia,
+        ...newNiBPDia,
+        lastTimeStamp:
+          newNiBPDia && newNiBPDia.values.length
+            ? newNiBPDia.values[0][0]
+            : oldNiBPdia.lastTimeStamp,
+        currentValue:
+          newNiBPDia && newNiBPDia.values.length
+            ? newNiBPDia.values[0][1]
+            : oldNiBPdia.currentValue,
+      };
+    });
+
+    //Getting NiBP systolic from incoming data
+    setNiBPsys((oldNiBPsys) => {
+      const newNiBPsys = biometricData.find((item) => item.label === BiometricParameters.NIBPsys);
+      return {
+        ...oldNiBPsys,
+        ...newNiBPsys,
+        lastTimeStamp:
+          newNiBPsys && newNiBPsys.values.length
+            ? newNiBPsys.values[0][0]
+            : oldNiBPsys.lastTimeStamp,
+        currentValue:
+          newNiBPsys && newNiBPsys.values.length
+            ? newNiBPsys.values[0][1]
+            : oldNiBPsys.currentValue,
+      };
+    });
+
+    //Getting NiBP from incoming data
+    setNiBpPr((oldNibpPr) => {
+      const newNibpPr = biometricData.find((item) => item.label === BiometricParameters.NiBPpr);
+      return {
+        ...oldNibpPr,
+        ...newNibpPr,
+        lastTimeStamp:
+          newNibpPr && newNibpPr.values.length ? newNibpPr.values[0][0] : oldNibpPr.lastTimeStamp,
+        currentValue:
+          newNibpPr && newNibpPr.values.length ? newNibpPr.values[0][1] : oldNibpPr.currentValue,
+      };
+    });
+
+    setNiBPmap((oldNiBPmap) => {
+      const newNiBPmap = biometricData.find((item) => item.label === BiometricParameters.NiBPmap);
+      return {
+        ...oldNiBPmap,
+        ...newNiBPmap,
+        lastTimeStamp:
+          newNiBPmap && newNiBPmap.values.length
+            ? newNiBPmap.values[0][0]
+            : oldNiBPmap.lastTimeStamp,
+        currentValue:
+          newNiBPmap && newNiBPmap.values.length
+            ? newNiBPmap.values[0][1]
+            : oldNiBPmap.currentValue,
+      };
+    });
+
     //Getting QT from incoming data
     setQT((oldQT) => {
       const newQT = biometricData.find((item) => item.label === BiometricParameters.QT);
@@ -403,9 +480,9 @@ const BiometricKpi = () => {
       />
       <NIBP
         isLive={false}
-        systolicValue={undefined}
-        diastolicValue={undefined}
-        unit={nibp.unit}
+        systolicValue={nibpSys.currentValue}
+        diastolicValue={nibpDia.currentValue}
+        unit={nibpSys.unit}
         idealSystolicValue={undefined}
         idealDiastolicValue={undefined}
       />

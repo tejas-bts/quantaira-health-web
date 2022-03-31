@@ -13,6 +13,7 @@ import {
   selectHospital,
   selectRoom,
 } from '../../reducers/patient';
+import MultiLingualLabel from './MultiLingualLabel';
 
 const BreadCrumbItem = ({
   title,
@@ -20,7 +21,7 @@ const BreadCrumbItem = ({
   onSelect,
   value,
 }: {
-  title: string;
+  title: any;
   options: Array<{ id: number | string; label: string }>;
   onSelect?: any;
   value: any;
@@ -29,8 +30,7 @@ const BreadCrumbItem = ({
   const [showDrop, setShow] = useState(false);
 
   useEffect(() => {
-    if (selectedOption && typeof onSelect == 'function')
-      onSelect(selectedOption);
+    if (selectedOption && typeof onSelect == 'function') onSelect(selectedOption);
   }, [selectedOption]);
 
   // useEffect(() => {
@@ -50,9 +50,7 @@ const BreadCrumbItem = ({
     >
       <span>{value ? value.label : title}</span>
 
-      <BsChevronRight
-        className={`arrow ${selectedOption == undefined && 'down'}`}
-      />
+      <BsChevronRight className={`arrow ${selectedOption == undefined && 'down'}`} />
       {showDrop && (
         <div className={`breadcrumb-drop ${!showDrop && 'hidden'}`}>
           {options.map((item, index) => (
@@ -93,7 +91,7 @@ const BreadCrumbs = ({
   return (
     <div className="quantaira-breadcrumbs">
       <BreadCrumbItem
-        title="Select Hospital"
+        title={<MultiLingualLabel id="SELECT_HOSPITAL" />}
         options={
           hospital
             ? [
@@ -111,12 +109,10 @@ const BreadCrumbs = ({
 
       {hospital && (
         <BreadCrumbItem
-          title="Select Building"
-          options={hospital.buildings.map(
-            (item: { buildingId: any; buildingName: any }) => {
-              return { id: item.buildingId, label: item.buildingName, ...item };
-            }
-          )}
+          title={<MultiLingualLabel id="SELECT_BUILDING" />}
+          options={hospital.buildings.map((item: { buildingId: any; buildingName: any }) => {
+            return { id: item.buildingId, label: item.buildingName, ...item };
+          })}
           onSelect={(building: any) => dispatch(selectBuilding(building))}
           value={building ? { label: building.buildingName } : undefined}
         />
@@ -124,16 +120,14 @@ const BreadCrumbs = ({
 
       {building && (
         <BreadCrumbItem
-          title="Select Floor"
-          options={building.floors.map(
-            (item: { floorId: any; floorName: any }) => {
-              return {
-                id: item.floorId,
-                label: `Floor no. ${item.floorName}`,
-                ...item,
-              };
-            }
-          )}
+          title={<MultiLingualLabel id="SELECT_FLOOR" />}
+          options={building.floors.map((item: { floorId: any; floorName: any }) => {
+            return {
+              id: item.floorId,
+              label: `Floor no. ${item.floorName}`,
+              ...item,
+            };
+          })}
           onSelect={(floor: any) => dispatch(selectFloor(floor))}
           value={floor ? { label: floor.floorName } : undefined}
         />
@@ -141,17 +135,15 @@ const BreadCrumbs = ({
 
       {floor && (
         <BreadCrumbItem
-          title="Select Room"
+          title={<MultiLingualLabel id="SELECT_ROOM" />}
           // options={['Room 1', 'Room 2', 'Room 3', 'Room 4', 'Room 5']}
-          options={floor.rooms.map(
-            (item: { roomNumber: any; roomName: any }) => {
-              return {
-                id: item.roomNumber,
-                label: item.roomName,
-                ...item,
-              };
-            }
-          )}
+          options={floor.rooms.map((item: { roomNumber: any; roomName: any }) => {
+            return {
+              id: item.roomNumber,
+              label: item.roomName,
+              ...item,
+            };
+          })}
           onSelect={(room: any) => dispatch(selectRoom(room))}
           value={room ? { label: room.roomName } : undefined}
         />
@@ -159,7 +151,7 @@ const BreadCrumbs = ({
 
       {room && (
         <BreadCrumbItem
-          title="Select Bed"
+          title={<MultiLingualLabel id="SELECT_BED" />}
           options={room.beds.map((item: { bedId: any; bedNumber: any }) => {
             return {
               id: item.bedId,

@@ -13,16 +13,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectHospital } from '../reducers/patient';
 import { appendToBiometricData } from '../reducers/biometrics';
 import { baseURLws } from '../utils/constants';
-// import { setLive, setTime } from '../reducers/time';
+
+import { IntlProvider } from 'react-intl';
+import MultiLingualLabel from './core/MultiLingualLabel';
 
 const App = () => {
   const user: any = useSelector((state: any) => state.auth);
   const bed: any = useSelector((state: any) => state.patient.bed);
+  const headerBlur = useSelector((state: any) => state.appState.headerBlur);
+  const contentBlur = useSelector((state: any) => state.appState.contentBlur);
+  console.log('Header Blur', headerBlur);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  console.log('User', user);
 
   if (!user) {
     console.log('User Not found', user);
@@ -44,7 +47,7 @@ const App = () => {
     const socket = Client(baseURLws);
     if (bed !== undefined) {
       socket.on('connect', () => {
-        toast('Successfully connected to server');
+        toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {
           dispatch(appendToBiometricData({ data }));
         });
@@ -61,8 +64,11 @@ const App = () => {
     };
   }, [bed]);
 
+  // const language = useSelector((state: any) => state.language.selectedLanguage);
+  const locale = useSelector((state: any) => state.language.selectedLocale);
+
   return (
-    <>
+    <IntlProvider locale="en" messages={locale}>
       <ToastContainer
         position="bottom-right"
         autoClose={3000}
@@ -75,7 +81,7 @@ const App = () => {
         pauseOnHover
       />
       <div className="d-flex flex-column h-100">
-        <div className="app-header">
+        <div className={`app-header ${headerBlur ? 'blur' : ''}`}>
           <Header
             onPatientChange={() => {
               console.log('');
@@ -83,7 +89,7 @@ const App = () => {
             onDateTimeChange={() => console.log('')}
           />
         </div>
-        <div className="main-container">
+        <div className={`main-container ${contentBlur ? 'blur' : ''}`}>
           <Routes>
             <Route path="patient" element={<PatientSelection />} />
             <Route path="charts/*" element={<BiometricCharts />} />
@@ -95,7 +101,7 @@ const App = () => {
           <BottomNavigationBar />
         </div>
       </div>
-    </>
+    </IntlProvider>
   );
 };
 

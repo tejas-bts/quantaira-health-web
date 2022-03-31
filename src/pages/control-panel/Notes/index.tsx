@@ -9,6 +9,7 @@ import AddNote from './AddNote';
 import ShowNotes from './ShowNotes';
 import ViewNote from './ViewNote';
 import { toast } from 'react-toastify';
+import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const index = () => {
   const bed: any = useSelector((state: any) => state.patient.bed);
@@ -28,7 +29,7 @@ const index = () => {
       dispatch(addToNotes({ notes }));
       dispatch(addToMedications({ medications }));
     } catch (e) {
-      toast('There was a problem fetching notes and medication data!');
+      toast(<MultiLingualLabel id="ERROR_FETCHING_NOTES" />);
     }
   };
 

@@ -8,6 +8,7 @@ import { fetchMedications } from '../../../services/medications.services';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToMedications } from '../../../reducers/medications';
 import { toast } from 'react-toastify';
+import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const index = () => {
   const bed: any = useSelector((state: any) => state.patient.bed);
@@ -21,7 +22,7 @@ const index = () => {
       });
       dispatch(addToMedications({ medications }));
     } catch (e) {
-      toast('There was a problem fetching medication data!');
+      toast(<MultiLingualLabel id="ERROR_FETCHING_MEDICATIONS" />);
     }
   };
 

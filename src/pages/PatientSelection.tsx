@@ -10,6 +10,7 @@ import {
   selectRoom,
 } from '../reducers/patient';
 import { useNavigate } from 'react-router-dom';
+import MultiLingualLabel from '../components/core/MultiLingualLabel';
 
 const PatientSelection = () => {
   const hospital = useSelector((state: any) => state.patient.hospital);
@@ -33,7 +34,7 @@ const PatientSelection = () => {
               dispatch(selectHospital(hospital));
             }}
             value={hospital && hospital.hospitalName}
-            title={'Select Hospital'}
+            title={<MultiLingualLabel id="SELECT_HOSPITAL" />}
           />
         </div>
         <div className="patient-selection-row">
@@ -45,7 +46,7 @@ const PatientSelection = () => {
               dispatch(selectBuilding(hospital ? hospital.buildings[index] : undefined));
             }}
             value={building && building.buildingName}
-            title={'Select Building'}
+            title={<MultiLingualLabel id="SELECT_BUILDING" />}
           />
           <QuantairaDropdown
             options={building ? building.floors.map((item: any) => item.floorName) : []}
@@ -54,7 +55,7 @@ const PatientSelection = () => {
               dispatch(selectFloor(building ? building.floors[index] : undefined));
             }}
             value={floor && floor.floorName}
-            title={'Select Floor'}
+            title={<MultiLingualLabel id="SELECT_FLOOR" />}
           />
           <QuantairaDropdown
             options={floor ? floor.rooms.map((item: any) => item.roomName) : []}
@@ -63,7 +64,7 @@ const PatientSelection = () => {
               dispatch(selectRoom(floor ? floor.rooms[index] : undefined));
             }}
             value={room && room.roomName}
-            title={'Select Room'}
+            title={<MultiLingualLabel id="SELECT_ROOM" />}
           />
         </div>
         <div className="patient-selection-row">
@@ -74,7 +75,7 @@ const PatientSelection = () => {
               dispatch(selectBed(room ? room.beds[index] : undefined));
             }}
             value={bed && bed.bedNumber}
-            title={'Select Bed No.'}
+            title={<MultiLingualLabel id="SELECT_BED_NUMBER" />}
           />
           <span>OR</span>
           <QuantairaDropdown
@@ -83,7 +84,7 @@ const PatientSelection = () => {
               if (room) localStorage.setItem('bed', JSON.stringify(room.beds[index]));
               dispatch(selectBed(room ? room.beds[index] : undefined));
             }}
-            title={'Select Patient Id'}
+            title={<MultiLingualLabel id="SELECT_PATIENT_ID" />}
             value={bed && bed.patientID}
           />
           {/* <span>OR</span>
@@ -103,7 +104,7 @@ const PatientSelection = () => {
                 if (bed !== undefined) navigate('/app/kpi', { replace: true });
               }}
             >
-              Done
+              <MultiLingualLabel id="DONE" />
             </button>
           </div>
         </div>

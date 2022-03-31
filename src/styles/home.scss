@@ -3,6 +3,10 @@
   width: 100%;
   flex: 1;
   display: grid;
+  transition: all 300ms;
+  &.blur {
+    filter: blur(3px) !important;
+  }
 }
 
 .chart-grid {

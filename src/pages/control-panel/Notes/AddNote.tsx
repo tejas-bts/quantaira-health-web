@@ -6,6 +6,7 @@ import { saveNote } from '../../../services/notes.services';
 import DateTimePicker from '../../../components/core/DateTimePicker';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const AddNote = ({ onUpdate }: { onUpdate: any }) => {
   let selectedTime = new Date().getTime();
@@ -41,10 +42,10 @@ const AddNote = ({ onUpdate }: { onUpdate: any }) => {
         inputTime: selectedTime,
       });
       await onUpdate();
-      toast('Your note was saved successfully!');
+      toast(<MultiLingualLabel id="SUCCESSFULLY_SAVED_NOTE" />);
       goBack();
     } catch (e) {
-      toast('Oops! There was an error trying to save this note');
+      toast(<MultiLingualLabel id="NOTE_SAVE_ERROR" />);
     } finally {
       setSaving(false);
     }
@@ -53,7 +54,9 @@ const AddNote = ({ onUpdate }: { onUpdate: any }) => {
   return (
     <div className="add-notes-page">
       <div className="add-notes-heading">
-        <div className="title">Add Notes</div>
+        <div className="title">
+          <MultiLingualLabel id="ADD_NOTES" />
+        </div>
         {selectedTime && <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />}
       </div>
       <div className="add-notes-text-area-input">
@@ -69,7 +72,7 @@ const AddNote = ({ onUpdate }: { onUpdate: any }) => {
           to={`/app/charts/medications/add/${selectedTime}`}
           className="add-pointer-option-link"
         >
-          Add a medication
+          <MultiLingualLabel id="ADD_MEDICATION" />
         </Link>
         <div className="d-flex gap-2">
           <Button

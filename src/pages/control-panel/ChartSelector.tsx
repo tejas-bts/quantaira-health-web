@@ -30,6 +30,16 @@ const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) 
     return oneDArray;
   };
 
+  const isArrayEmpty = (twoDArray: Array<Array<string>>) => {
+    for (const arr of twoDArray) {
+      for (const i of arr) {
+        console.log('data found in array', i);
+        return false;
+      }
+    }
+    return true;
+  };
+
   return (
     <div className="flex-1 w-100">
       <div className="chart-selector-container">
@@ -41,8 +51,7 @@ const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) 
         />
 
         <div className="selected-options">
-          {chartSelections.length >= 1 &&
-            chartSelections[0].length > 0 &&
+          {!isArrayEmpty(chartSelections) &&
             chartSelections.map(
               (screen: any[], index: number) =>
                 screen.length > 0 && (

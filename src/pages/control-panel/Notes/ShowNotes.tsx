@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
 import Button from '../../../components/core/Button';
+import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const ShowNotes = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const ShowNotes = () => {
           cssBorder="none"
         />
         <Button
-          label="Add Notes"
+          label={<MultiLingualLabel id="ADD_NOTES" />}
           onClick={() => {
             navigate('/app/charts/notes/add', {
               replace: true,

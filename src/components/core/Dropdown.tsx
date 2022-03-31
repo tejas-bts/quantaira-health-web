@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
+import MultiLingualLabel from './MultiLingualLabel';
 
 const QuantairaDropdown = ({
   options,
@@ -23,7 +24,9 @@ const QuantairaDropdown = ({
             setShow(!showDrop);
           }}
         >
-          <div>Select Patient Report</div>
+          <div>
+            <MultiLingualLabel id="SELECT_PATIENT_REPORT" />
+          </div>
           <div className="dropdown-arrow">{showDrop ? <BiChevronUp /> : <BiChevronDown />}</div>
         </button>
         <div className={`drop-container ${showDrop ? 'shown' : 'hidden'}`}>
@@ -45,7 +48,9 @@ const QuantairaDropdown = ({
               </label>
             ))
           ) : (
-            <p className="text-center m-0">No items to show</p>
+            <p className="text-center m-0">
+              <MultiLingualLabel id="NO_ITEMS_TO_SHOW" />
+            </p>
           )}
         </div>
       </div>

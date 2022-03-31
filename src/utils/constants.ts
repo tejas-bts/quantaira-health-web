@@ -16,6 +16,11 @@ export const BiometricParameters = {
   QT: 'QT',
   DeltaQTc: 'deltaQTc',
   QTc: 'QTc',
+  NIBPsys: 'NiBP SYS',
+  NIBPdia: 'NiBP DIA',
+  NiBPpr: 'NiBP PR',
+  NiBPmap: 'NiBP MAP'
+
 };
 
 

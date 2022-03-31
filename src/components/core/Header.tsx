@@ -11,7 +11,7 @@ const Header = ({ onPatientChange, onDateTimeChange }: any) => {
   const floor = useSelector((state: any) => state.patient.floor);
   const room = useSelector((state: any) => state.patient.room);
   const bed = useSelector((state: any) => state.patient.bed);
-  const patient = useSelector((state: any) => state.patient.patient);
+  const patient = useSelector((state: any) => state.patient.bed);
 
   const dispatch = useDispatch();
 

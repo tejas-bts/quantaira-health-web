@@ -8,6 +8,7 @@ import { ChartPropsType } from '../../types/Chart.propsType';
 import { ApexChartData } from '../../types/ChartAttributes';
 import { FaLightbulb } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import MultiLingualLabel from './MultiLingualLabel';
 
 const ADDING_DATA_INTERVAL_IN_SECONDS = 1000;
 const MAX_ZOOM_LEVEL = 200;
@@ -265,6 +266,10 @@ const Chart = ({
   }, [values, leftOffset, zoomLevel]);
 
   useEffect(() => {
+    console.log('Values asdasd', title, values);
+  }, [dataFrame]);
+
+  useEffect(() => {
     Data.isLive = isLive;
   }, [isLive]);
 
@@ -447,14 +452,18 @@ const Chart = ({
         // onTouchEnd={(e) => setDragging(false)}
         // onTouchStart={(e) => setDragging(true)}
       >
-        <ApexChart
-          type="area"
-          options={options}
-          series={dataFrame}
-          height={chartHeight}
-          width={chartWidth}
-          className="quant-chart-item"
-        />
+        {values.length ? (
+          <ApexChart
+            type="area"
+            options={options}
+            series={dataFrame}
+            height={chartHeight}
+            width={chartWidth}
+            className="quant-chart-item"
+          />
+        ) : (
+          <MultiLingualLabel id="NO_DATA_AVAILABLE" />
+        )}
       </div>
     </div>
   );

@@ -1,0 +1,73 @@
+.settings-wrapper {
+  position: absolute;
+  bottom: 100%;
+  right: 0px;
+  background-color: $background8;
+  border-radius: 0.3rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.3rem;
+
+  .settings-item {
+    min-width: 25rem;
+    // min-height: 2rem;
+    border-top: 1px solid $border1;
+    .settings-header {
+      display: flex;
+      flex-direction: row;
+      color: white;
+      cursor: pointer;
+      .settings-icon {
+        background-image: 'white';
+        height: 3rem;
+        width: 3rem;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 2rem;
+        margin-right: 0.5rem;
+      }
+
+      .settings-item-title {
+        font-weight: 500;
+        font-size: 120%;
+        line-height: 1rem;
+        margin-top: 0.5rem;
+      }
+
+      .settings-open-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform: rotate(90deg);
+        margin-right: 1rem;
+        transition: all 500ms;
+
+        &.open {
+          transform: rotate(-90deg);
+        }
+      }
+    }
+    .settings-item-drop {
+      background: $background2;
+      color: white;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+      border-radius: 0 0 0.2rem 0.2rem;
+      transition: all 500ms linear;
+      &.closed {
+        height: 0;
+        overflow-y: hidden;
+        padding: 0 1rem;
+      }
+
+      p {
+        margin-top: 0.5rem;
+        padding: 6px 16px;
+        cursor: pointer;
+        margin-bottom: unset;
+        &.selected {
+          background: linear-gradient($gradient-start, $gradient-end);
+        }
+      }
+    }
+  }
+}

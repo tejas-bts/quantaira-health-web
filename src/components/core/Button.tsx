@@ -16,7 +16,7 @@ const Button = ({
   disabled,
 }: {
   icon?: string;
-  label?: string;
+  label?: any;
   orientation: 'vertical' | 'horizontle';
   size: 'lg' | 'md' | 'sm';
   type: 'primary' | 'secondary' | 'ternary';

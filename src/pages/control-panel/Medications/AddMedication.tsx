@@ -7,8 +7,9 @@ import DateTimePicker from '../../../components/core/DateTimePicker';
 import { toast } from 'react-toastify';
 import { saveMedication, searchMedications } from '../../../services/medications.services';
 // import QuantairaAutoSuggest from '../../../components/core/QuantairaAutoSuggest';
-import QuantairaAutoSuggest2 from '../../../components/core/QuantairaAutoSuggest.new';
+import QuantairaAutoSuggest from '../../../components/core/QuantairaAutoSuggest.new';
 import { useSelector } from 'react-redux';
+import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   console.log('Add Medication');
@@ -50,10 +51,10 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
         item_id: selectedOption.row_id,
       });
       await onUpdate();
-      toast('Your medication was saved successfully!');
+      toast(<MultiLingualLabel id="SUCCESSFULLY_SAVED_MEDICATION" />);
       goBack();
     } catch (e) {
-      toast('Oops! There was an error trying to save this note');
+      toast(<MultiLingualLabel id="MEDICATION_SAVE_ERROR" />);
     } finally {
       setSaving(false);
     }
@@ -80,35 +81,17 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   return (
     <div className="add-notes-page">
       <div className="add-notes-heading">
-        <div className="title">Add Medications</div>
+        <div className="title">
+          <MultiLingualLabel id="ADD_MEDICATION" />
+        </div>
         {selectedTime && <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />}
       </div>
-      {/* <div
-        className="add-notes-category"
-        style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}
-      >
-        <QuantairaAutoSuggest
-          title="NDC Code"
-          options={medicationOptions.map((item: any) => item.NDC)}
-          onChange={(value: any) => setInputValue(value)}
-          onSelect={(selectedValue: any, index: string | number) => {
-            console.log('Selected Value', medicationOptions[index]);
-            const selectedItem = medicationOptions[index];
-            setItemId(selectedItem ? selectedItem.row_id : undefined);
-            setInputValue(() =>
-              medicationOptions[index]
-                ? `${medicationOptions[index].product_name}`
-                : 'NDC Code'
-            );
-          }}
-          value={inputValue}
-        />
-      </div> */}
       <div
         className="add-notes-category"
         style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}
       >
-        <QuantairaAutoSuggest2
+        <QuantairaAutoSuggest
+          placeHolder="Search available medicines"
           options={medicationOptions.map((item: any) => {
             return {
               label: item.product_name,
@@ -129,7 +112,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
       </div>
       <div className="add-notes-buttons">
         <Link to={`/app/charts/notes/add/${selectedTime}`} className="add-pointer-option-link">
-          Add a note
+          <MultiLingualLabel id="ADD_NOTES" />
         </Link>
         <div className="d-flex gap-2">
           <Button

@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import React, { useEffect, useState } from 'react';
 import { BiChevronDown, BiChevronUp } from 'react-icons/bi';
+import MultiLingualLabel from './MultiLingualLabel';
 
 const QuantairaDropdown = ({
   options,
@@ -12,12 +13,10 @@ const QuantairaDropdown = ({
   // eslint-disable-next-line @typescript-eslint/ban-types
   onChange: Function;
   value?: string;
-  title: string;
+  title: any;
 }) => {
   const [showDrop, setShow] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     onChange(
@@ -36,18 +35,12 @@ const QuantairaDropdown = ({
           }}
         >
           <div>{selectedOption || value || title}</div>
-          <div className="dropdown-arrow">
-            {showDrop ? <BiChevronUp /> : <BiChevronDown />}
-          </div>
+          <div className="dropdown-arrow">{showDrop ? <BiChevronUp /> : <BiChevronDown />}</div>
         </button>
         <div className={`drop-container ${showDrop ? 'shown' : 'hidden'}`}>
           {showDrop && options.length ? (
             options.map((item, index) => (
-              <label
-                htmlFor={`chekbox-${index}`}
-                key={index}
-                className="drop-item"
-              >
+              <label htmlFor={`chekbox-${index}`} key={index} className="drop-item">
                 <div
                   className="drop-item-header"
                   onClick={() => {
@@ -60,7 +53,9 @@ const QuantairaDropdown = ({
               </label>
             ))
           ) : (
-            <p className="text-center m-0">No items to show</p>
+            <p className="text-center m-0">
+              <MultiLingualLabel id="NO_ITEMS_TO_SHOW" />
+            </p>
           )}
         </div>
       </div>

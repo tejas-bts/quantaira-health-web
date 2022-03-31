@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
 import Button from '../../../components/core/Button';
+import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const ShowNotes = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const ShowNotes = () => {
   return (
     <div className="show-notes-page">
       <div className="notes-page-header">
-        <input className="notes-input-field" placeholder="Search notes here" />
+        <input className="notes-input-field" placeholder="Search medications here" />
         <Button
           orientation={'vertical'}
           icon="/images/filters-icon.svg"
@@ -22,7 +23,7 @@ const ShowNotes = () => {
           cssBorder="none"
         />
         <Button
-          label="Add Medication"
+          label={<MultiLingualLabel id="ADD_MEDICATION" />}
           onClick={() => {
             navigate('/app/charts/medications/add', {
               replace: true,
@@ -37,9 +38,7 @@ const ShowNotes = () => {
         />
       </div>
       <div className="notes-list">
-        {medications.length > 0 && (
-          <AccordionInDropdown show={true} data={medications} />
-        )}
+        {medications.length > 0 && <AccordionInDropdown show={true} data={medications} />}
       </div>
     </div>
   );

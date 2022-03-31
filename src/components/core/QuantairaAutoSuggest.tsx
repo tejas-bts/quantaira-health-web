@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import React, { useEffect, useState } from 'react';
+import MultiLingualLabel from './MultiLingualLabel';
 
 const QuantairaAutoSuggest = ({
   options,
@@ -14,9 +15,7 @@ const QuantairaAutoSuggest = ({
   onSelect?: any;
 }) => {
   const [showDrop, setShow] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
 
   console.log('AutoSuggest Value', value);
 
@@ -62,11 +61,7 @@ const QuantairaAutoSuggest = ({
         <div className={`drop-container ${showDrop ? 'shown' : 'hidden'}`}>
           {value && value.length < 10 && showDrop && options.length ? (
             options.map((item, index) => (
-              <label
-                htmlFor={`chekbox-${index}`}
-                key={index}
-                className="drop-item"
-              >
+              <label htmlFor={`chekbox-${index}`} key={index} className="drop-item">
                 <div
                   className="drop-item-header"
                   onClick={() => {
@@ -79,7 +74,9 @@ const QuantairaAutoSuggest = ({
               </label>
             ))
           ) : (
-            <p className="text-center m-0">No items to show</p>
+            <p className="text-center m-0">
+              <MultiLingualLabel id="NO_ITEMS_TO_SHOW" />
+            </p>
           )}
         </div>
       </div>
