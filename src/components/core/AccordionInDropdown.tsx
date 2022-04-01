@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 
 const AccordionItem = ({ icon, label, description, heading, productName }: any) => {
   const [show, setShow] = useState(false);
-
-  console.log('Product Name', productName);
-
   const toggleShow = () => {
     setShow(!show);
   };

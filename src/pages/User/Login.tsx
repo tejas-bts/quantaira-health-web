@@ -32,7 +32,7 @@ const Login = () => {
         username: userName,
         password: password,
       });
-      console.log('User Data', userData);
+
       dispatch(logIn({ userName: 'tejas', permissions: [1, 2, 3, 4] }));
       dispatch(selectHospital(userData.userAccess));
       localStorage.setItem('user', JSON.stringify(userData));

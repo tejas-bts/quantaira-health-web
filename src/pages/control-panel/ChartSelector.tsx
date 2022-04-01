@@ -32,8 +32,8 @@ const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) 
 
   const isArrayEmpty = (twoDArray: Array<Array<string>>) => {
     for (const arr of twoDArray) {
-      for (const i of arr) {
-        console.log('data found in array', i);
+      // eslint-disable-next-line no-unused-vars
+      for (const _i of arr) {
         return false;
       }
     }

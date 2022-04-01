@@ -81,7 +81,6 @@ const Chart = ({
           if (config.seriesIndex === 1 && onNoteClick) {
             const timeStamp = dataFrame[1].data[config.dataPointIndex][0];
             const targetNote = notes.find((item: any) => item.inputTime == timeStamp);
-            console.log('Click', targetNote);
             onNoteClick(targetNote.row_id);
           } else if (config.seriesIndex === 2 && onMedicationClick) {
             onMedicationClick(dataFrame[2].data[config.dataPointIndex][0]);
@@ -91,14 +90,12 @@ const Chart = ({
         },
 
         beforeZoom: (e) => {
-          console.log('EVENT : Before zoom', e);
           setLive(false);
         },
         zoomed: (e) => {
-          console.log('EVENT : Zoomed', e);
           setLive(false);
         },
-        beforeResetZoom: () => console.log('EVENT : Zoom Reset'),
+
         scrolled: () => setLive(false),
       },
     },
@@ -264,10 +261,6 @@ const Chart = ({
       }
     }
   }, [values, leftOffset, zoomLevel]);
-
-  useEffect(() => {
-    console.log('Values asdasd', title, values);
-  }, [dataFrame]);
 
   useEffect(() => {
     Data.isLive = isLive;
@@ -462,7 +455,9 @@ const Chart = ({
             className="quant-chart-item"
           />
         ) : (
-          <MultiLingualLabel id="NO_DATA_AVAILABLE" />
+          <div className="h-100 w-100 d-flex justify-content-center align-items-center">
+            <MultiLingualLabel id="NO_DATA_AVAILABLE" />
+          </div>
         )}
       </div>
     </div>

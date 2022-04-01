@@ -69,9 +69,6 @@ const BiometricKpi = () => {
     navigate('/app/patient', { replace: true });
   }
 
-  console.log('Bed   ', bed);
-  console.log('Biometric', biometricData);
-
   useEffect(() => {
     if (isLive) {
       setBiometricData(biometricDataProps);
@@ -79,7 +76,6 @@ const BiometricKpi = () => {
   }, [biometricDataProps]);
 
   useEffect(() => {
-    console.log('Selected Time sadasd', time, isLive);
     if (!isLive) {
       setPastTime(time);
       fetchKpi({
@@ -373,14 +369,12 @@ const BiometricKpi = () => {
   const fetchNotes = async () => {
     return new Promise<void>((resolve, rej) => {
       setTimeout(() => {
-        console.log('Fetch Notes');
         resolve();
       }, 500);
     });
   };
 
   useEffect(() => {
-    console.log('Time', time);
     const timeOut = setTimeout(() => {
       fetchNotes();
     }, 500);
@@ -389,7 +383,6 @@ const BiometricKpi = () => {
   }, [time]);
 
   useEffect(() => {
-    console.log('Slider Change', slider, pastKpiTime);
     if (pastKpiData[slider]) {
       pastKpiData[slider];
       console.log('Past KPI data sadasd', new Date(pastKpiTime[slider]), pastKpiData[slider]);
@@ -410,7 +403,6 @@ const BiometricKpi = () => {
             max={pastKpiTime.length}
             className="quant-slider"
             onChange={({ target }: any) => {
-              console.log('Slider', target);
               setSlider(() => target.value);
             }}
           />

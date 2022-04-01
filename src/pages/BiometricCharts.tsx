@@ -75,11 +75,9 @@ const BiometricCharts = () => {
             values={bufferData[getIndex(chartSelections[selectedScreen][0])] || []}
             onClick={(time: number) => navigateTo(`/app/charts/medications/add/${time}`)}
             onNoteClick={(time: number) => {
-              console.log('Note Clicked');
               navigateTo(`/app/charts/notes/view/${time}`);
             }}
             onMedicationClick={(time: number) => {
-              console.log('Medicine Clicked');
               navigateTo(`/app/charts/medications/view/${time}`);
             }}
             notes={notes}

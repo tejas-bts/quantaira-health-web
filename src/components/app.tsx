@@ -16,13 +16,17 @@ import { baseURLws } from '../utils/constants';
 
 import { IntlProvider } from 'react-intl';
 import MultiLingualLabel from './core/MultiLingualLabel';
+import { logBiometricData } from '../utils/logger';
 
 const App = () => {
   const user: any = useSelector((state: any) => state.auth);
   const bed: any = useSelector((state: any) => state.patient.bed);
+
   const headerBlur = useSelector((state: any) => state.appState.headerBlur);
   const contentBlur = useSelector((state: any) => state.appState.contentBlur);
-  console.log('Header Blur', headerBlur);
+  const biometricData = useSelector((state: any) => state.biometrics.biometricData);
+
+  console.log('Bmetric', biometricData);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -40,7 +44,30 @@ const App = () => {
   };
 
   useEffect(() => {
+    logBiometricData(biometricData, ['PPV Source', 'PVCs']);
+  }, [biometricData]);
+
+  useEffect(() => {
     loadHospitalData();
+    // const data = JSON.stringify({
+    //   memberExternalId: '51855224',
+    // });
+    // const config: any = {
+    //   method: 'post',
+    //   url: 'https://dev.revive-healthcare.com/api.svc/GetSsoLoginToken',
+    //   headers: {
+    //     'Access-Control-Allow-Origin': '*',
+    //     'Content-Type': 'application/json',
+    //   },
+    //   data: data,
+    // };
+    // axios(config)
+    //   .then((response: { data: any }) => {
+    //     console.log(JSON.stringify(response.data));
+    //   })
+    //   .catch((error: any) => {
+    //     console.log(error);
+    //   });
   }, []);
 
   useEffect(() => {

@@ -11,7 +11,6 @@ axios.defaults.headers.common = {
 
 
 export const fetchKpi = async ({ bedId, patientId, fromDate, limit }: { bedId: string | number, patientId: string | number, fromDate: string | number, limit: number }) => {
-  console.log('Fetching KPI data');
   return new Promise<void>((resolve, reject) => {
     axios.get(getKPIdata, {
       params: {
@@ -22,7 +21,7 @@ export const fetchKpi = async ({ bedId, patientId, fromDate, limit }: { bedId: s
         resolve(response.data.data.data);
       })
       .catch((e) => {
-        console.log('Error Fetch KPI', e);
+        console.error('Error Fetch KPI', e);
         reject(e);
       });
   });

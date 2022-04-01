@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
-  console.log('Add Medication');
   let selectedTime = new Date().getTime();
   const urlParams = useParams();
   if (urlParams.selectedTime) selectedTime = parseInt(urlParams.selectedTime);
@@ -40,7 +39,6 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      console.log('Payload', medicationOptions);
       await saveMedication({
         patientId: bed.patientID,
         device: '123',
@@ -60,13 +58,8 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
     }
   };
 
-  useEffect(() => {
-    console.log('Medication Data', medicationOptions);
-  }, [medicationOptions]);
-
   const loadMedication = async (inputValue: any) => {
     const data = await searchMedications(inputValue);
-    console.log('Medication Option', data);
     setMedicationOptions(() => {
       return data;
     });

@@ -35,7 +35,6 @@ export const searchMedications = async (ndc_value: any) => {
   return new Promise<void>((resolve, reject) => {
     axios.get(searchAvailableMedicines, { params: { ndc_value } })
       .then((response) => {
-        console.log('Search Response', response.data.data);
         resolve(response.data.data);
       })
       .catch((e) => reject(e));

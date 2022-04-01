@@ -8,7 +8,6 @@ import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 const ShowNotes = () => {
   const navigate = useNavigate();
   const medications = useSelector((state: any) => state.medications.data);
-  console.log('Medication', medications);
   return (
     <div className="show-notes-page">
       <div className="notes-page-header">

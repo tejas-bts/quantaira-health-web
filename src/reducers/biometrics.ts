@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+/* eslint-disable no-unused-vars */
+import { createSlice, current } from '@reduxjs/toolkit';
 
 export const biometrics = createSlice({
   name: 'biometrics',
@@ -7,9 +8,23 @@ export const biometrics = createSlice({
   },
   reducers: {
     appendToBiometricData: (state, action) => {
+      const oldData: any = [...current(state).biometricData];
+      const newData: any = [...action.payload.data];
+
+      for (const newItem of newData) {
+        const target: any = oldData.findIndex((item: any) => item.label == newItem.label);
+        if (target < 0) {
+          oldData.push(newItem);
+        } else {
+          const newTarget = { ...oldData[target] };
+          newTarget.values = [...newTarget.values, ...newItem.values];
+          oldData[target] = newTarget;
+        }
+      }
+
       return {
         ...state,
-        biometricData: action.payload.data,
+        biometricData: oldData,
       };
     },
   }
