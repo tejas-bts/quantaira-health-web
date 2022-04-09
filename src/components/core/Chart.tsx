@@ -9,6 +9,7 @@ import { ApexChartData } from '../../types/ChartAttributes';
 import { FaLightbulb } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import MultiLingualLabel from './MultiLingualLabel';
+import { debounce } from '@mui/material';
 
 const ADDING_DATA_INTERVAL_IN_SECONDS = 1000;
 const MAX_ZOOM_LEVEL = 200;
@@ -33,6 +34,7 @@ const Chart = ({
   onClick,
   onNoteClick,
   onMedicationClick,
+  onDataDemand,
 }: ChartPropsType) => {
   const [isLive, setLive] = useState(true);
   const [chartHeight] = useState(180);
@@ -41,7 +43,7 @@ const Chart = ({
   const [leftScroll] = useState(0);
   const [rightScroll, setRightScroll] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(10);
-  const [leftOffset, setLeftOffset] = useState(0);
+  const [leftOffset, setLeftOffset] = useState<number>(0);
   const [zoomIn, setZoomIn] = useState(false);
   const [zoomOut, setZoomOut] = useState(false);
 
@@ -60,6 +62,7 @@ const Chart = ({
       show: false,
     },
     chart: {
+      type: 'line',
       redrawOnParentResize: true,
       toolbar: {
         show: false,
@@ -278,6 +281,13 @@ const Chart = ({
       setWidth(target.current.offsetWidth);
     }
   }, []);
+
+  useEffect(() => {
+    console.log('Left Offset', leftOffset, values.length);
+    if (leftOffset >= values.length) {
+      if (onDataDemand && values.length > 0) debounce(onDataDemand());
+    }
+  }, [leftOffset]);
 
   useEffect(() => {
     if (zoomIn) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AccordionItem = ({ icon, label, description, heading, productName }: any) => {
+const AccordionItem = ({ icon, label, description, heading, productName, author }: any) => {
   const [show, setShow] = useState(false);
   const toggleShow = () => {
     setShow(!show);
@@ -10,11 +10,18 @@ const AccordionItem = ({ icon, label, description, heading, productName }: any) 
       <div className="drop-item-header">
         <div className="drop-item-icon" style={{ backgroundImage: `url("${icon}")` }} />
         <div className="drop-item-heading">{heading}</div>
-        <div className="drop-item-label">{label} : </div>
+        <div className="drop-item-label">
+          ({author}) {label} :{' '}
+        </div>
         {!show && <div className="drop-item-content-preview">{description}</div>}
       </div>
       {show && <div className="drop-item-description">{description}</div>}
       {show && productName && <div className="drop-item-description">{productName}</div>}
+      {show && author && (
+        <div className="drop-item-description">
+          Added by <strong>{author}</strong>
+        </div>
+      )}
     </div>
   );
 };
@@ -23,6 +30,7 @@ const AccordionInDropdown = ({ show, data }: { show: boolean; data: any }) => {
   const [showDrop] = useState(show);
 
   const options = data.map((item: any) => {
+    console.log('Accordion Item', item);
     return {
       heading: `${new Date(item.inputTime).toLocaleDateString()}  ${new Date(
         item.inputTime
@@ -31,6 +39,7 @@ const AccordionInDropdown = ({ show, data }: { show: boolean; data: any }) => {
       description: item.inputContent,
       icon: item.productName ? '/images/navbar/medication.svg' : '/images/navbar/notes.svg',
       productName: item.productName,
+      author: item.userName,
     };
   });
 
@@ -45,6 +54,7 @@ const AccordionInDropdown = ({ show, data }: { show: boolean; data: any }) => {
               description: any;
               heading: any;
               productName: any;
+              author: string;
             },
             index: any
           ) => (
@@ -55,6 +65,7 @@ const AccordionInDropdown = ({ show, data }: { show: boolean; data: any }) => {
               description={item.description}
               heading={item.heading}
               productName={item.productName}
+              author={item.author}
             />
           )
         )}

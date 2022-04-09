@@ -24,6 +24,11 @@ const ViewNote = () => {
         <h5>Content :</h5>
         <h4>{targetNote.inputContent}</h4>
       </div>
+
+      <div className="mt-4">
+        <h5>Added by :</h5>
+        <h4>{targetNote.userName || targetNote.author}</h4>
+      </div>
     </div>
   ) : null;
 };

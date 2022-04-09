@@ -10,9 +10,12 @@ import { Route, Routes, To, useNavigate } from 'react-router-dom';
 import Notes from '../pages/control-panel/Notes';
 import Medications from '../pages/control-panel/Medications';
 import Alarms from '../pages/control-panel/Alarms';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPastChartData } from '../services/chart.services';
+import { prependToBiometricData } from '../reducers/biometrics';
 
 const BiometricCharts = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
@@ -46,14 +49,35 @@ const BiometricCharts = () => {
     const availableCharts: any = [];
     biometricData.map((item: BiometricData) => availableCharts.push(item.label));
     setAvailableCharts(availableCharts);
-    setBuffer(
-      biometricData.map((item: any, index: any) => [...(bufferData[index] || []), ...item.values])
-    );
+    setBuffer(biometricData.map((item: any) => item.values));
   }, [biometricData]);
 
   const getIndex = (label: string) => {
     const index = biometricData.findIndex((item: any) => item.label === label);
     return index;
+  };
+
+  const handleDataDemand = async (biometricId: any) => {
+    const biometricItem = biometricData.find((item: any) => item.biometricId === biometricId);
+    const fromDate = biometricItem.values[0][0];
+
+    console.log('Left : New Data Demanded', new Date(fromDate));
+
+    try {
+      const newData = await fetchPastChartData({
+        bedId: 1,
+        patientId: 1,
+        fromDate,
+        limit: 100,
+        biometricId,
+      });
+
+      console.log('New Data Loaded', newData);
+
+      dispatch(prependToBiometricData({ data: [newData] }));
+    } catch (e) {
+      console.log('Error fetching Past chart data', e);
+    }
   };
 
   if (!bed) {
@@ -62,7 +86,7 @@ const BiometricCharts = () => {
 
   return (
     <div className="chart-grid">
-      <div>
+      <div className="overflow-hidden">
         {chartSelections[selectedScreen] && chartSelections[selectedScreen][0] && (
           <Chart
             color={colors[0]}
@@ -82,6 +106,11 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
+            onDataDemand={() =>
+              handleDataDemand(
+                biometricData[getIndex(chartSelections[selectedScreen][0])].biometricId
+              )
+            }
           />
         )}
       </div>
@@ -95,7 +124,7 @@ const BiometricCharts = () => {
           </Routes>
         </div>
       </div>
-      <div>
+      <div className="overflow-hidden">
         {chartSelections[selectedScreen] && chartSelections[selectedScreen][1] && (
           <Chart
             color={colors[1]}
@@ -117,10 +146,15 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
+            onDataDemand={() =>
+              handleDataDemand(
+                biometricData[getIndex(chartSelections[selectedScreen][1])].biometricId
+              )
+            }
           />
         )}
       </div>
-      <div>
+      <div className="overflow-hidden">
         {chartSelections[selectedScreen] && chartSelections[selectedScreen][2] && (
           <Chart
             color={colors[2]}
@@ -142,6 +176,11 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
+            onDataDemand={() =>
+              handleDataDemand(
+                biometricData[getIndex(chartSelections[selectedScreen][2])].biometricId
+              )
+            }
           />
         )}
       </div>

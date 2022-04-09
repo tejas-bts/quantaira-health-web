@@ -47,10 +47,8 @@ const App = () => {
     const socket = Client(baseURLws);
     if (bed !== undefined) {
       socket.on('connect', () => {
-        console.log('New Connection');
         toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {
-          console.log('Data', data);
           dispatch(appendToBiometricData({ data }));
         });
       });

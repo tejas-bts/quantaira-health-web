@@ -107,7 +107,7 @@ const BreadCrumbs = ({
         value={hospital ? { label: hospital.hospitalName } : undefined}
       />
 
-      {hospital && (
+      {hospital && hospital.buildings && (
         <BreadCrumbItem
           title={<MultiLingualLabel id="SELECT_BUILDING" />}
           options={hospital.buildings.map((item: { buildingId: any; buildingName: any }) => {

@@ -41,7 +41,7 @@ const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) 
   };
 
   return (
-    <div className="flex-1 w-100">
+    <div className="flex-1 w-100 overflow-hidden">
       <div className="chart-selector-container">
         <Dropdown
           options={availableCharts}

@@ -12,13 +12,14 @@ export const biometrics = createSlice({
       const newData: any = [...action.payload.data];
 
       for (const newItem of newData) {
-        const target: any = oldData.findIndex((item: any) => item.label == newItem.label);
-        if (target < 0) {
+        const targetIndex: any = oldData.findIndex((item: any) => item.label == newItem.label);
+        if (targetIndex < 0) {
           oldData.push(newItem);
         } else {
-          const newTarget = { ...oldData[target] };
-          newTarget.values = [...newTarget.values, ...newItem.values];
-          oldData[target] = newTarget;
+          const newTarget = { ...oldData[targetIndex] };
+          const existingValues = oldData[targetIndex].values;
+          newTarget.values = [...existingValues, ...newItem.values];
+          oldData[targetIndex] = newTarget;
         }
       }
 
@@ -27,9 +28,35 @@ export const biometrics = createSlice({
         biometricData: oldData,
       };
     },
+
+
+    prependToBiometricData: (state, action) => {
+
+      const oldData: any = [...current(state).biometricData];
+      const newData: any = [...action.payload.data];
+
+      for (const newItem of newData) {
+        const targetIndex: any = oldData.findIndex((item: any) => item.label == newItem.label);
+        if (targetIndex < 0) {
+          oldData.push(newItem);
+        } else {
+          const newTarget = { ...oldData[targetIndex] };
+          const existingValues = oldData[targetIndex].values;
+          newTarget.values = [...newItem.values, ...existingValues];
+          oldData[targetIndex] = newTarget;
+        }
+      }
+      console.log('Old Data', oldData.find((item: any) => item.label === 'Temp'));
+
+      return {
+        ...state,
+        biometricData: oldData,
+      };
+    },
+
   }
 });
 
 
-export const { appendToBiometricData } = biometrics.actions;
+export const { appendToBiometricData, prependToBiometricData } = biometrics.actions;
 export default biometrics.reducer;

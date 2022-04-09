@@ -1,0 +1,54 @@
+.quantaira-switch-container {
+  cursor: pointer;
+  color: white;
+  border-radius: 100vw;
+  border: none;
+  background-color: $background3;
+
+  & > input[type='checkbox'] {
+    display: none;
+  }
+  input:checked {
+    & + .quantaira-switch > .quantaira-switch-active-bg {
+      right: 0.1rem;
+      left: 49% !important;
+    }
+  }
+
+  & > .quantaira-switch {
+    position: relative;
+
+    & > .quantaira-switch-items {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      :first-child {
+        padding-right: 0.5rem;
+      }
+      :last-child {
+        padding-left: 0.5rem;
+      }
+
+      & > div {
+        // width: 50%;
+        background-color: transparent;
+        border-radius: 100vw;
+        padding: 0.3rem 1rem;
+        text-align: center;
+        white-space: nowrap;
+      }
+    }
+
+    & > .quantaira-switch-active-bg {
+      background: linear-gradient($gradient-start, $gradient-end);
+      position: absolute;
+      width: 50%;
+      height: 92%;
+      top: 0.1rem;
+      left: 0.1rem;
+      border-radius: 100vw;
+      transition: left 0.3s linear;
+    }
+  }
+}
