@@ -75,6 +75,8 @@ const BiometricKpi = () => {
     }
   }, [biometricDataProps]);
 
+  useEffect(() => { console.log('Delta Qtc', deltaQtc);},[deltaQtc]);
+
   useEffect(() => {
     if (!isLive) {
       setPastTime(time);
@@ -351,6 +353,7 @@ const BiometricKpi = () => {
     //Getting delta QTc from incoming data
     setDeltaQTc((oldDeltaQTc) => {
       const newDeltaQTc = biometricData.find((item) => item.label === BiometricParameters.DeltaQTc);
+      console.log('Delta QTc', newDeltaQTc);
       return {
         ...oldDeltaQTc,
         ...newDeltaQTc,

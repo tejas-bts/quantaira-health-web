@@ -20,7 +20,7 @@ export const saveMedication = async (params: any) => {
 
 export const fetchMedications = async (parameters: any) => {
   return new Promise<void>((resolve, reject) => {
-    axios.get(getNotesAndMedications, { params: { ...parameters, input_type_id: 1, pid: parameters.patientId } })
+    axios.get(getNotesAndMedications, { params: { ...parameters, input_type_id: 'B5CDC538-BFBF-4E84-A76D-DEDD8D419A35', pid: parameters.patientId } })
       .then((response) => {
         resolve(response.data.data);
       })

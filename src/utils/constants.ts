@@ -23,6 +23,6 @@ export const BiometricParameters = {
 };
 
 
-const baseUrl = '192.168.1.29'; //'127.0.0.1';
+const baseUrl = '127.0.0.1';
 export const baseURLws = `http://${baseUrl}:3001`;
 export const baseURLhttp = `http://${baseUrl}:7071/api`;

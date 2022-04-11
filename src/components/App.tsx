@@ -16,6 +16,7 @@ import { baseURLws } from '../utils/constants';
 
 import { IntlProvider } from 'react-intl';
 import MultiLingualLabel from './core/MultiLingualLabel';
+import { authenticateAxios } from '../services/authenticatedAxios';
 
 const App = () => {
   const user: any = useSelector((state: any) => state.auth);
@@ -41,6 +42,7 @@ const App = () => {
 
   useEffect(() => {
     loadHospitalData();
+    authenticateAxios();
   }, []);
 
   useEffect(() => {
@@ -49,6 +51,7 @@ const App = () => {
       socket.on('connect', () => {
         toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {
+          console.log('Data', data);
           dispatch(appendToBiometricData({ data }));
         });
       });
