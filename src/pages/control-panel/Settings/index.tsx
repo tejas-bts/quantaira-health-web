@@ -7,13 +7,11 @@ import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const Settings = () => {
   const language = useSelector((state: any) => state.language.selectedLanguage);
-  const locale = useSelector((state: any) => state.language.selectedLocale);
   const dispatch = useDispatch();
   const handleSelectLanguage = (label: any, locale: any) => {
     dispatch(selectLanguage({ label, locale }));
   };
 
-  console.log(language, locale);
   return (
     <div className="settings-wrapper">
       <SettingsItem

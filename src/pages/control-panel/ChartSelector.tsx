@@ -32,8 +32,8 @@ const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) 
 
   const isArrayEmpty = (twoDArray: Array<Array<string>>) => {
     for (const arr of twoDArray) {
-      for (const i of arr) {
-        console.log('data found in array', i);
+      // eslint-disable-next-line no-unused-vars
+      for (const _i of arr) {
         return false;
       }
     }
@@ -41,7 +41,7 @@ const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) 
   };
 
   return (
-    <div className="flex-1 w-100">
+    <div className="flex-1 w-100 overflow-hidden">
       <div className="chart-selector-container">
         <Dropdown
           options={availableCharts}

@@ -12,4 +12,5 @@ export interface ChartPropsType {
   onClick?: any;
   onNoteClick?: any;
   onMedicationClick?: any;
+  onDataDemand?: any;
 }

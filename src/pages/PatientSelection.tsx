@@ -87,12 +87,6 @@ const PatientSelection = () => {
             title={<MultiLingualLabel id="SELECT_PATIENT_ID" />}
             value={bed && bed.patientID}
           />
-          {/* <span>OR</span>
-          <QuantairaDropdown
-            options={[]}
-            onChange={() => console.log()}
-            title={'Select Patient Name'}
-          /> */}
         </div>
         <div className="d-flex justify-content-end flex-1 w-100 align-items-end">
           <div>

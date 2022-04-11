@@ -17,6 +17,12 @@ export const englishUS: Record<string, string> = {
   PRIVACY_POLICY: 'Privacy Policy',
   TERMS_OF_USE: 'Terms of Use',
 
+  NEW_PASSWORD: 'New Password',
+  CONFIRM_PASSWORD: 'Confirm Password',
+  NEW_PASSWORD_TITLE: 'Set New Password',
+  RESET_PASSWORD: 'Reset Password',
+  RESETTING: 'Resetting...',
+
   SELECT_HOSPITAL: 'Select Hospital',
   SELECT_BUILDING: 'Select Building',
   SELECT_FLOOR: 'Select Floor',

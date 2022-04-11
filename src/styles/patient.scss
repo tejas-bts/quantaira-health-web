@@ -13,6 +13,7 @@
 }
 
 .patient-id-input-wrapper {
+  position: relative;
   .patient-id-input-edit-btn {
     background-image: url('../../public/images/edit-icon.svg');
     background-color: transparent;
@@ -35,4 +36,20 @@
   color: white;
   padding: 0.5rem;
   padding-right: 1rem;
+}
+
+.patient-card {
+  background-color: $background7;
+  border-radius: 0.3rem;
+  border-top-left-radius: 0;
+  border: 1px solid $border1;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 105%;
+  z-index: 999;
+  padding: 0.5rem;
+  min-width: 10rem;
+  box-shadow: 0px 10px 15px #02162c;
+  white-space: nowrap;
 }

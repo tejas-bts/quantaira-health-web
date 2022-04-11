@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -16,12 +16,24 @@ const DateTimePicker = ({
   disableFuture?: boolean;
 }) => {
   const dateFormat = `MM/dd/yyyy h:mm${showSeconds ?? ':ss'} aa`;
+  const [selectedDate, setSelectedDate] = useState<Date | null | undefined>(
+    defaultDate ? defaultDate : null
+  );
+
+  const handleChange = (value: Date | null | undefined) => {
+    setSelectedDate(value);
+    if (onChange) onChange(value);
+  };
+
+  useEffect(() => {
+    setSelectedDate(defaultDate);
+  }, [defaultDate]);
 
   return (
     <div className="quantaira-date-time-picker-wrapper">
       <DatePicker
-        selected={defaultDate ? defaultDate : null}
-        onChange={onChange}
+        selected={selectedDate}
+        onChange={handleChange}
         timeInputLabel="Time:"
         dateFormat={dateFormat}
         className={`quantaira-date-time-picker ${size}`}

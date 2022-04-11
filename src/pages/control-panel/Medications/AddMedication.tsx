@@ -10,9 +10,9 @@ import { saveMedication, searchMedications } from '../../../services/medications
 import QuantairaAutoSuggest from '../../../components/core/QuantairaAutoSuggest.new';
 import { useSelector } from 'react-redux';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
+import QuantairaSwitch from '../../../components/core/QuantairaSwitch';
 
 const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
-  console.log('Add Medication');
   let selectedTime = new Date().getTime();
   const urlParams = useParams();
   if (urlParams.selectedTime) selectedTime = parseInt(urlParams.selectedTime);
@@ -40,15 +40,13 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      console.log('Payload', medicationOptions);
       await saveMedication({
         patientId: bed.patientID,
         device: '123',
         content: note,
-        categoryId: '2',
         inputTime: selectedTime,
-        productName: inputValue,
-        item_id: selectedOption.row_id,
+        item_id: selectedOption.NDC,
+        ndc: false,
       });
       await onUpdate();
       toast(<MultiLingualLabel id="SUCCESSFULLY_SAVED_MEDICATION" />);
@@ -60,20 +58,15 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
     }
   };
 
-  useEffect(() => {
-    console.log('Medication Data', medicationOptions);
-  }, [medicationOptions]);
-
   const loadMedication = async (inputValue: any) => {
     const data = await searchMedications(inputValue);
-    console.log('Medication Option', data);
     setMedicationOptions(() => {
       return data;
     });
   };
 
   useEffect(() => {
-    if (inputValue && inputValue.length > 4 && inputValue.length < 8) {
+    if (inputValue && inputValue.length > 1 && inputValue.length < 8) {
       loadMedication(inputValue);
     }
   }, [inputValue]);
@@ -91,7 +84,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
         style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}
       >
         <QuantairaAutoSuggest
-          placeHolder="Search available medicines"
+          placeHolder="Search available medicines with name"
           options={medicationOptions.map((item: any) => {
             return {
               label: item.product_name,
@@ -100,6 +93,23 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
           })}
           onChange={(value: any) => setInputValue(value)}
           onSelect={(selectedValue: any) => setSelectedOption(selectedValue)}
+        />
+        <QuantairaAutoSuggest
+          placeHolder="Search available medicines with id"
+          options={medicationOptions.map((item: any) => {
+            return {
+              label: item.product_name,
+              value: item,
+            };
+          })}
+          onChange={(value: any) => setInputValue(value)}
+          onSelect={(selectedValue: any) => setSelectedOption(selectedValue)}
+        />
+        <QuantairaSwitch
+          disabled
+          onChange={(value: any) => console.log('Value', value)}
+          label1={'Client'}
+          label2={'NDC'}
         />
       </div>
       <div className="add-notes-text-area-input">

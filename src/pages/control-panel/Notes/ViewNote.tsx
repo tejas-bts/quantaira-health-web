@@ -6,7 +6,6 @@ const ViewNote = () => {
   const { noteId } = useParams();
   const notes = useSelector((state: any) => state.notes.data);
   const targetNote = notes.find((item: any) => item.row_id == noteId);
-  console.log('award Notes', targetNote);
 
   return targetNote ? (
     <div className="d-flex flex-column align-items-center justify-content-center">
@@ -24,6 +23,11 @@ const ViewNote = () => {
       <div className="d-flex flex-column m-3">
         <h5>Content :</h5>
         <h4>{targetNote.inputContent}</h4>
+      </div>
+
+      <div className="mt-4">
+        <h5>Added by :</h5>
+        <h4>{targetNote.userName || targetNote.author}</h4>
       </div>
     </div>
   ) : null;

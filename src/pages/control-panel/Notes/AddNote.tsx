@@ -31,7 +31,6 @@ const AddNote = ({ onUpdate }: { onUpdate: any }) => {
 
   const handleSaveAndRefresh = async () => {
     try {
-      console.log('Bed dsdfds', bed.patientID);
       setSaving(true);
       await saveNote({
         patientId: bed.patientID,

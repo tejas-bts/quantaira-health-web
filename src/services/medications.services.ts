@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './authenticatedAxios';
 import { baseURLhttp } from '../utils/constants';
 
 const saveMedications = `${baseURLhttp}/AddMedication`;
@@ -7,14 +7,11 @@ const searchAvailableMedicines = `${baseURLhttp}/SearchMedicines`;
 
 
 
-axios.defaults.headers.common = {
-  'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInVzZXJuYW1lIjoiYWRpdHlhZG9lQGhvc3BpdGFsZG9tYWluLmNvbSIsImlhdCI6MTY0Njc0NDY4OX0.5_6N_XGCfmYMBpqUNIKgrnsYaTiTJVV9cydzlNfUHpg',
-};
 
 
 export const saveMedication = async (params: any) => {
   return new Promise<void>((resolve, reject) => {
-    axios.post(saveMedications, { ...params, ipType: 1, pid: params.patientId })
+    axios.post(saveMedications, { ...params, pid: params.patientId, categoryId: '54AA1262-73DA-49ED-8D96-FD0D2261A16D' })
       .then(() => resolve())
       .catch((e) => reject(e));
   });
@@ -35,7 +32,6 @@ export const searchMedications = async (ndc_value: any) => {
   return new Promise<void>((resolve, reject) => {
     axios.get(searchAvailableMedicines, { params: { ndc_value } })
       .then((response) => {
-        console.log('Search Response', response.data.data);
         resolve(response.data.data);
       })
       .catch((e) => reject(e));

@@ -3,6 +3,7 @@ export interface KPIitemProp {
   color?: string;
   latestTimestamp?: number;
   currentValue: number | undefined;
+  currentTime?: number | undefined;
   idealMin?: number | undefined;
   idealMax?: number | undefined;
   unit?: string | undefined;

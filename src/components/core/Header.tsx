@@ -4,6 +4,8 @@ import { setLive, setTime } from '../../reducers/time';
 import BreadCrumbs from './BreadCrumbs';
 import DateTimePicker from './DateTimePicker';
 import PatientIdInput from './PatientIdInput';
+import QuantairaSwitch from './QuantairaSwitch';
+import MultiLingualLabel from './MultiLingualLabel';
 
 const Header = ({ onPatientChange, onDateTimeChange }: any) => {
   const hospital = useSelector((state: any) => state.patient.hospital);
@@ -43,16 +45,12 @@ const Header = ({ onPatientChange, onDateTimeChange }: any) => {
   return (
     <div className="header-container">
       <div className="m-2">
-        <span className="btn btn-1">
-          <input
-            type="checkbox"
-            name=""
-            id="switch"
-            onChange={() => document.getElementById('root')?.requestFullscreen()}
-            checked={true}
-          />
-          <label htmlFor="switch"></label>
-        </span>
+        <QuantairaSwitch
+          disabled
+          onChange={() => console.log('Changed')}
+          label1={<MultiLingualLabel id="CLOUD_DATA" />}
+          label2={<MultiLingualLabel id="REAL_TIME" />}
+        />
       </div>
       <div className="d-flex flex-1">
         <BreadCrumbs

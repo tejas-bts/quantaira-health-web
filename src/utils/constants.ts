@@ -14,13 +14,12 @@ export const BiometricParameters = {
   STaVF: 'ST aVF',
   STV: 'ST V',
   QT: 'QT',
-  DeltaQTc: 'deltaQTc',
+  DeltaQTc: 'delta QTc',
   QTc: 'QTc',
   NIBPsys: 'NiBP SYS',
   NIBPdia: 'NiBP DIA',
   NiBPpr: 'NiBP PR',
   NiBPmap: 'NiBP MAP'
-
 };
 
 

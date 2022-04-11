@@ -5,11 +5,13 @@ const GenericKpiItem = ({
   title,
   color,
   currentValue,
+  currentTime,
   idealMin,
   idealMax,
   unit,
   isLive,
 }: KPIitemProp) => {
+  console.log('Current Time', currentTime);
   return (
     <div
       className={`kpi-item ${isLive ? 'live' : 'delayed'}`}
@@ -23,16 +25,10 @@ const GenericKpiItem = ({
           <div className="kpi-title">{title || '?'}</div>
           <div className="kpi-unit">{unit || '?'}</div>
         </div>
-        <div className="kpi-value">
-          {currentValue !== undefined ? currentValue : '?'}
-        </div>
+        <div className="kpi-value">{currentValue !== undefined ? currentValue : '?'}</div>
         <div className="kpi-ideal-values">
-          <div className="kpi-ideal-max">
-            {idealMax !== undefined ? idealMax : '?'}
-          </div>
-          <div className="kpi-ideal-min">
-            {idealMin !== undefined ? idealMin : '?'}
-          </div>
+          <div className="kpi-ideal-max">{idealMax !== undefined ? idealMax : '?'}</div>
+          <div className="kpi-ideal-min">{idealMin !== undefined ? idealMin : '?'}</div>
         </div>
       </div>
     </div>

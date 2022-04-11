@@ -29,6 +29,10 @@ const ViewMedication = () => {
           <h5>Medication :</h5>
           <h4>{targetMedication.productName}</h4>
         </div>
+        <div className="mt-4">
+          <h5>Added by :</h5>
+          <h4>{targetMedication.userName || targetMedication.author}</h4>
+        </div>
       </div>
     </div>
   ) : null;

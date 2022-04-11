@@ -9,6 +9,7 @@ import { ApexChartData } from '../../types/ChartAttributes';
 import { FaLightbulb } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import MultiLingualLabel from './MultiLingualLabel';
+import { debounce } from '@mui/material';
 
 const ADDING_DATA_INTERVAL_IN_SECONDS = 1000;
 const MAX_ZOOM_LEVEL = 200;
@@ -33,6 +34,7 @@ const Chart = ({
   onClick,
   onNoteClick,
   onMedicationClick,
+  onDataDemand,
 }: ChartPropsType) => {
   const [isLive, setLive] = useState(true);
   const [chartHeight] = useState(180);
@@ -41,7 +43,7 @@ const Chart = ({
   const [leftScroll] = useState(0);
   const [rightScroll, setRightScroll] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(10);
-  const [leftOffset, setLeftOffset] = useState(0);
+  const [leftOffset, setLeftOffset] = useState<number>(0);
   const [zoomIn, setZoomIn] = useState(false);
   const [zoomOut, setZoomOut] = useState(false);
 
@@ -60,6 +62,7 @@ const Chart = ({
       show: false,
     },
     chart: {
+      type: 'line',
       redrawOnParentResize: true,
       toolbar: {
         show: false,
@@ -81,7 +84,6 @@ const Chart = ({
           if (config.seriesIndex === 1 && onNoteClick) {
             const timeStamp = dataFrame[1].data[config.dataPointIndex][0];
             const targetNote = notes.find((item: any) => item.inputTime == timeStamp);
-            console.log('Click', targetNote);
             onNoteClick(targetNote.row_id);
           } else if (config.seriesIndex === 2 && onMedicationClick) {
             onMedicationClick(dataFrame[2].data[config.dataPointIndex][0]);
@@ -91,14 +93,12 @@ const Chart = ({
         },
 
         beforeZoom: (e) => {
-          console.log('EVENT : Before zoom', e);
           setLive(false);
         },
         zoomed: (e) => {
-          console.log('EVENT : Zoomed', e);
           setLive(false);
         },
-        beforeResetZoom: () => console.log('EVENT : Zoom Reset'),
+
         scrolled: () => setLive(false),
       },
     },
@@ -266,10 +266,6 @@ const Chart = ({
   }, [values, leftOffset, zoomLevel]);
 
   useEffect(() => {
-    console.log('Values asdasd', title, values);
-  }, [dataFrame]);
-
-  useEffect(() => {
     Data.isLive = isLive;
   }, [isLive]);
 
@@ -285,6 +281,13 @@ const Chart = ({
       setWidth(target.current.offsetWidth);
     }
   }, []);
+
+  useEffect(() => {
+    console.log('Left Offset', leftOffset, values.length);
+    if (leftOffset >= values.length) {
+      if (onDataDemand && values.length > 0) debounce(onDataDemand());
+    }
+  }, [leftOffset]);
 
   useEffect(() => {
     if (zoomIn) {
@@ -462,7 +465,9 @@ const Chart = ({
             className="quant-chart-item"
           />
         ) : (
-          <MultiLingualLabel id="NO_DATA_AVAILABLE" />
+          <div className="h-100 w-100 d-flex justify-content-center align-items-center">
+            <MultiLingualLabel id="NO_DATA_AVAILABLE" />
+          </div>
         )}
       </div>
     </div>

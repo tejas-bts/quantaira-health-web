@@ -15,6 +15,7 @@ const Login = () => {
 
   const [userName, setUserName] = useState<string>('adityadoe@hospitaldomain.com');
   const [password, setPassword] = useState<string>('qwerty@123');
+  const [termsAndCondns, setTermsAndConditions] = useState(false);
 
   useEffect(() => {
     const user: any = localStorage.getItem('user');
@@ -26,14 +27,33 @@ const Login = () => {
   }, []);
 
   const handleLogin = async () => {
+    if (!termsAndCondns) {
+      toast('Please accept the terms and conditions to proceed');
+      return;
+    }
     try {
       setLoading(true);
       const userData: any = await loginUser({
         username: userName,
         password: password,
       });
-      console.log('User Data', userData);
-      dispatch(logIn({ userName: 'tejas', permissions: [1, 2, 3, 4] }));
+
+      if (userData.resetPassword) {
+        const token = userData.token;
+        console.log('Redirection', token);
+        navigate('/new-password', { replace: false, state: { token } });
+        toast('You need to reset the password', { position: 'top-center', autoClose: 10000 });
+        return;
+      }
+
+      dispatch(
+        logIn({
+          userName: userData.name,
+          permissions: userData.permissions,
+          token: userData.token,
+          userAccess: userData.userAccess,
+        })
+      );
       dispatch(selectHospital(userData.userAccess));
       localStorage.setItem('user', JSON.stringify(userData));
 
@@ -44,6 +64,10 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTermsAndConditions = ({ target }: any) => {
+    setTermsAndConditions(target.checked);
   };
 
   return (
@@ -141,6 +165,8 @@ const Login = () => {
           <div className="d-flex m-2">
             <input
               type="checkbox"
+              onChange={handleTermsAndConditions}
+              checked={termsAndCondns}
               className="form-check-input drop-item-check m-0"
               id="terms-condition"
             />
