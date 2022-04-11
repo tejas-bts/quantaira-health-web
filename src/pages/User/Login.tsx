@@ -46,9 +46,14 @@ const Login = () => {
         return;
       }
 
-      console.log('User Data', userData.resetPassword);
-
-      dispatch(logIn({ userName: 'tejas', permissions: [1, 2, 3, 4] }));
+      dispatch(
+        logIn({
+          userName: userData.name,
+          permissions: userData.permissions,
+          token: userData.token,
+          userAccess: userData.userAccess,
+        })
+      );
       dispatch(selectHospital(userData.userAccess));
       localStorage.setItem('user', JSON.stringify(userData));
 

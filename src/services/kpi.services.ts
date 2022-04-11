@@ -1,14 +1,7 @@
-import axios from 'axios';
+import axios from './authenticatedAxios';
 import { baseURLhttp } from '../utils/constants';
 
-
 const getKPIdata = `${baseURLhttp}/FetchKPIPastData`;
-
-axios.defaults.headers.common = {
-  'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInVzZXJuYW1lIjoiYWRpdHlhZG9lQGhvc3BpdGFsZG9tYWluLmNvbSIsImlhdCI6MTY0Njc0NDY4OX0.5_6N_XGCfmYMBpqUNIKgrnsYaTiTJVV9cydzlNfUHpg',
-};
-
-
 
 export const fetchKpi = async ({ bedId, patientId, fromDate, limit }: { bedId: string | number, patientId: string | number, fromDate: string | number, limit: number }) => {
   return new Promise<void>((resolve, reject) => {

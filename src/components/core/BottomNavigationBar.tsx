@@ -5,6 +5,7 @@ import Settings from '../../pages/control-panel/Settings';
 import { hideSettings, showSettings } from '../../reducers/appState';
 import { logOut } from '../../reducers/auth';
 import { nextScreen, previousScreen } from '../../reducers/charts';
+import { deAuthenticateAxios } from '../../services/authenticatedAxios';
 import MultiLingualLabel from './MultiLingualLabel';
 
 const BottomNavigationBar = () => {
@@ -17,6 +18,7 @@ const BottomNavigationBar = () => {
     // Logic for destroying session here
     dispatch(logOut());
     localStorage.clear();
+    deAuthenticateAxios();
     navigate('/', { replace: true });
   };
 

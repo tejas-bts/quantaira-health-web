@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from './authenticatedAxios';
 import { baseURLhttp } from '../utils/constants';
 
 const login = `${baseURLhttp}/LoginUser`;

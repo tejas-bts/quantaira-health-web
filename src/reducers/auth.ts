@@ -13,6 +13,8 @@ export const authState = createSlice({
         loggedIn: true,
         userName: action.payload.userName,
         permissions: action.payload.permissions,
+        token: action.payload.token,
+        userAccess: action.payload.userAccess,
       };
     },
 

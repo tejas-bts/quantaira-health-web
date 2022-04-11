@@ -16,6 +16,7 @@ import { baseURLws } from '../utils/constants';
 
 import { IntlProvider } from 'react-intl';
 import MultiLingualLabel from './core/MultiLingualLabel';
+import { authenticateAxios } from '../services/authenticatedAxios';
 
 const App = () => {
   const user: any = useSelector((state: any) => state.auth);
@@ -40,6 +41,7 @@ const App = () => {
   };
 
   useEffect(() => {
+    authenticateAxios();
     loadHospitalData();
   }, []);
 
