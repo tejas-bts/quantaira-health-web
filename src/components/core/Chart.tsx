@@ -80,15 +80,16 @@ const Chart = ({
         enabled: false,
       },
       events: {
-        click: function (event, chartContext, config) {
-          if (config.seriesIndex === 1 && onNoteClick) {
-            const timeStamp = dataFrame[1].data[config.dataPointIndex][0];
+        dataPointSelection: function (event, chartContext, config) {
+          const { seriesIndex, dataPointIndex } = config;
+          if (seriesIndex === 1 && onNoteClick) {
+            const timeStamp = dataFrame[1].data[dataPointIndex][0];
             const targetNote = notes.find((item: any) => item.inputTime == timeStamp);
             onNoteClick(targetNote.row_id);
-          } else if (config.seriesIndex === 2 && onMedicationClick) {
-            onMedicationClick(dataFrame[2].data[config.dataPointIndex][0]);
+          } else if (seriesIndex === 2 && onMedicationClick) {
+            onMedicationClick(dataFrame[2].data[dataPointIndex][0]);
           } else if (onClick) {
-            onClick(dataFrame[0].data[config.dataPointIndex][0]);
+            onClick(dataFrame[0].data[dataPointIndex][0]);
           }
         },
 
