@@ -51,7 +51,6 @@ const App = () => {
       socket.on('connect', () => {
         toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {
-          console.log('Data', data);
           dispatch(appendToBiometricData({ data }));
         });
       });

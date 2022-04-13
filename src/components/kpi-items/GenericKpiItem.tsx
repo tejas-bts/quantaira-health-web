@@ -11,7 +11,7 @@ const GenericKpiItem = ({
   unit,
   isLive,
 }: KPIitemProp) => {
-  console.log('Current Time', currentTime);
+  if (currentTime) console.log('Current Time', currentTime);
   return (
     <div
       className={`kpi-item ${isLive ? 'live' : 'delayed'}`}

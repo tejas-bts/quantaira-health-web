@@ -14,7 +14,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const [userName, setUserName] = useState<string>('adityadoe@hospitaldomain.com');
-  const [password, setPassword] = useState<string>('qwerty@123');
+  const [password, setPassword] = useState<string>('qwertY@123');
   const [termsAndCondns, setTermsAndConditions] = useState(false);
 
   useEffect(() => {

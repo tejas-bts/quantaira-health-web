@@ -9,7 +9,7 @@ import { ApexChartData } from '../../types/ChartAttributes';
 import { FaLightbulb } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import MultiLingualLabel from './MultiLingualLabel';
-import { debounce } from '@mui/material';
+import { debounce } from '../../utils/utilities';
 
 const ADDING_DATA_INTERVAL_IN_SECONDS = 1000;
 const MAX_ZOOM_LEVEL = 200;

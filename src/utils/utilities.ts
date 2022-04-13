@@ -1,6 +1,6 @@
 import { User } from '../types/User.type';
 
-export const debounce = (func: any, timeout = 300) => {
+export const debounce = (func: any, timeout = 1000) => {
   let timer: NodeJS.Timeout;
   return (...args: any) => {
     clearTimeout(timer);

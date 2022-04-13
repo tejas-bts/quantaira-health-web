@@ -13,6 +13,7 @@ import Alarms from '../pages/control-panel/Alarms';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPastChartData } from '../services/chart.services';
 import { prependToBiometricData } from '../reducers/biometrics';
+import { logBiometricData } from '../utils/logger';
 
 const BiometricCharts = () => {
   const dispatch = useDispatch();
@@ -20,7 +21,6 @@ const BiometricCharts = () => {
   const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
   const [bufferData, setBuffer] = useState<any>({});
-  const [availableCharts, setAvailableCharts] = useState<any>([]);
 
   const chartSelections = useSelector((state: any) => state.chart.selectedCharts);
   const selectedScreen = useSelector((state: any) => state.chart.selectedScreen);
@@ -48,8 +48,9 @@ const BiometricCharts = () => {
   useEffect(() => {
     const availableCharts: any = [];
     biometricData.map((item: BiometricData) => availableCharts.push(item.label));
-    setAvailableCharts(availableCharts);
+    // setAvailableCharts(availableCharts);
     setBuffer(biometricData.map((item: any) => item.values));
+    logBiometricData(biometricData);
   }, [biometricData]);
 
   const getIndex = (label: string) => {
@@ -61,19 +62,14 @@ const BiometricCharts = () => {
     const biometricItem = biometricData.find((item: any) => item.biometricId === biometricId);
     const fromDate = biometricItem.values[0][0];
 
-    console.log('Left : New Data Demanded', new Date(fromDate));
-
     try {
       const newData = await fetchPastChartData({
-        bedId: 1,
-        patientId: 1,
+        bedId: bed.bedId,
+        patientId: bed.patientID,
         fromDate,
-        limit: 100,
+        limit: 4,
         biometricId,
       });
-
-      console.log('New Data Loaded', newData);
-
       dispatch(prependToBiometricData({ data: [newData] }));
     } catch (e) {
       console.log('Error fetching Past chart data', e);
@@ -106,11 +102,12 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
-            onDataDemand={() =>
+            onDataDemand={() => {
+              console.log('Data demanded');
               handleDataDemand(
                 biometricData[getIndex(chartSelections[selectedScreen][0])].biometricId
-              )
-            }
+              );
+            }}
           />
         )}
       </div>
@@ -120,7 +117,7 @@ const BiometricCharts = () => {
             <Route path="/notes/*" element={<Notes />} />
             <Route path="/medications/*" element={<Medications />} />
             <Route path="/alarms/*" element={<Alarms />} />
-            <Route path="/" element={<ChartSelector availableCharts={availableCharts} />} />
+            <Route path="/" element={<ChartSelector />} />
           </Routes>
         </div>
       </div>

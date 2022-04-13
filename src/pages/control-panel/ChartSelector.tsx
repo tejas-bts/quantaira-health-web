@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoMdCloseCircle } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 import { addChartToScreen, removeChartFromScreen, selectScreen } from '../../reducers/charts';
+import { BiometricData } from '../../types/WebsocketData';
 import Dropdown from './../../components/core/Dropdown';
 
-const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) => {
+const ChartSelector = () => {
   const chartSelections = useSelector((state: any) => state.chart.selectedCharts);
   const selectedScreen = useSelector((state: any) => state.chart.selectedScreen);
+  const biometricData: any = useSelector((state: any) => state.biometrics.biometricData);
+
+  const [availableCharts, setAvailableCharts] = useState<Array<string>>([]);
 
   const dispatch = useDispatch();
 
@@ -39,6 +43,12 @@ const ChartSelector = ({ availableCharts }: { availableCharts: Array<string> }) 
     }
     return true;
   };
+
+  useEffect(() => {
+    const availableCharts: any = [];
+    biometricData.map((item: BiometricData) => availableCharts.push(item.label));
+    setAvailableCharts(availableCharts);
+  }, [biometricData]);
 
   return (
     <div className="flex-1 w-100 overflow-hidden">

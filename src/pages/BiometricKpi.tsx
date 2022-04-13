@@ -16,6 +16,7 @@ import { fetchKpi } from '../services/kpi.services';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { logBiometricData } from '../utils/logger';
 
 const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
@@ -75,8 +76,6 @@ const BiometricKpi = () => {
     }
   }, [biometricDataProps]);
 
-  useEffect(() => { console.log('Delta Qtc', deltaQtc);},[deltaQtc]);
-
   useEffect(() => {
     if (!isLive) {
       setPastTime(time);
@@ -101,6 +100,8 @@ const BiometricKpi = () => {
   }, [isLive, time]);
 
   useEffect(() => {
+    logBiometricData(biometricData);
+
     for (const biometric of biometricData) {
       if (biometric && biometric.values) {
         if (biometric.values.length) {
@@ -118,9 +119,13 @@ const BiometricKpi = () => {
         ...oldTemp,
         ...newTemp,
         lastTimeStamp:
-          newTemp && newTemp.values.length ? newTemp.values[0][0] : oldTemp.lastTimeStamp,
+          newTemp && newTemp.values.length
+            ? newTemp.values[newTemp.values.length - 1][0]
+            : oldTemp.lastTimeStamp,
         currentValue:
-          newTemp && newTemp.values.length ? newTemp.values[0][1] : oldTemp.currentValue,
+          newTemp && newTemp.values.length
+            ? newTemp.values[newTemp.values.length - 1][1]
+            : oldTemp.currentValue,
       };
     });
 
@@ -131,9 +136,13 @@ const BiometricKpi = () => {
         ...oldSpO2,
         ...newSpo2,
         lastTimeStamp:
-          newSpo2 && newSpo2.values.length ? newSpo2.values[0][0] : oldSpO2.lastTimeStamp,
+          newSpo2 && newSpo2.values.length
+            ? newSpo2.values[newSpo2.values.length - 1][0]
+            : oldSpO2.lastTimeStamp,
         currentValue:
-          newSpo2 && newSpo2.values.length ? newSpo2.values[0][1] : oldSpO2.currentValue,
+          newSpo2 && newSpo2.values.length
+            ? newSpo2.values[newSpo2.values.length - 1][1]
+            : oldSpO2.currentValue,
       };
     });
 
@@ -143,9 +152,13 @@ const BiometricKpi = () => {
         ...oldNiBP,
         ...newNiBP,
         lastTimeStamp:
-          newNiBP && newNiBP.values.length ? newNiBP.values[0][0] : oldNiBP.lastTimeStamp,
+          newNiBP && newNiBP.values.length
+            ? newNiBP.values[newNiBP.values.length - 1][0]
+            : oldNiBP.lastTimeStamp,
         currentValue:
-          newNiBP && newNiBP.values.length ? newNiBP.values[0][1] : oldNiBP.currentValue,
+          newNiBP && newNiBP.values.length
+            ? newNiBP.values[newNiBP.values.length - 1][1]
+            : oldNiBP.currentValue,
       };
     });
 
@@ -155,8 +168,14 @@ const BiometricKpi = () => {
       return {
         ...oldHR,
         ...newHR,
-        lastTimeStamp: newHR && newHR.values.length ? newHR.values[0][0] : oldHR.lastTimeStamp,
-        currentValue: newHR && newHR.values.length ? newHR.values[0][1] : oldHR.currentValue,
+        lastTimeStamp:
+          newHR && newHR.values.length
+            ? newHR.values[newHR.values.length - 1][0]
+            : oldHR.lastTimeStamp,
+        currentValue:
+          newHR && newHR.values.length
+            ? newHR.values[newHR.values.length - 1][1]
+            : oldHR.currentValue,
       };
     });
 
@@ -166,8 +185,14 @@ const BiometricKpi = () => {
       return {
         ...oldPR,
         ...newPR,
-        lastTimeStamp: newPR && newPR.values.length ? newPR.values[0][0] : oldPR.lastTimeStamp,
-        currentValue: newPR && newPR.values.length ? newPR.values[0][1] : oldPR.currentValue,
+        lastTimeStamp:
+          newPR && newPR.values.length
+            ? newPR.values[newPR.values.length - 1][0]
+            : oldPR.lastTimeStamp,
+        currentValue:
+          newPR && newPR.values.length
+            ? newPR.values[newPR.values.length - 1][1]
+            : oldPR.currentValue,
       };
     });
 
@@ -177,8 +202,14 @@ const BiometricKpi = () => {
       return {
         ...oldRR,
         ...newRR,
-        lastTimeStamp: newRR && newRR.values.length ? newRR.values[0][0] : oldRR.lastTimeStamp,
-        currentValue: newRR && newRR.values.length ? newRR.values[0][1] : oldRR.currentValue,
+        lastTimeStamp:
+          newRR && newRR.values.length
+            ? newRR.values[newRR.values.length - 1][0]
+            : oldRR.lastTimeStamp,
+        currentValue:
+          newRR && newRR.values.length
+            ? newRR.values[newRR.values.length - 1][1]
+            : oldRR.currentValue,
       };
     });
 
@@ -188,8 +219,14 @@ const BiometricKpi = () => {
       return {
         ...oldST1,
         ...newST1,
-        lastTimeStamp: newST1 && newST1.values.length ? newST1.values[0][0] : oldST1.lastTimeStamp,
-        currentValue: newST1 && newST1.values.length ? newST1.values[0][1] : oldST1.currentValue,
+        lastTimeStamp:
+          newST1 && newST1.values.length
+            ? newST1.values[newST1.values.length - 1][0]
+            : oldST1.lastTimeStamp,
+        currentValue:
+          newST1 && newST1.values.length
+            ? newST1.values[newST1.values.length - 1][1]
+            : oldST1.currentValue,
       };
     });
 
@@ -199,8 +236,14 @@ const BiometricKpi = () => {
       return {
         ...oldST2,
         ...newST2,
-        lastTimeStamp: newST2 && newST2.values.length ? newST2.values[0][0] : oldST2.lastTimeStamp,
-        currentValue: newST2 && newST2.values.length ? newST2.values[0][1] : oldST2.currentValue,
+        lastTimeStamp:
+          newST2 && newST2.values.length
+            ? newST2.values[newST2.values.length - 1][0]
+            : oldST2.lastTimeStamp,
+        currentValue:
+          newST2 && newST2.values.length
+            ? newST2.values[newST2.values.length - 1][1]
+            : oldST2.currentValue,
       };
     });
 
@@ -210,8 +253,14 @@ const BiometricKpi = () => {
       return {
         ...oldST3,
         ...newST3,
-        lastTimeStamp: newST3 && newST3.values.length ? newST3.values[0][0] : oldST3.lastTimeStamp,
-        currentValue: newST3 && newST3.values.length ? newST3.values[0][1] : oldST3.currentValue,
+        lastTimeStamp:
+          newST3 && newST3.values.length
+            ? newST3.values[newST3.values.length - 1][0]
+            : oldST3.lastTimeStamp,
+        currentValue:
+          newST3 && newST3.values.length
+            ? newST3.values[newST3.values.length - 1][1]
+            : oldST3.currentValue,
       };
     });
 
@@ -222,9 +271,13 @@ const BiometricKpi = () => {
         ...oldSTaVR,
         ...newSTaVR,
         lastTimeStamp:
-          newSTaVR && newSTaVR.values.length ? newSTaVR.values[0][0] : oldSTaVR.lastTimeStamp,
+          newSTaVR && newSTaVR.values.length
+            ? newSTaVR.values[newSTaVR.values.length - 1][0]
+            : oldSTaVR.lastTimeStamp,
         currentValue:
-          newSTaVR && newSTaVR.values.length ? newSTaVR.values[0][1] : oldSTaVR.currentValue,
+          newSTaVR && newSTaVR.values.length
+            ? newSTaVR.values[newSTaVR.values.length - 1][1]
+            : oldSTaVR.currentValue,
       };
     });
 
@@ -235,9 +288,13 @@ const BiometricKpi = () => {
         ...oldSTaVL,
         ...newSTaVL,
         lastTimeStamp:
-          newSTaVL && newSTaVL.values.length ? newSTaVL.values[0][0] : oldSTaVL.lastTimeStamp,
+          newSTaVL && newSTaVL.values.length
+            ? newSTaVL.values[newSTaVL.values.length - 1][0]
+            : oldSTaVL.lastTimeStamp,
         currentValue:
-          newSTaVL && newSTaVL.values.length ? newSTaVL.values[0][1] : oldSTaVL.currentValue,
+          newSTaVL && newSTaVL.values.length
+            ? newSTaVL.values[newSTaVL.values.length - 1][1]
+            : oldSTaVL.currentValue,
       };
     });
 
@@ -248,9 +305,13 @@ const BiometricKpi = () => {
         ...oldSTaVF,
         ...newSTaVF,
         lastTimeStamp:
-          newSTaVF && newSTaVF.values.length ? newSTaVF.values[0][0] : oldSTaVF.lastTimeStamp,
+          newSTaVF && newSTaVF.values.length
+            ? newSTaVF.values[newSTaVF.values.length - 1][0]
+            : oldSTaVF.lastTimeStamp,
         currentValue:
-          newSTaVF && newSTaVF.values.length ? newSTaVF.values[0][1] : oldSTaVF.currentValue,
+          newSTaVF && newSTaVF.values.length
+            ? newSTaVF.values[newSTaVF.values.length - 1][1]
+            : oldSTaVF.currentValue,
       };
     });
 
@@ -260,8 +321,14 @@ const BiometricKpi = () => {
       return {
         ...oldSTV,
         ...newSTV,
-        lastTimeStamp: newSTV && newSTV.values.length ? newSTV.values[0][0] : oldSTV.lastTimeStamp,
-        currentValue: newSTV && newSTV.values.length ? newSTV.values[0][1] : oldSTV.currentValue,
+        lastTimeStamp:
+          newSTV && newSTV.values.length
+            ? newSTV.values[newSTV.values.length - 1][0]
+            : oldSTV.lastTimeStamp,
+        currentValue:
+          newSTV && newSTV.values.length
+            ? newSTV.values[newSTV.values.length - 1][1]
+            : oldSTV.currentValue,
       };
     });
 
@@ -273,11 +340,11 @@ const BiometricKpi = () => {
         ...newNiBPDia,
         lastTimeStamp:
           newNiBPDia && newNiBPDia.values.length
-            ? newNiBPDia.values[0][0]
+            ? newNiBPDia.values[newNiBPDia.values.length - 1][0]
             : oldNiBPdia.lastTimeStamp,
         currentValue:
           newNiBPDia && newNiBPDia.values.length
-            ? newNiBPDia.values[0][1]
+            ? newNiBPDia.values[newNiBPDia.values.length - 1][1]
             : oldNiBPdia.currentValue,
       };
     });
@@ -290,11 +357,11 @@ const BiometricKpi = () => {
         ...newNiBPsys,
         lastTimeStamp:
           newNiBPsys && newNiBPsys.values.length
-            ? newNiBPsys.values[0][0]
+            ? newNiBPsys.values[newNiBPsys.values.length - 1][0]
             : oldNiBPsys.lastTimeStamp,
         currentValue:
           newNiBPsys && newNiBPsys.values.length
-            ? newNiBPsys.values[0][1]
+            ? newNiBPsys.values[newNiBPsys.values.length - 1][1]
             : oldNiBPsys.currentValue,
       };
     });
@@ -306,9 +373,13 @@ const BiometricKpi = () => {
         ...oldNibpPr,
         ...newNibpPr,
         lastTimeStamp:
-          newNibpPr && newNibpPr.values.length ? newNibpPr.values[0][0] : oldNibpPr.lastTimeStamp,
+          newNibpPr && newNibpPr.values.length
+            ? newNibpPr.values[newNibpPr.values.length - 1][0]
+            : oldNibpPr.lastTimeStamp,
         currentValue:
-          newNibpPr && newNibpPr.values.length ? newNibpPr.values[0][1] : oldNibpPr.currentValue,
+          newNibpPr && newNibpPr.values.length
+            ? newNibpPr.values[newNibpPr.values.length - 1][1]
+            : oldNibpPr.currentValue,
       };
     });
 
@@ -319,11 +390,11 @@ const BiometricKpi = () => {
         ...newNiBPmap,
         lastTimeStamp:
           newNiBPmap && newNiBPmap.values.length
-            ? newNiBPmap.values[0][0]
+            ? newNiBPmap.values[newNiBPmap.values.length - 1][0]
             : oldNiBPmap.lastTimeStamp,
         currentValue:
           newNiBPmap && newNiBPmap.values.length
-            ? newNiBPmap.values[0][1]
+            ? newNiBPmap.values[newNiBPmap.values.length - 1][1]
             : oldNiBPmap.currentValue,
       };
     });
@@ -334,8 +405,14 @@ const BiometricKpi = () => {
       return {
         ...oldQT,
         ...newQT,
-        lastTimeStamp: newQT && newQT.values.length ? newQT.values[0][0] : oldQT.lastTimeStamp,
-        currentValue: newQT && newQT.values.length ? newQT.values[0][1] : oldQT.currentValue,
+        lastTimeStamp:
+          newQT && newQT.values.length
+            ? newQT.values[newQT.values.length - 1][0]
+            : oldQT.lastTimeStamp,
+        currentValue:
+          newQT && newQT.values.length
+            ? newQT.values[newQT.values.length - 1][1]
+            : oldQT.currentValue,
       };
     });
 
@@ -345,25 +422,30 @@ const BiometricKpi = () => {
       return {
         ...oldQTc,
         ...newQTc,
-        lastTimeStamp: newQTc && newQTc.values.length ? newQTc.values[0][0] : oldQTc.lastTimeStamp,
-        currentValue: newQTc && newQTc.values.length ? newQTc.values[0][1] : oldQTc.currentValue,
+        lastTimeStamp:
+          newQTc && newQTc.values.length
+            ? newQTc.values[newQTc.values.length - 1][0]
+            : oldQTc.lastTimeStamp,
+        currentValue:
+          newQTc && newQTc.values.length
+            ? newQTc.values[newQTc.values.length - 1][1]
+            : oldQTc.currentValue,
       };
     });
 
     //Getting delta QTc from incoming data
     setDeltaQTc((oldDeltaQTc) => {
       const newDeltaQTc = biometricData.find((item) => item.label === BiometricParameters.DeltaQTc);
-      console.log('Delta QTc', newDeltaQTc);
       return {
         ...oldDeltaQTc,
         ...newDeltaQTc,
         lastTimeStamp:
           newDeltaQTc && newDeltaQTc.values.length
-            ? newDeltaQTc.values[0][0]
+            ? newDeltaQTc.values[newDeltaQTc.values.length - 1][0]
             : oldDeltaQTc.lastTimeStamp,
         currentValue:
           newDeltaQTc && newDeltaQTc.values.length
-            ? newDeltaQTc.values[0][1]
+            ? newDeltaQTc.values[newDeltaQTc.values.length - 1][1]
             : oldDeltaQTc.currentValue,
       };
     });
