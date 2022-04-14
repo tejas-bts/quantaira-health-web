@@ -391,7 +391,7 @@ const Chart = ({
             </div>
             <div className="chart-header-col-2">
               <div className="chart-current-value" style={{ color }}>
-                {currentValue}
+                {values.length > 0 ? currentValue : '?'}
               </div>
             </div>
             <div className="chart-header-col-3">

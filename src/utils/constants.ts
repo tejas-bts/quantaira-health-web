@@ -1,6 +1,7 @@
 export const BiometricParameters = {
 
   Temp: 'Temp',
+  Temp2: 'Temp 2',
   SpO2: 'SpO2',
   HR: 'HR',
   PR: 'PR',

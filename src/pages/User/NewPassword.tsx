@@ -33,6 +33,18 @@ const NewPassword = () => {
       toast('Both the passwords need to be same');
       return;
     }
+    if (password.length < 8) {
+      toast('Password must be atleast 8 characters');
+      return;
+    }
+    if (password.toUpperCase() === password.toLowerCase()) {
+      toast('Password must contain atleast one Upper-case and one Lower-case alphabet');
+      return;
+    }
+    if (!/\d/.test(password)) {
+      toast('Password must contain atleast one number');
+      return;
+    }
     try {
       setLoading(true);
       const userData: any = await resetUserPassword({
@@ -48,7 +60,8 @@ const NewPassword = () => {
       localStorage.setItem('user', JSON.stringify(userData));
 
       navigate('/app', { replace: true });
-    } catch (e) {
+    } catch (e: any) {
+      console.log('Erorororro %j', e.message);
       // console.error('Error loging in', e);
       toast('Oops! The credentials are not correct');
     } finally {

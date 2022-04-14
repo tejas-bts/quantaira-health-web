@@ -28,6 +28,8 @@ const BiometricKpi = () => {
   const [slider, setSlider] = useState(0);
 
   const [temp, setTemp] = useState(new BioMetricDataObj(BiometricParameters.Temp));
+  const [temp2, setTemp2] = useState(new BioMetricDataObj(BiometricParameters.Temp2));
+
   const [spo2, setSpO2] = useState(new BioMetricDataObj(BiometricParameters.SpO2));
 
   const [nibp, setNiBP] = useState(new BioMetricDataObj(BiometricParameters.NIBP));
@@ -126,6 +128,23 @@ const BiometricKpi = () => {
           newTemp && newTemp.values.length
             ? newTemp.values[newTemp.values.length - 1][1]
             : oldTemp.currentValue,
+      };
+    });
+
+    //Getting Temperature from incoming data
+    setTemp2((oldTemp2) => {
+      const newTemp2 = biometricData.find((item) => item.label === BiometricParameters.Temp2);
+      return {
+        ...oldTemp2,
+        ...newTemp2,
+        lastTimeStamp:
+          newTemp2 && newTemp2.values.length
+            ? newTemp2.values[newTemp2.values.length - 1][0]
+            : oldTemp2.lastTimeStamp,
+        currentValue:
+          newTemp2 && newTemp2.values.length
+            ? newTemp2.values[newTemp2.values.length - 1][1]
+            : oldTemp2.currentValue,
       };
     });
 
@@ -530,12 +549,17 @@ const BiometricKpi = () => {
       <GenericKpiItem
         title={'Temp'}
         color={colors[2]}
-        currentValue={temp.currentValue}
-        latestTimestamp={temp.lastTimeStamp}
-        idealMin={temp.idealMin ?? undefined}
-        idealMax={temp.idealMax ?? undefined}
-        unit={temp.unit ?? undefined}
-        isLive={temp.lastTimeStamp === latestTimestamp && isLive}
+        currentValue={temp.currentValue !== undefined ? temp.currentValue : temp2.currentValue}
+        latestTimestamp={
+          temp.lastTimeStamp !== undefined ? temp.lastTimeStamp : temp2.lastTimeStamp
+        }
+        idealMin={temp.idealMin !== undefined ? temp.idealMin : temp2.idealMin ?? undefined}
+        idealMax={temp.idealMax !== undefined ? temp.idealMax : temp2.idealMax ?? undefined}
+        unit={temp.unit ? temp.unit : temp2.unit ?? undefined}
+        isLive={
+          (temp.lastTimeStamp === latestTimestamp || temp2.lastTimeStamp === latestTimestamp) &&
+          isLive
+        }
       />
       <GenericKpiItem
         title={'SpO2'}
