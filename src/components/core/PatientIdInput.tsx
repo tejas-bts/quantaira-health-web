@@ -1,9 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { fetchPatientData } from '../../services/patient.services';
 
 const PatientIdInput = ({ value, ...props }: { value?: string }) => {
   const [isDisabled, setDisabled] = useState(true);
   const [isCardShown, setCardShown] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+  const [patient, setPatient] = useState<any>({});
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const bed: any = useSelector((state: any) => state.patient.bed);
+
+  const loadPatientData = async () => {
+    try {
+      setLoading(true);
+      const patientData: any = await fetchPatientData(bed.patientID);
+      setPatient(patientData);
+    } catch (e) {
+      console.error('Error fetching patient data', e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (inputRef && inputRef.current && !isDisabled) {
@@ -12,6 +30,10 @@ const PatientIdInput = ({ value, ...props }: { value?: string }) => {
       inputRef.current.select();
     }
   }, [isDisabled]);
+
+  useEffect(() => {
+    if (isCardShown) loadPatientData();
+  }, [isCardShown]);
 
   const showCard = () => {
     setCardShown(true);
@@ -38,28 +60,34 @@ const PatientIdInput = ({ value, ...props }: { value?: string }) => {
       <button className="patient-id-input-edit-btn d-none" onClick={() => setDisabled(false)} />
       {isCardShown && (
         <div className="patient-card">
-          <p className="mb-0 text-center mt-2">
-            Name : <strong className="ml-2">Tejas Dadhe</strong>
-          </p>
-          <div className="d-flex justify-content-around">
-            <p className="mb-0">
-              Age : <strong>27 yrs</strong>
-            </p>
-            <p className="mb-0">
-              Gender : <strong>Male</strong>
-            </p>
-          </div>
-          <div className="d-flex justify-content-around">
-            <p className="mb-0">
-              Height : <strong>174 cm</strong>
-            </p>
-            <p className="mb-0">
-              Weight : <strong>74 kg</strong>
-            </p>
-          </div>
-          <p className="mb-0">
-            Admission time : <strong>{new Date().toLocaleString()}</strong>{' '}
-          </p>
+          {isLoading ? (
+            <div className="text-center">Loading...</div>
+          ) : (
+            <>
+              <p className="mb-0 text-center mt-2">
+                Name : <strong className="ml-2">{patient.name}</strong>
+              </p>
+              <div className="d-flex justify-content-between gap-2">
+                <p className="mb-0 flex-1">
+                  Date of Birth : <strong>{patient.dob}</strong>
+                </p>
+                <p className="mb-0 flex-1">
+                  Gender : <strong>{patient.gender}</strong>
+                </p>
+              </div>
+              <div className="d-flex justify-content-between gap-2">
+                <p className="mb-0 flex-1">
+                  Height : <strong>{patient.height}</strong>
+                </p>
+                <p className="mb-0 flex-1">
+                  Weight : <strong>{patient.weight}</strong>
+                </p>
+              </div>
+              <p className="mb-0">
+                Admission time : <strong>{patient.dateOfAdmission}</strong>{' '}
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>

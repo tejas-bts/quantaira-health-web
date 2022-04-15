@@ -25,8 +25,16 @@ const AddNote = ({ onUpdate }: { onUpdate: any }) => {
     });
   };
 
-  const handleChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+  const handleNoteChange = (e: { target: { value: React.SetStateAction<string> } }) => {
     setNote(e.target.value);
+  };
+
+  const handleChangeDate = (e: Date) => {
+    const timeStamp = e.getTime();
+    navigate(`/app/charts/notes/add/${timeStamp}`, {
+      replace: true,
+    });
+    console.log('Date Changed', timeStamp);
   };
 
   const handleSaveAndRefresh = async () => {
@@ -56,14 +64,20 @@ const AddNote = ({ onUpdate }: { onUpdate: any }) => {
         <div className="title">
           <MultiLingualLabel id="ADD_NOTES" />
         </div>
-        {selectedTime && <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />}
+        {selectedTime && (
+          <DateTimePicker
+            size={'sm'}
+            defaultDate={new Date(selectedTime)}
+            onChange={handleChangeDate}
+          />
+        )}
       </div>
       <div className="add-notes-text-area-input">
         <textarea
           className="quantaira-text-area"
           placeholder="Type notes here..."
           value={note}
-          onChange={handleChange}
+          onChange={handleNoteChange}
         />
       </div>
       <div className="add-notes-buttons">

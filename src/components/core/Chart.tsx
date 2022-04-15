@@ -172,7 +172,7 @@ const Chart = ({
       decimalsInFloat: 0,
       range: zoomLevel * 1000,
       labels: {
-        offsetX: 50,
+        // offsetX: 50,
         format: 'hh:mm:ss',
         datetimeUTC: false,
         style: {
@@ -255,11 +255,12 @@ const Chart = ({
           },
           {
             name: 'Notes',
-            data: values.slice(start, end).filter((item) => notesDirectory.includes(item[0])),
+            data: notes.map((item: any) => [item.inputTime, 0]), //values.slice(start, end).filter((item) => notesDirectory.includes(item[0])),
           },
           {
             name: 'Medication',
-            data: values.slice(start, end).filter((item) => medicationsDirectory.includes(item[0])),
+            data: medications.map((item: any) => [item.inputTime, 0]),
+            // data: values.slice(start, end).filter((item) => medicationsDirectory.includes(item[0])),
           },
         ]);
       }

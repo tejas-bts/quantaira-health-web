@@ -4,10 +4,12 @@ import AppLocale from '../../../languages/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectLanguage } from '../../../reducers/language';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
+import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
   const language = useSelector((state: any) => state.language.selectedLanguage);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleSelectLanguage = (label: any, locale: any) => {
     dispatch(selectLanguage({ label, locale }));
   };
@@ -29,6 +31,12 @@ const Settings = () => {
           </p>
         ))}
       </SettingsItem>
+      <SettingsItem
+        title={<MultiLingualLabel id="About" />}
+        icon="/images/settings/language.svg"
+        value={''}
+        onClick={() => navigate('/app/about', { replace: true })}
+      />
     </div>
   );
 };

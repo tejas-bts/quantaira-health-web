@@ -33,8 +33,16 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
     });
   };
 
-  const handleChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+  const handleMedicationChange = (e: { target: { value: React.SetStateAction<string> } }) => {
     setNote(e.target.value);
+  };
+
+  const handleChangeDate = (e: Date) => {
+    const timeStamp = e.getTime();
+    navigate(`/app/charts/medications/add/${timeStamp}`, {
+      replace: true,
+    });
+    console.log('Date Changed', timeStamp);
   };
 
   const handleSave = async () => {
@@ -77,7 +85,13 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
         <div className="title">
           <MultiLingualLabel id="ADD_MEDICATION" />
         </div>
-        {selectedTime && <DateTimePicker size={'sm'} defaultDate={new Date(selectedTime)} />}
+        {selectedTime && (
+          <DateTimePicker
+            size={'sm'}
+            defaultDate={new Date(selectedTime)}
+            onChange={handleChangeDate}
+          />
+        )}
       </div>
       <div
         className="add-notes-category"
@@ -117,7 +131,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
           className="quantaira-text-area"
           placeholder="Type notes here..."
           value={note}
-          onChange={handleChange}
+          onChange={handleMedicationChange}
         />
       </div>
       <div className="add-notes-buttons">

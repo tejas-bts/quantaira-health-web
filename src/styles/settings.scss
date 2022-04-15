@@ -37,9 +37,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        transform: rotate(90deg);
         margin-right: 1rem;
         transition: all 500ms;
+
+        &.closed {
+          transform: rotate(90deg);
+        }
 
         &.open {
           transform: rotate(-90deg);

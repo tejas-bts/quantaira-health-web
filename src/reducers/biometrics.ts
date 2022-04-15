@@ -19,9 +19,7 @@ export const biometrics = createSlice({
           const newTarget = { ...oldData[targetIndex] };
           const existingValues = oldData[targetIndex].values;
           const newValues = newItem.values.slice().sort((a: [number, number], b: [number, number]) => a[0] - b[0]);
-          const newValuesReversed = newItem.values.slice().sort((a: [number, number], b: [number, number]) => b[0] - a[0]);
-          console.log('New Values', newValues);
-          console.log('New Values', newValuesReversed);
+          // const newValuesReversed = newItem.values.slice().sort((a: [number, number], b: [number, number]) => b[0] - a[0]);
 
           newTarget.values = [...existingValues, ...newValues];
           oldData[targetIndex] = newTarget;

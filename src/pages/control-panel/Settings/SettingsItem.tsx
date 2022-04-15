@@ -6,11 +6,13 @@ const SettingsItem = ({
   icon,
   value,
   children,
+  onClick,
 }: {
   title: any;
   icon: string;
   value: string;
-  children: any;
+  children?: any;
+  onClick?: any;
 }) => {
   const [isOpen, setOpen] = useState(false);
 
@@ -19,18 +21,20 @@ const SettingsItem = ({
   };
 
   return (
-    <div className="settings-item">
+    <div className="settings-item" onClick={onClick}>
       <div className="settings-header" onClick={toggleOpen}>
         <div className="settings-icon" style={{ backgroundImage: `url('${icon}')` }} />
         <div className="d-flex flex-column flex-1">
           <div className="settings-item-title">{title}</div>
           <div className="settings-item-value">{value}</div>
         </div>
-        <div className={`settings-open-icon ${isOpen ? 'open' : 'closed'}`}>
+        <div className={`settings-open-icon ${children ? (isOpen ? 'open' : 'closed') : ''}`}>
           <BsChevronRight />
         </div>
       </div>
-      <div className={`settings-item-drop ${isOpen ? 'open' : 'closed'}`}>{children}</div>
+      {children && (
+        <div className={`settings-item-drop ${isOpen ? 'open' : 'closed'}`}>{children}</div>
+      )}
     </div>
   );
 };
