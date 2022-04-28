@@ -2,7 +2,7 @@ import { User } from '../types/User.type';
 
 export const debounce = (func: any, timeout = 1000) => {
   let timer: NodeJS.Timeout;
-  return (...args: any) => {
+  return (...args: [unknown]) => {
     clearTimeout(timer);
     timer = setTimeout(() => { func.apply(this, args); }, timeout);
   };

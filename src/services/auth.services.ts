@@ -4,18 +4,18 @@ import { baseURLhttp } from '../utils/constants';
 const login = `${baseURLhttp}/LoginUser`;
 const resetPassword = `${baseURLhttp}/ResetPassword`;
 
-export const loginUser = async (params: any) => {
+export const loginUser = async (parameters: { userName: string, password: string }) => {
   return new Promise<void>((resolve, reject) => {
-    axios.post(login, { ...params })
+    axios.post(login, { username: parameters.userName, password: parameters.password })
       .then((data: any) => resolve(data.data.data))
       .catch((e) => reject(e));
   });
 };
 
 
-export const resetUserPassword = async (params: { token: string, password: string, cpassword: string }) => {
+export const resetUserPassword = async (parameters: { token: string, password: string, cpassword: string }) => {
   return new Promise<void>((resolve, reject) => {
-    axios.post(resetPassword, { ...params })
+    axios.post(resetPassword, { params: { token: parameters.token, password: parameters.password, cpassword: parameters.cpassword } })
       .then((data: any) => resolve(data.data.data))
       .catch((e) => reject(e));
   });

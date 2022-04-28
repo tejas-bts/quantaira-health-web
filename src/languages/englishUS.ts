@@ -62,6 +62,8 @@ export const englishUS: Record<string, string> = {
   ERROR_FETCHING_MEDICATIONS: 'Oops!There was a problem fetching previous medications!',
   ERROR_FETCHING_NOTES: 'Oops!There was a problem fetching previous notes!',
 
-  NO_DATA_AVAILABLE: 'No data available',
+  ERROR_SEARCHING_MEDICATIONS: 'Oops!There was a problem during medications search!',
+  ERROR_SEARCHING_NOTES: 'Oops!There was a problem during notes search!',
 
+  NO_DATA_AVAILABLE: 'No data available',
 };

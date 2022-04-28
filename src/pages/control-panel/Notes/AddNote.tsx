@@ -7,14 +7,15 @@ import DateTimePicker from '../../../components/core/DateTimePicker';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
+import { Bed } from '../../../types/Core.types';
 
-const AddNote = ({ onUpdate }: { onUpdate: any }) => {
+const AddNote = ({ onUpdate }: { onUpdate: () => void }) => {
   let selectedTime = new Date().getTime();
   const urlParams = useParams();
   if (urlParams.selectedTime) selectedTime = parseInt(urlParams.selectedTime);
 
   const navigate = useNavigate();
-  const bed: any = useSelector((state: any) => state.patient.bed);
+  const bed: Bed = useSelector((state: any) => state.patient.bed);
 
   const [note, setNote] = useState('');
   const [isSaving, setSaving] = useState(false);
@@ -41,12 +42,10 @@ const AddNote = ({ onUpdate }: { onUpdate: any }) => {
     try {
       setSaving(true);
       await saveNote({
-        patientId: bed.patientID,
-        device: '123',
+        patientId: bed.patientID.toString(),
+        deviceId: '123',
         content: note,
-        ipType: '2',
-        categoryId: '2',
-        inputTime: selectedTime,
+        inputTimeStamp: selectedTime,
       });
       await onUpdate();
       toast(<MultiLingualLabel id="SUCCESSFULLY_SAVED_NOTE" />);

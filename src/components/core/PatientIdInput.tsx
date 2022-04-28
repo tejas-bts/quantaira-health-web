@@ -1,20 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchPatientData } from '../../services/patient.services';
+import { Bed } from '../../types/Core.types';
 
-const PatientIdInput = ({ value, ...props }: { value?: string }) => {
+const PatientIdInput = ({ value, ...props }: { value?: string | number }) => {
   const [isDisabled, setDisabled] = useState(true);
   const [isCardShown, setCardShown] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [patient, setPatient] = useState<any>({});
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const bed: any = useSelector((state: any) => state.patient.bed);
+  const bed: Bed = useSelector((state: any) => state.patient.bed);
 
   const loadPatientData = async () => {
     try {
       setLoading(true);
-      const patientData: any = await fetchPatientData(bed.patientID);
+      const patientData: any = await fetchPatientData(bed.patientID.toString());
       setPatient(patientData);
     } catch (e) {
       console.error('Error fetching patient data', e);

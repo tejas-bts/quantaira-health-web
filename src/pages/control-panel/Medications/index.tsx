@@ -9,16 +9,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToMedications } from '../../../reducers/medications';
 import { toast } from 'react-toastify';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
+import { Bed } from '../../../types/Core.types';
 
 const index = () => {
-  const bed: any = useSelector((state: any) => state.patient.bed);
+  const bed: Bed = useSelector((state: any) => state.patient.bed);
   const dispatch = useDispatch();
 
   const loadMedications = async () => {
     try {
+      console.log('Bed asdsad', bed);
       const medications: any = await fetchMedications({
-        pid: bed.patientId,
-        device: '123',
+        patientId: String(bed.patientID),
+        deviceId: '123',
       });
       dispatch(addToMedications({ medications }));
     } catch (e) {
@@ -36,6 +38,7 @@ const index = () => {
       <Route path="/add/*" element={<AddMedication onUpdate={loadMedications} />} />
       <Route path="/add/:selectedTime" element={<AddMedication onUpdate={loadMedications} />} />
       <Route path="/view/:selectedTime" element={<ViewMedication />} />
+      <Route path="/show/:medicationId" element={<ViewMedication />} />
     </Routes>
   );
 };
