@@ -13,7 +13,7 @@ import Alarms from '../pages/control-panel/Alarms';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPastChartData } from '../services/chart.services';
 import { prependToBiometricData } from '../reducers/biometrics';
-import { logBiometricData } from '../utils/logger';
+// import { logBiometricData } from '../utils/logger';
 
 const BiometricCharts = () => {
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ const BiometricCharts = () => {
     biometricData.map((item: BiometricData) => availableCharts.push(item.label));
     // setAvailableCharts(availableCharts);
     setBuffer(biometricData.map((item: any) => item.values));
-    logBiometricData(biometricData);
+    // logBiometricData(biometricData);
   }, [biometricData]);
 
   const getIndex = (label: string) => {

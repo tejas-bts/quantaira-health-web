@@ -2,7 +2,6 @@ export const logBiometricData = (data: any, exclusions: Array<string> = []) => {
   console.clear();
   const processedData: any = {};
   for (const i of data) {
-
     const label: string = i.label;
     if (exclusions.includes(label)) {
       continue;
@@ -17,11 +16,13 @@ export const logBiometricData = (data: any, exclusions: Array<string> = []) => {
       const obj = processedData[time];
       obj[i.label] = reading;
     }
-
   }
   console.table(processedData);
 };
 
 export const logData = () => {
-  console.log('%cWelcome to Quantaira debug console', 'color:yellow; font-size:20px;text-align:center');
+  console.log(
+    '%cWelcome to Quantaira debug console',
+    'color:yellow; font-size:20px;text-align:center'
+  );
 };

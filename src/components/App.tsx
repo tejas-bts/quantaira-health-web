@@ -84,12 +84,7 @@ const App = () => {
       />
       <div className="d-flex flex-column h-100">
         <div className={`app-header ${headerBlur ? 'blur' : ''}`}>
-          <Header
-            onPatientChange={() => {
-              console.log('');
-            }}
-            onDateTimeChange={() => console.log('')}
-          />
+          <Header onDateTimeChange={() => console.log('')} />
         </div>
         <div className={`main-container ${contentBlur ? 'blur' : ''}`}>
           <Routes>

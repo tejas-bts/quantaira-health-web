@@ -5,7 +5,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
 import DateTimePicker from '../../../components/core/DateTimePicker';
 import { toast } from 'react-toastify';
-import { saveMedication, searchMedications } from '../../../services/medications.services';
+import { saveMedication, searchMedicines } from '../../../services/medications.services';
 // import QuantairaAutoSuggest from '../../../components/core/QuantairaAutoSuggest';
 import QuantairaAutoSuggest from '../../../components/core/QuantairaAutoSuggest.new';
 import { useSelector } from 'react-redux';
@@ -24,6 +24,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   const [inputValue, setInputValue] = useState<any>(undefined);
   const [medicationOptions, setMedicationOptions] = useState<any>([]);
   const [selectedOption, setSelectedOption] = useState<any>({});
+  const [isNDC, setNdc] = useState(false);
 
   const bed: any = useSelector((state: any) => state.patient.bed);
 
@@ -50,11 +51,11 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
       setSaving(true);
       await saveMedication({
         patientId: bed.patientID,
-        device: '123',
+        deviceId: '123',
         content: note,
-        inputTime: selectedTime,
-        item_id: selectedOption.NDC,
-        ndc: false,
+        inputTimeStamp: selectedTime,
+        item: selectedOption.row_id,
+        isNDC: isNDC,
       });
       await onUpdate();
       toast(<MultiLingualLabel id="SUCCESSFULLY_SAVED_MEDICATION" />);
@@ -67,7 +68,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   };
 
   const loadMedication = async (inputValue: any) => {
-    const data = await searchMedications(inputValue);
+    const data = await searchMedicines(inputValue, isNDC);
     setMedicationOptions(() => {
       return data;
     });
@@ -77,7 +78,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
     if (inputValue && inputValue.length > 1 && inputValue.length < 8) {
       loadMedication(inputValue);
     }
-  }, [inputValue]);
+  }, [inputValue, isNDC]);
 
   return (
     <div className="add-notes-page">
@@ -98,21 +99,10 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
         style={{ display: 'flex', flexDirection: 'row', gap: '1rem' }}
       >
         <QuantairaAutoSuggest
-          placeHolder="Search available medicines with name"
+          placeHolder="Search available medicines"
           options={medicationOptions.map((item: any) => {
             return {
-              label: item.product_name,
-              value: item,
-            };
-          })}
-          onChange={(value: any) => setInputValue(value)}
-          onSelect={(selectedValue: any) => setSelectedOption(selectedValue)}
-        />
-        <QuantairaAutoSuggest
-          placeHolder="Search available medicines with id"
-          options={medicationOptions.map((item: any) => {
-            return {
-              label: item.product_name,
+              label: `${item.proprietary_name} (${item.nonproprietary_name}) - ${item.manufacturer}`,
               value: item,
             };
           })}
@@ -120,8 +110,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
           onSelect={(selectedValue: any) => setSelectedOption(selectedValue)}
         />
         <QuantairaSwitch
-          disabled
-          onChange={(value: any) => console.log('Value', value)}
+          onChange={(value: any) => setNdc(value === 'NDC')}
           label1={'Client'}
           label2={'NDC'}
         />

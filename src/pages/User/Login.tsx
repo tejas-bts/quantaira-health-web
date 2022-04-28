@@ -34,8 +34,8 @@ const Login = () => {
     try {
       setLoading(true);
       const userData: any = await loginUser({
-        username: userName,
-        password: password,
+        userName,
+        password,
       });
 
       if (userData.resetPassword) {

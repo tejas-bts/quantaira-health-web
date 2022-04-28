@@ -1,24 +1,84 @@
 import axios from './authenticatedAxios';
 import { baseURLhttp } from '../utils/constants';
+import { Note } from '../types/Core.types';
 
 const saveNotesAndMedications = `${baseURLhttp}/AddNotes`;
 const getNotesAndMedications = `${baseURLhttp}/FetchNotesMedication`;
+const searchAddedNotes = `${baseURLhttp}/SearchNotesMedications`;
 
-export const saveNote = async (params: any) => {
+export const saveNote = async (parameters: {
+  patientId: string;
+  deviceId: string;
+  content: string;
+  inputTimeStamp: number;
+}) => {
   return new Promise<void>((resolve, reject) => {
-    axios.post(saveNotesAndMedications, { ...params, ipType: '803F6D90-1F23-42D3-BA18-63954638CF4F', pid: params.patientId, categoryId: '54AA1262-73DA-49ED-8D96-FD0D2261A16D' })
+    axios
+      .post(saveNotesAndMedications, {
+        device: parameters.deviceId,
+        ipType: '803F6D90-1F23-42D3-BA18-63954638CF4F',
+        categoryId: '54AA1262-73DA-49ED-8D96-FD0D2261A16D',
+        pid: parameters.patientId,
+        inputTime: parameters.inputTimeStamp,
+        content: parameters.content,
+      })
       .then(() => resolve())
       .catch((e) => reject(e));
   });
 };
 
-
-export const fetchNotes = async (parameters: any) => {
+export const fetchNotes = async (parameters: { patientId: string; deviceId: string }) => {
   console.log('Fetch Notes called');
-  return new Promise<void>((resolve, reject) => {
-    axios.get(getNotesAndMedications, { params: { ...parameters, input_type_id: '803F6D90-1F23-42D3-BA18-63954638CF4F', pid: parameters.patientId } })
+  return new Promise<undefined | Array<Note>>((resolve, reject) => {
+    axios
+      .get(getNotesAndMedications, {
+        params: {
+          device: parameters.deviceId,
+          input_type_id: '803F6D90-1F23-42D3-BA18-63954638CF4F',
+          pid: parameters.patientId,
+        },
+      })
       .then((response) => {
-        resolve(response.data.data);
+        const notes: undefined | Array<Note> = response.data.data.map((item: any) => {
+          return {
+            id: item.row_id,
+            timeStamp: item.inputTime,
+            author: {
+              id: item.createdby,
+              name: item.userName,
+              role: item.categoryName,
+            },
+            note: item.inputContent,
+          };
+        });
+        resolve(notes);
+      })
+      .catch((e) => reject(e));
+  });
+};
+
+export const searchPatientsNotes = async (patientId: string | number, query: string) => {
+  return new Promise<undefined | Array<Note>>((resolve, reject) => {
+    axios
+      .get(searchAddedNotes, { params: { searchType: 'notes', searchTerm: query, pid: patientId } })
+      .then((response) => {
+        const notes: undefined | Array<Note> = response.data.data.map((item: any) => {
+          return {
+            product: {
+              name: item.productName,
+              strength: item.strength,
+            },
+            id: item.row_id,
+            timeStamp: item.inputTime,
+            author: {
+              id: item.createdby,
+              name: item.userName,
+              role: item.categoryName,
+            },
+            note: item.inputContent,
+          };
+        });
+        resolve(notes);
       })
       .catch((e) => reject(e));
   });

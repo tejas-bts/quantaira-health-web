@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Medication, Note } from '../../types/Core.types';
 
 const AccordionItem = ({ icon, label, description, heading, productName, author }: any) => {
   const [show, setShow] = useState(false);
@@ -26,49 +27,42 @@ const AccordionItem = ({ icon, label, description, heading, productName, author 
   );
 };
 
-const AccordionInDropdown = ({ show, data }: { show: boolean; data: any }) => {
+const AccordionInDropdown = ({
+  show,
+  data,
+}: {
+  show: boolean;
+  data: Array<Medication> | Array<Note>;
+}) => {
   const [showDrop] = useState(show);
 
-  const options = data.map((item: any) => {
-    console.log('Accordion Item', item);
+  const options = data.map((item: Medication | Note) => {
     return {
-      heading: `${new Date(item.inputTime).toLocaleDateString()}  ${new Date(
-        item.inputTime
+      heading: `${new Date(item.timeStamp).toLocaleDateString()}  ${new Date(
+        item.timeStamp
       ).toLocaleTimeString()}`,
-      label: item.categoryName,
-      description: item.inputContent,
-      icon: item.productName ? '/images/navbar/medication.svg' : '/images/navbar/notes.svg',
-      productName: item.productName,
-      author: item.userName,
+      label: 'author' in item ? item.author.role : null,
+      author: 'author' in item ? item.author.name : null,
+      description: item.note,
+      icon: 'product' in item ? '/images/navbar/medication.svg' : '/images/navbar/notes.svg',
+      productName: 'product' in item ? item.product.name : null,
     };
   });
 
   return (
     <div className={`accordion-drop-container ${showDrop ? 'shown' : 'hidden'}`}>
       {showDrop &&
-        options.map(
-          (
-            item: {
-              icon: any;
-              label: any;
-              description: any;
-              heading: any;
-              productName: any;
-              author: string;
-            },
-            index: any
-          ) => (
-            <AccordionItem
-              key={index}
-              icon={item.icon}
-              label={item.label}
-              description={item.description}
-              heading={item.heading}
-              productName={item.productName}
-              author={item.author}
-            />
-          )
-        )}
+        options.map((item, index: any) => (
+          <AccordionItem
+            key={index}
+            icon={item.icon}
+            label={item.label}
+            description={item.description}
+            heading={item.heading}
+            productName={item.productName}
+            author={item.author}
+          />
+        ))}
     </div>
   );
 };

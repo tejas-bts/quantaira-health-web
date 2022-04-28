@@ -6,14 +6,15 @@ import DateTimePicker from './DateTimePicker';
 import PatientIdInput from './PatientIdInput';
 import QuantairaSwitch from './QuantairaSwitch';
 import MultiLingualLabel from './MultiLingualLabel';
+import { Patient } from '../../types/Core.types';
 
-const Header = ({ onPatientChange, onDateTimeChange }: any) => {
-  const hospital = useSelector((state: any) => state.patient.hospital);
-  const building = useSelector((state: any) => state.patient.building);
-  const floor = useSelector((state: any) => state.patient.floor);
-  const room = useSelector((state: any) => state.patient.room);
-  const bed = useSelector((state: any) => state.patient.bed);
-  const patient = useSelector((state: any) => state.patient.bed);
+const Header = ({ onDateTimeChange }: any) => {
+  const hospital = useSelector((state: { patient: Patient }) => state.patient.hospital);
+  const building = useSelector((state: { patient: Patient }) => state.patient.building);
+  const floor = useSelector((state: { patient: Patient }) => state.patient.floor);
+  const room = useSelector((state: { patient: Patient }) => state.patient.room);
+  const bed = useSelector((state: { patient: Patient }) => state.patient.bed);
+  const patient = useSelector((state: { patient: Patient }) => state.patient.bed);
 
   const dispatch = useDispatch();
 
@@ -60,7 +61,6 @@ const Header = ({ onPatientChange, onDateTimeChange }: any) => {
           room={room}
           bed={bed}
           patient={patient}
-          onChange={onPatientChange}
         />
         <div className="m-2">{bed && <PatientIdInput value={bed.patientID} />}</div>
       </div>
