@@ -4,40 +4,20 @@ import { createSlice, current } from '@reduxjs/toolkit';
 export const biometrics = createSlice({
   name: 'biometrics',
   initialState: {
-    biometricData: []
+    biometricData: [],
   },
   reducers: {
     appendToBiometricData: (state, action) => {
-      const oldData: any = [...current(state).biometricData];
       const newData: any = [...action.payload.data];
-
-      for (const newItem of newData) {
-        const targetIndex: any = oldData.findIndex((item: any) => item.label == newItem.label);
-        if (targetIndex < 0) {
-          oldData.push(newItem);
-        } else {
-          const newTarget = { ...oldData[targetIndex] };
-          const existingValues = oldData[targetIndex].values;
-          const newValues = newItem.values.slice().sort((a: [number, number], b: [number, number]) => a[0] - b[0]);
-          // const newValuesReversed = newItem.values.slice().sort((a: [number, number], b: [number, number]) => b[0] - a[0]);
-
-          newTarget.values = [...existingValues, ...newValues];
-          oldData[targetIndex] = newTarget;
-        }
-      }
-
       return {
         ...state,
-        biometricData: oldData,
+        biometricData: newData,
       };
     },
 
-
     prependToBiometricData: (state, action) => {
-
       const oldData: any = [...current(state).biometricData];
       const newData: any = [...action.payload.data];
-
 
       for (const newItem of newData) {
         const targetIndex: any = oldData.findIndex((item: any) => item.label == newItem.label);
@@ -52,17 +32,18 @@ export const biometrics = createSlice({
           oldData[targetIndex] = newTarget;
         }
       }
-      console.log('Old Data', oldData.find((item: any) => item.label === 'Temp'));
+      console.log(
+        'Old Data',
+        oldData.find((item: any) => item.label === 'Temp')
+      );
 
       return {
         ...state,
         biometricData: oldData,
       };
     },
-
-  }
+  },
 });
-
 
 export const { appendToBiometricData, prependToBiometricData } = biometrics.actions;
 export default biometrics.reducer;

@@ -15,14 +15,13 @@ const NIBP = ({
     <div
       className={`nibp-kpi-item kpi-item ${isLive ? 'live' : 'delayed'}`}
       style={{
-        color:
-          isLive && systolicValue !== undefined && diastolicValue !== undefined
-            ? color
-            : 'grey',
-        borderColor:
-          isLive && systolicValue !== undefined && diastolicValue !== undefined
-            ? color
-            : 'grey',
+        color: isLive ? color : 'grey',
+        borderColor: isLive ? color : 'grey',
+
+        // color:
+        //   isLive && systolicValue !== undefined && diastolicValue !== undefined ? color : 'grey',
+        // borderColor:
+        //   isLive && systolicValue !== undefined && diastolicValue !== undefined ? color : 'grey',
       }}
     >
       <div className="kpi-grid">

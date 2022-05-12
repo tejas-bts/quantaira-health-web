@@ -18,7 +18,7 @@ const ShowNotes = () => {
   const bed: Bed = useSelector((state: any) => state.patient.bed);
 
   useEffect(() => {
-    if (notes !== undefined && notes.length > 0) setLoading(false);
+    if (notes !== undefined) setLoading(false);
   }, [notes]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

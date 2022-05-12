@@ -38,8 +38,8 @@ const AccordionInDropdown = ({
 
   const options = data.map((item: Medication | Note) => {
     return {
-      heading: `${new Date(item.timeStamp).toLocaleDateString()}  ${new Date(
-        item.timeStamp
+      heading: `${new Date(item.timeStamp * 1000).toLocaleDateString()}  ${new Date(
+        item.timeStamp * 1000
       ).toLocaleTimeString()}`,
       label: 'author' in item ? item.author.role : null,
       author: 'author' in item ? item.author.name : null,

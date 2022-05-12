@@ -17,7 +17,6 @@ const index = () => {
 
   const loadMedications = async () => {
     try {
-      console.log('Bed asdsad', bed);
       const medications: any = await fetchMedications({
         patientId: String(bed.patientID),
         deviceId: '123',

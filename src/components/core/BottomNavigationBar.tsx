@@ -124,11 +124,15 @@ const BottomNavigationBar = () => {
         </button>
       </div>
       <div className="bottom-nav-item">
-        <button>
-          {/* <div
-          style={{ backgroundImage: 'url("/images/navbar/combine-view.svg")' }}
-        />
-        Combine View */}
+        <button
+          onClick={() => {
+            navigate('/app/combined-charts', {
+              replace: true,
+            });
+          }}
+        >
+          <div style={{ backgroundImage: 'url("/images/navbar/combine-view.svg")' }} />
+          Combine View
         </button>
       </div>
       <div className="bottom-nav-item">

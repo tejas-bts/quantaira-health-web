@@ -17,11 +17,13 @@ import { Bed, Building, Floor, Hospital, Room } from '../../types/Core.types';
 import MultiLingualLabel from './MultiLingualLabel';
 
 const BreadCrumbItem = ({
+  id,
   title,
   options,
   onSelect,
   value,
 }: {
+  id?: string | number;
   title: React.ReactElement;
   options: Array<{ id: number | string; label: string | number }>;
   onSelect?:
@@ -43,6 +45,7 @@ const BreadCrumbItem = ({
 
   return (
     <div
+      id={`breadcrumb-item${id !== undefined ? `-${id}` : ''}`}
       className={`quantaira-breadcrumb-item ${
         showDrop ? 'open' : value == undefined ? 'closed' : 'selected-option'
       }`}
@@ -91,6 +94,7 @@ const BreadCrumbs = ({
   return (
     <div className="quantaira-breadcrumbs">
       <BreadCrumbItem
+        id={1}
         title={<MultiLingualLabel id="SELECT_HOSPITAL" />}
         options={
           hospital
@@ -109,6 +113,7 @@ const BreadCrumbs = ({
 
       {hospital && hospital.buildings && (
         <BreadCrumbItem
+          id={2}
           title={<MultiLingualLabel id="SELECT_BUILDING" />}
           options={hospital.buildings.map((item: Building) => {
             return { id: item.buildingId, label: item.buildingName, ...item };
@@ -120,6 +125,7 @@ const BreadCrumbs = ({
 
       {building && (
         <BreadCrumbItem
+          id={3}
           title={<MultiLingualLabel id="SELECT_FLOOR" />}
           options={
             building !== undefined && building.floors !== undefined
@@ -139,6 +145,7 @@ const BreadCrumbs = ({
 
       {floor && (
         <BreadCrumbItem
+          id={4}
           title={<MultiLingualLabel id="SELECT_ROOM" />}
           options={
             floor !== undefined && floor.rooms !== undefined
@@ -158,6 +165,7 @@ const BreadCrumbs = ({
 
       {room && (
         <BreadCrumbItem
+          id={5}
           title={<MultiLingualLabel id="SELECT_BED" />}
           options={
             room != undefined && room.beds !== undefined

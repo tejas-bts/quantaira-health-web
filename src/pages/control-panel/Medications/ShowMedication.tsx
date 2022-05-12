@@ -52,7 +52,7 @@ const ShowNotes = () => {
   };
 
   useEffect(() => {
-    if (medications !== undefined && medications.length > 0) setLoading(false);
+    if (medications !== undefined) setLoading(false);
   }, [medications]);
 
   return (

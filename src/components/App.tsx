@@ -17,6 +17,12 @@ import { baseURLws } from '../utils/constants';
 import { IntlProvider } from 'react-intl';
 import MultiLingualLabel from './core/MultiLingualLabel';
 import { authenticateAxios } from '../services/authenticatedAxios';
+import CombinedBiometricCharts from '../pages/CombinedBiometricCharts';
+import { fetchMedications } from '../services/medications.services';
+import { addToMedications } from '../reducers/medications';
+import { addToNotes } from '../reducers/notes';
+import { Note } from '../types/Core.types';
+import { fetchNotes } from '../services/notes.services';
 
 const App = () => {
   const user: any = useSelector((state: any) => state.auth);
@@ -40,6 +46,29 @@ const App = () => {
     dispatch(selectHospital(hospitalData));
   };
 
+  const loadNotesAndMedication = async () => {
+    try {
+      const medications: any = await fetchMedications({
+        patientId: String(bed.patientID),
+        deviceId: '123',
+      });
+      dispatch(addToMedications({ medications }));
+    } catch (e) {
+      toast(<MultiLingualLabel id="ERROR_FETCHING_MEDICATIONS" />);
+    }
+
+    try {
+      const notes: Array<Note> | undefined = await fetchNotes({
+        patientId: String(bed.patientID),
+        deviceId: '123',
+      });
+
+      dispatch(addToNotes({ notes }));
+    } catch (e) {
+      toast(<MultiLingualLabel id="ERROR_FETCHING_NOTES" />);
+    }
+  };
+
   useEffect(() => {
     loadHospitalData();
     authenticateAxios();
@@ -51,7 +80,9 @@ const App = () => {
       socket.on('connect', () => {
         toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {
+          console.log('Bed Id', bed.bedId);
           dispatch(appendToBiometricData({ data }));
+          console.log('Raw Biometric data', data);
         });
       });
 
@@ -59,6 +90,8 @@ const App = () => {
         console.log(socket.id);
         console.log(socket.connected); // true
       });
+
+      loadNotesAndMedication();
     }
 
     return () => {
@@ -90,6 +123,7 @@ const App = () => {
           <Routes>
             <Route path="patient" element={<PatientSelection />} />
             <Route path="charts/*" element={<BiometricCharts />} />
+            <Route path="combined-charts" element={<CombinedBiometricCharts />} />
             <Route path="kpi" element={<BiometricKpi />} />
             <Route path="/" element={<Navigate to="patient" />} />
           </Routes>

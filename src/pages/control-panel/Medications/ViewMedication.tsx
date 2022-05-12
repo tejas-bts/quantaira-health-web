@@ -1,47 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
 import { Medication } from '../../../types/Core.types';
 
 const ViewMedication = () => {
   const { selectedTime } = useParams();
-  const [targetMedication, setMedication] = useState<Medication | undefined>(undefined);
+  const [targetMedications, setMedications] = useState<Array<Medication>>([]);
 
-  const medications = useSelector((state: any) => state.medications.data);
+  const medications: Array<Medication> = useSelector((state: any) => state.medications.data);
+
+  console.log('Medication Id', selectedTime, medications);
 
   useEffect(() => {
     if (selectedTime !== undefined && medications !== undefined) {
-      const targetMedication = medications.find((item: any) => item.inputTime == selectedTime);
-      setMedication(targetMedication);
+      const targetMedications = medications.filter(
+        (item: Medication) => item.timeStamp == parseInt(selectedTime)
+      );
+      setMedications(targetMedications);
     }
   }, []);
 
-  return targetMedication !== undefined ? (
-    <div className="d-flex flex-column align-items-center justify-content-center">
-      <div className="d-flex flex-row w-100">
-        <div className="m-3">
-          <h5>Category</h5>
-          {targetMedication.author.role}
-        </div>
-        <div className="m-3">
-          <h5>Time</h5>
-          {`${new Date(targetMedication.timeStamp).toLocaleDateString()}  --
-            ${new Date(targetMedication.timeStamp).toLocaleTimeString()}`}
-        </div>
+  return targetMedications.length > 0 ? (
+    <div className="show-notes-page">
+      <div className="notes-page-header">
+        {`Medications at ${new Date(
+          parseInt(`${selectedTime}`) * 1000
+        ).toLocaleDateString()} ${new Date(
+          parseInt(`${selectedTime}`) * 1000
+        ).toLocaleTimeString()}`}
       </div>
-      <div className="d-flex flex-column m-3">
-        <div>
-          <h5>Content :</h5>
-          <h4>{targetMedication.note}</h4>
-        </div>
-        <div className="mt-4">
-          <h5>Medication :</h5>
-          <h4>{targetMedication.product.name}</h4>
-        </div>
-        <div className="mt-4">
-          <h5>Added by :</h5>
-          <h4>{targetMedication.author.name}</h4>
-        </div>
+      <div className="notes-list">
+        {medications.length > 0 && <AccordionInDropdown show={true} data={targetMedications} />}
       </div>
     </div>
   ) : null;

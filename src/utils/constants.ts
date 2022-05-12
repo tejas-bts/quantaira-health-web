@@ -1,5 +1,4 @@
 export const BiometricParameters = {
-
   Temp: 'Temp',
   Temp2: 'Temp 2',
   SpO2: 'SpO2',
@@ -20,10 +19,11 @@ export const BiometricParameters = {
   NIBPsys: 'NiBP SYS',
   NIBPdia: 'NiBP DIA',
   NiBPpr: 'NiBP PR',
-  NiBPmap: 'NiBP MAP'
+  NiBPmap: 'NiBP MAP',
 };
 
+export const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
-const baseUrl = '192.168.1.31';
+const baseUrl = 'localhost'; //'192.168.1.31';
 export const baseURLws = `http://${baseUrl}:3001`;
-export const baseURLhttp = `http://${baseUrl}:7071/api`;
+export const baseURLhttp = 'http://192.168.1.31:7071/api';

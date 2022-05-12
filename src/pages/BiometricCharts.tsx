@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Chart from '../components/core/Chart';
+import Chart from '../components/core/SimpleChart';
 import { GiLungs, GiHeartOrgan, GiMedicalThermometer } from 'react-icons/gi';
 import { FaNotesMedical } from 'react-icons/fa';
 import { BiPulse } from 'react-icons/bi';

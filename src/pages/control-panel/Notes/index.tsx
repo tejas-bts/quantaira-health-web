@@ -36,7 +36,7 @@ const index = () => {
       <Route path="/" element={<ShowNotes />} />
       <Route path="/add/*" element={<AddNote onUpdate={loadNotes} />} />
       <Route path="/add/:selectedTime" element={<AddNote onUpdate={loadNotes} />} />
-      <Route path="/view/:noteId" element={<ViewNote />} />
+      <Route path="/view/:selectedTime" element={<ViewNote />} />
     </Routes>
   );
 };

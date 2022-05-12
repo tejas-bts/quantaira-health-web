@@ -1,33 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
+import { Note } from '../../../types/Core.types';
 
 const ViewNote = () => {
-  const { noteId } = useParams();
-  const notes = useSelector((state: any) => state.notes.data);
-  const targetNote = notes.find((item: any) => item.row_id == noteId);
+  const { selectedTime } = useParams();
+  const notes: Array<Note> = useSelector((state: any) => state.notes.data);
+  const [targetNotes, setTargetNotes] = useState<Array<Note>>([]);
 
-  return targetNote ? (
-    <div className="d-flex flex-column align-items-center justify-content-center">
-      <div className="d-flex flex-row w-100">
-        <div className="m-3">
-          <h5>Category</h5>
-          {targetNote.categoryName}
-        </div>
-        <div className="m-3">
-          <h5>Time</h5>
-          {`${new Date(targetNote.inputTime).toLocaleDateString()}  --
-            ${new Date(targetNote.inputTime).toLocaleTimeString()}`}
-        </div>
-      </div>
-      <div className="d-flex flex-column m-3">
-        <h5>Content :</h5>
-        <h4>{targetNote.inputContent}</h4>
-      </div>
+  console.log('Note Id', selectedTime, notes);
 
-      <div className="mt-4">
-        <h5>Added by :</h5>
-        <h4>{targetNote.userName || targetNote.author}</h4>
+  useEffect(() => {
+    if (selectedTime !== undefined && notes !== undefined) {
+      const targetNotes = notes.filter((item: Note) => item.timeStamp == parseInt(selectedTime));
+      setTargetNotes(targetNotes);
+    }
+  }, []);
+
+  return targetNotes.length > 0 ? (
+    <div className="show-notes-page">
+      <div className="notes-list">
+        {notes.length > 0 && <AccordionInDropdown show={true} data={targetNotes} />}
       </div>
     </div>
   ) : null;
