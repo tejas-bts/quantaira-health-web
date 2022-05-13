@@ -16,8 +16,8 @@ export const timeToLocal = (originalTime: number): Time => {
   return ret;
 };
 
-export const localToTime = (time: number): number => {
-  return time * 1000 + new Date().getTimezoneOffset() * 60 * 1000;
+export const localToTime = (time: Time): number => {
+  return (time as number) * 1000 + new Date().getTimezoneOffset() * 60 * 1000;
 };
 
 export const debounce = (func: any, timeout = 1000) => {

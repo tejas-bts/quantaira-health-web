@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import Chart from '../components/core/SimpleChart';
 import { GiLungs, GiHeartOrgan, GiMedicalThermometer } from 'react-icons/gi';
@@ -13,6 +15,8 @@ import Alarms from '../pages/control-panel/Alarms';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPastChartData } from '../services/chart.services';
 import { prependToBiometricData } from '../reducers/biometrics';
+import { localToTime, timeToLocal } from '../utils/utilities';
+import { Time } from 'lightweight-charts';
 // import { logBiometricData } from '../utils/logger';
 
 const BiometricCharts = () => {
@@ -48,9 +52,7 @@ const BiometricCharts = () => {
   useEffect(() => {
     const availableCharts: any = [];
     biometricData.map((item: BiometricData) => availableCharts.push(item.label));
-    // setAvailableCharts(availableCharts);
     setBuffer(biometricData.map((item: any) => item.values));
-    // logBiometricData(biometricData);
   }, [biometricData]);
 
   const getIndex = (label: string) => {
@@ -58,18 +60,16 @@ const BiometricCharts = () => {
     return index;
   };
 
-  const handleDataDemand = async (biometricId: any) => {
-    const biometricItem = biometricData.find((item: any) => item.biometricId === biometricId);
-    const fromDate = biometricItem.values[0][0];
-
+  const handleDataDemand = async (biometricId: any, time: number) => {
     try {
       const newData = await fetchPastChartData({
         bedId: bed.bedId,
         patientId: bed.patientID,
-        fromDate,
+        fromDate: time,
         limit: 4,
         biometricId,
       });
+      console.log('Data demanded fullfiled with', newData);
       dispatch(prependToBiometricData({ data: [newData] }));
     } catch (e) {
       console.log('Error fetching Past chart data', e);
@@ -79,6 +79,73 @@ const BiometricCharts = () => {
   if (!bed) {
     navigate('/app/patient', { replace: true });
   }
+
+  const [history, setHistory] = useState<Array<any>>([]);
+
+  const onDemand = (biometricId: any, time: number) => {
+    return new Promise<void>((resolve, reject) => {
+      fetchPastChartData({
+        bedId: bed.bedId,
+        patientId: bed.patientID,
+        fromDate: time,
+        limit: 4,
+        biometricId,
+      })
+        .then((data) => {
+          const { values } = data;
+          if (values != undefined && values.length > 0) {
+            const newHistory: Array<[Time, number]> = [];
+            for (const item of values) {
+              const [timeStamp, value] = item;
+              newHistory.push([timeToLocal(timeStamp), value]);
+            }
+            console.log('New History', newHistory);
+            setHistory((oldHistory) => {
+              if (oldHistory.length > 0) {
+                if (oldHistory[0][0] > newHistory[newHistory.length - 1][0]) {
+                  return [...newHistory, ...oldHistory];
+                } else {
+                  console.log('Final History', 'Order was incorrect', oldHistory, newHistory);
+                  return oldHistory;
+                }
+              } else {
+                return newHistory;
+              }
+            });
+          }
+        })
+        .catch((e) => console.error(e));
+    });
+
+    // return new Promise<void>((resolve) => {
+    //   console.log('new History', new Date(time));
+    //   setTimeout(() => {
+    //     const newHistory: Array<[number, number]> = [];
+    //     for (let i = 0; i < 10; i++) {
+    //       newHistory.push([
+    //         Math.floor(time / 1000) - (10 - i),
+    //         parseFloat(Math.random().toFixed(1)),
+    //       ]);
+    //       console.log('Target Time', [
+    //         Math.floor(time / 1000) - (10 - i),
+    //         Math.random().toFixed(1),
+    //       ]);
+    //     }
+    //     setHistory((oldHistory) => {
+    //       if (oldHistory.length > 0) {
+    //         if (oldHistory[0][0] > newHistory[newHistory.length - 1][0]) {
+    //           return [...newHistory, ...oldHistory];
+    //         } else {
+    //           return oldHistory;
+    //         }
+    //       } else {
+    //         return newHistory;
+    //       }
+    //     });
+    //     resolve();
+    //   }, 500);
+    // });
+  };
 
   return (
     <div className="chart-grid">
@@ -102,12 +169,20 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
-            onDataDemand={() => {
-              console.log('Data demanded');
-              handleDataDemand(
-                biometricData[getIndex(chartSelections[selectedScreen][0])].biometricId
+            // onDataDemand={(time) => {
+            //   handleDataDemand(
+            //     biometricData[getIndex(chartSelections[selectedScreen][0])].biometricId,
+            //     time
+            //   );
+            // }}
+            onDataDemand={(time) => {
+              console.log('Demand Time', time);
+              return onDemand(
+                biometricData[getIndex(chartSelections[selectedScreen][0])].biometricId,
+                time
               );
             }}
+            history={history}
           />
         )}
       </div>
@@ -143,11 +218,13 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
-            onDataDemand={() =>
-              handleDataDemand(
-                biometricData[getIndex(chartSelections[selectedScreen][1])].biometricId
-              )
-            }
+            // onDataDemand={(time) =>
+            //   handleDataDemand(
+            //     biometricData[getIndex(chartSelections[selectedScreen][1])].biometricId,
+            //     time
+            //   )
+            // }
+            history={[]}
           />
         )}
       </div>
@@ -173,11 +250,13 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
-            onDataDemand={() =>
-              handleDataDemand(
-                biometricData[getIndex(chartSelections[selectedScreen][2])].biometricId
-              )
-            }
+            // onDataDemand={(time) =>
+            //   handleDataDemand(
+            //     biometricData[getIndex(chartSelections[selectedScreen][2])].biometricId,
+            //     time
+            //   )
+            // }
+            history={[]}
           />
         )}
       </div>

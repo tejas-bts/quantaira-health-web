@@ -53,6 +53,7 @@ const CombinedBiometricCharts = () => {
     const selectedCharts = flattenArray(chartSelections);
     const combinedBiometricData: Array<CombinedChartData> = biometricData.map(
       (biometricItem: BiometricData, index: number) => {
+        const values = biometricItem.values;
         const arrayItem: CombinedChartData = {
           title: biometricItem.label,
           color: colors[index % colors.length],
@@ -60,7 +61,8 @@ const CombinedBiometricCharts = () => {
           idealMin: biometricItem.idealMin,
           idealMax: biometricItem.idealMax,
           unit: biometricItem.unit,
-          values: biometricItem.values,
+          values,
+          currentValue: values.length > 0 ? values[values.length - 1][1] : '?',
           showOnchart: selectedCharts.includes(biometricItem.label),
         };
         return arrayItem;

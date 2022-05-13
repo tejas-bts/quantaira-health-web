@@ -1,10 +1,10 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FiChevronsRight, FiChevronsLeft, FiZoomIn, FiZoomOut, FiClock } from 'react-icons/fi';
 import { ChartPropsType } from '../../types/Chart.propsType';
 
-import { timeToLocal } from '../../utils/utilities';
+import { localToTime, timeToLocal } from '../../utils/utilities';
 import {
   createChart,
   ISeriesApi,
@@ -15,8 +15,10 @@ import {
   IChartApi,
   IPriceLine,
   TimeRange,
+  Logical,
 } from 'lightweight-charts';
 import { Medication, Note } from '../../types/Core.types';
+import { fetchPastChartData } from '../../services/chart.services';
 
 const leftOffset = 0;
 
@@ -38,11 +40,13 @@ const Chart = ({
   idealMax,
   unit,
   values,
+  history,
   notes,
   medications,
   onClick,
   onNoteClick,
   onMedicationClick,
+  onDataDemand,
 }: ChartPropsType) => {
   const [isLive, setLive] = useState(false);
 
@@ -57,7 +61,8 @@ const Chart = ({
   const [lineSeries, setLineSeries] = useState<ISeriesApi<'Area'> | undefined>(undefined);
   const [timeScale, setTimeScale] = useState<ITimeScaleApi | undefined>(undefined);
 
-  const target = useRef<HTMLDivElement>(null);
+  const [isLoading, setLoading] = useState<boolean>(false);
+
   const chartDiv = useRef<HTMLDivElement>(null);
 
   const options = {
@@ -123,9 +128,7 @@ const Chart = ({
       };
 
       window.addEventListener('resize', handleResize);
-
       setChart(chart);
-
       return () => {
         chart.remove();
         window.removeEventListener('resize', handleResize);
@@ -137,25 +140,22 @@ const Chart = ({
     if (chart !== undefined) {
       chart.subscribeClick(myClickHandler);
       const timeScale = chart.timeScale();
-
       timeScale.subscribeVisibleLogicalRangeChange((e) => {
         if (e != null) {
           const { from, to }: { from: any; to: any } = e;
-          if (to < 5) {
-            console.log('Demand more Data');
+          const range = to - from;
+          if (to < range) {
+            const co_ordinate = timeScale.logicalToCoordinate(0 as Logical);
+            if (co_ordinate != null) {
+              const time = timeScale.coordinateToTime(co_ordinate);
+              if (onDataDemand != undefined && time != null) {
+                if (!isLoading) {
+                  setLoading(true);
+                  onDataDemand(localToTime(time)).finally(() => setLoading(false));
+                }
+              }
+            }
           }
-          // const difference = to - from;
-
-          console.log('Visible Logical Change', e, to - from); //from, to, difference);
-        }
-      });
-
-      timeScale.subscribeVisibleTimeRangeChange((e) => {
-        if (e != null) {
-          // const { from, to }: { from: any; to: any } = e;
-          // const difference = to - from;
-
-          console.log('Visible Time Change', e); //from, to, difference);
         }
       });
 
@@ -206,8 +206,8 @@ const Chart = ({
   }, [timeScale]);
 
   useEffect(() => {
+    console.log('Values', values);
     if (lineSeries !== undefined) {
-      console.log('Values', values);
       for (const item of values) {
         const [time, value] = item;
         const zoneTime: Time = timeToLocal(time);
@@ -216,6 +216,25 @@ const Chart = ({
       }
     }
   }, [values]);
+
+  useEffect(() => {
+    if (history != undefined && lineSeries != undefined) {
+      if (history.length > 0) {
+        const newHistory = [];
+        for (const item of history) {
+          const [timeStamp, value] = item;
+          const time: Time = timeToLocal(timeStamp);
+
+          newHistory.push({ time, value });
+        }
+        lineSeries.setData(newHistory);
+      }
+    }
+  }, [lineSeries, history]);
+
+  useEffect(() => {
+    console.log('Final History', history);
+  }, [history]);
 
   useEffect(() => {
     Data.isLive = isLive;
@@ -228,8 +247,6 @@ const Chart = ({
       lineSeries !== undefined &&
       medications !== undefined
     ) {
-      console.log('Notes & Medications', notes, medications);
-
       const notesMarkers: Array<SeriesMarker<Time>> = notes.reduce(
         (result: Array<SeriesMarker<Time>>, item: Note) => {
           const time: Time = timeToLocal(item.timeStamp);
@@ -247,7 +264,6 @@ const Chart = ({
               text: '📝 Note',
             });
           }
-          console.log('Notes & Medications : Out of Chart');
           return result;
         },
         []
@@ -271,14 +287,10 @@ const Chart = ({
               text: '💊 Medication',
             });
           }
-          console.log('Notes & Medications : Out of Chart');
           return result;
         },
         []
       );
-
-      console.log('Notes & Medications', notesMarkers, medicationMarkers);
-
       lineSeries.setMarkers([...medicationMarkers, ...notesMarkers]);
     }
 

@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import { FiChevronsRight, FiChevronsLeft, FiClock } from 'react-icons/fi';
-import { CombinedChartData, CombinedChartPropsType } from '../../types/Chart.propsType';
+import {
+  CombinedChartData,
+  CombinedChartPropsType,
+  SelectedChartItem,
+} from '../../types/Chart.propsType';
 
 import { isSameArray, timeToLocal } from '../../utils/utilities';
 import {
@@ -33,9 +37,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
   const [leftOffset, setLeftOffset] = useState<number>(0);
 
   const [chart, setChart] = useState<IChartApi | undefined>(undefined);
-  const [selectedCharts, setSelectedCharts] = useState<
-    Array<{ series: ISeriesApi<'Line'>; chart: CombinedChartData; title: string }>
-  >([]);
+  const [selectedCharts, setSelectedCharts] = useState<Array<SelectedChartItem>>([]);
 
   const [timeScale, setTimeScale] = useState<ITimeScaleApi | undefined>(undefined);
 
@@ -69,6 +71,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
     if (chartDiv != null && chartDiv.current != null) {
       const chart = createChart(chartDiv.current, options);
       setChart(chart);
+      return () => chart.remove();
     }
   }, [chartDiv]);
 
@@ -93,7 +96,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
           if (targetIndex < 0) {
             // Series does not Exist Create new
             const newSeries = chart.addLineSeries({ color: combinedChartItem.color });
-            const newSelectedCharts = {
+            const newSelectedCharts: SelectedChartItem = {
               series: newSeries,
               chart: combinedChartItem,
               title: combinedChartItem.title,
@@ -140,8 +143,8 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
         backgroundColor: CHART_BACKGROUND_COLOR,
       }}
     >
-      <div className="chart-header">
-        <div className="chart-header-left flex-row">
+      <div className="chart-header flex-column">
+        <div className="d-flex flex-row flex-wrap">
           {combinedChartData &&
             combinedChartData
               .filter((item) => item.showOnchart)
@@ -158,7 +161,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
                     <div className="d-flex">
                       <div className="chart-header-col-2">
                         <div className="chart-current-value" style={{ color }}>
-                          {/* {item.values[item.values.length - 1]} */}
+                          {item.currentValue !== undefined ? item.currentValue : '?'}
                         </div>
                       </div>
                       <div className="chart-header-col-3">
@@ -175,36 +178,39 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
                 );
               })}
         </div>
-        <div className="chart-header-center">
-          <div className="chart-header-col-4">
-            <div className="chart-online-status delayed">
-              {leftOffset == 0 ? (
-                <>
-                  {' '}
-                  <FiClock color="yellow" className="m-1" />
-                  Delayed
-                </>
-              ) : (
-                <button onClick={() => setLeftOffset(0)} className="go-live-button">
-                  Go Live
-                </button>
-              )}
+        <div className="d-flex">
+          <div className="chart-header-center">
+            <div className="chart-header-col-4">
+              <div className="chart-online-status delayed">
+                {leftOffset == 0 ? (
+                  <>
+                    <FiClock color="yellow" className="m-1" />
+                    Delayed
+                  </>
+                ) : (
+                  <button onClick={() => setLeftOffset(0)} className="go-live-button">
+                    Go Live
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="chart-header-right">
-          <div className="chart-header-col-5">
-            <div className="chart-navigation">
-              <button
-                className={`chart-navigation-button disabled${leftScroll > 0 ? 'is-active' : ''}`}
-              >
-                <FiChevronsLeft />
-              </button>
-              <button
-                className={`chart-navigation-button disabled${rightScroll > 0 ? 'is-active' : ''}`}
-              >
-                <FiChevronsRight />
-              </button>
+          <div className="chart-header-right">
+            <div className="chart-header-col-5">
+              <div className="chart-navigation">
+                <button
+                  className={`chart-navigation-button disabled${leftScroll > 0 ? 'is-active' : ''}`}
+                >
+                  <FiChevronsLeft />
+                </button>
+                <button
+                  className={`chart-navigation-button disabled${
+                    rightScroll > 0 ? 'is-active' : ''
+                  }`}
+                >
+                  <FiChevronsRight />
+                </button>
+              </div>
             </div>
           </div>
         </div>
