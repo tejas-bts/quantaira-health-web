@@ -179,7 +179,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
               })}
         </div>
         <div className="d-flex">
-          <div className="chart-header-center">
+          {/* <div className="chart-header-center">
             <div className="chart-header-col-4">
               <div className="chart-online-status delayed">
                 {leftOffset == 0 ? (
@@ -194,7 +194,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
                 )}
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="chart-header-right">
             <div className="chart-header-col-5">
               <div className="chart-navigation">

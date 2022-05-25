@@ -12,17 +12,20 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
-
-  const [userName, setUserName] = useState<string>('adityadoe@hospitaldomain.com');
-  const [password, setPassword] = useState<string>('qwertY@123');
+  const [userName, setUserName] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [termsAndCondns, setTermsAndConditions] = useState(false);
 
   useEffect(() => {
     const user: any = localStorage.getItem('user');
     if (user) {
       const userObj = JSON.parse(user);
-      dispatch(logIn(userObj));
-      navigate('/app', { replace: true });
+      if (userObj.userAccess != null) {
+        dispatch(logIn(userObj));
+        navigate('/app', { replace: true });
+      } else {
+        navigate('/no-permission', { replace: true });
+      }
     }
   }, []);
 

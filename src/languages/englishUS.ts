@@ -43,7 +43,9 @@ export const englishUS: Record<string, string> = {
   NOTES: 'Notes',
   MEDICATION: 'Medications',
   SELECT_GRAPH: 'Select Graph',
+  COMBINE_VIEW: 'Combine View',
   SETTINGS: 'Settings',
+  ABOUT: 'About',
   LANGUAGE: 'Language',
 
   ADD_NOTES: 'Add Notes',

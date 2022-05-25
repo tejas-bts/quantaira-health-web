@@ -32,7 +32,7 @@ const Settings = () => {
         ))}
       </SettingsItem>
       <SettingsItem
-        title={<MultiLingualLabel id="About" />}
+        title={<MultiLingualLabel id="ABOUT" />}
         icon="/images/settings/language.svg"
         value={''}
         onClick={() => navigate('/app/about', { replace: true })}

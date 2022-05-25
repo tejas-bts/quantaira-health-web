@@ -180,7 +180,11 @@
     justify-content: flex-start;
     margin: 0 0.2rem;
     width: 100%;
-    color: white
+    color: white;
+
+    div {
+      white-space: nowrap;
+    }
   }
 
   .drop-item-heading {
@@ -192,7 +196,6 @@
   }
 
   .drop-item-content-preview {
-    max-width: 3rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -204,6 +207,7 @@
     margin-top: 0.3rem;
     padding: 0rem 1rem;
     width: 100%;
+    white-space: pre-line;
   }
 }
 

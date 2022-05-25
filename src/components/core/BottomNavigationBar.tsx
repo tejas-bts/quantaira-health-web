@@ -132,7 +132,7 @@ const BottomNavigationBar = () => {
           }}
         >
           <div style={{ backgroundImage: 'url("/images/navbar/combine-view.svg")' }} />
-          Combine View
+          <MultiLingualLabel id="COMBINE_VIEW" />
         </button>
       </div>
       <div className="bottom-nav-item">

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // import { Time } from 'lightweight-charts';
 
 import { ISeriesApi } from 'lightweight-charts';
@@ -7,8 +8,8 @@ export interface ChartPropsType {
   color: string;
   Icon: React.ComponentType;
   curveType: 'smooth' | 'straight' | 'stepline';
-  idealMin: number | string;
-  idealMax: number | string;
+  idealMin?: number;
+  idealMax?: number;
   unit: string;
   values: Array<[any, number]>;
   history?: Array<[any, number]>;
@@ -17,8 +18,9 @@ export interface ChartPropsType {
   onClick?: any;
   onNoteClick?: any;
   onMedicationClick?: any;
-  // eslint-disable-next-line no-unused-vars
-  onDataDemand?: (time: number) => Promise<void>;
+  isLive: boolean;
+  chartTime: Date;
+  onDataDemand?: (time: number, direction: 'to' | 'from') => Promise<void>;
 }
 
 export interface CombinedChartData {

@@ -12,17 +12,14 @@ import { Bed, Note } from '../../../types/Core.types';
 const ShowNotes = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const notes: Array<Note> = useSelector((state: any) => state.notes.data);
   const bed: Bed = useSelector((state: any) => state.patient.bed);
 
-  useEffect(() => {
-    if (notes !== undefined) setLoading(false);
-  }, [notes]);
-
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm: string = e.target.value;
+  const performSearch = async () => {
     try {
       setLoading(true);
       if (searchTerm.length < 3) {
@@ -48,13 +45,22 @@ const ShowNotes = () => {
     }
   };
 
+  useEffect(() => {
+    if (notes !== undefined) setLoading(false);
+  }, [notes]);
+
+  useEffect(() => {
+    performSearch();
+  }, [searchTerm]);
+
   return (
     <div className="show-notes-page">
       <div className="notes-page-header">
         <input
           className="notes-input-field"
           placeholder="Search notes here"
-          onChange={handleChange}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          value={searchTerm}
         />
         {/* <Button
           orientation={'vertical'}
@@ -86,7 +92,9 @@ const ShowNotes = () => {
         </div>
       ) : (
         <div className="notes-list">
-          {notes.length > 0 && <AccordionInDropdown show={true} data={notes} />}
+          {notes.length > 0 && (
+            <AccordionInDropdown show={true} data={notes} searchTerm={searchTerm} />
+          )}
         </div>
       )}
     </div>

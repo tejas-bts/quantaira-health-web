@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import React, { useState, useEffect } from 'react';
+import { getHighlightedText } from '../../utils/utilities';
 import MultiLingualLabel from './MultiLingualLabel';
 
 const QuantairaAutoSuggest = ({
@@ -49,9 +50,8 @@ const QuantairaAutoSuggest = ({
                     if (onSelect) onSelect(item.value);
                     setInputValue(item.label);
                   }}
-                >
-                  {item.label}
-                </div>
+                  dangerouslySetInnerHTML={{ __html: getHighlightedText(item.label, inputValue) }}
+                ></div>
               </label>
             ))
           ) : (

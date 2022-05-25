@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { AiOutlineCaretRight } from 'react-icons/ai';
+import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 
 const About = () => {
   const [dbStatus, setDbstatus] = useState('NA');
@@ -19,7 +20,9 @@ const About = () => {
   return (
     <div className="container">
       <section className="about-container">
-        <h2>About</h2>
+        <h2>
+          <MultiLingualLabel id="ABOUT" />
+        </h2>
         <div className="about-content">
           <div className="about-list">
             <article className="about-details">

@@ -47,3 +47,38 @@ export const isSameArray = (item1: Array<unknown>, item2: Array<unknown>): boole
   }
   return true;
 };
+
+export const getHighlightedText = (text: string, highlight: string): string => {
+  // Split on highlight term and include term into parts, ignore case
+  if (highlight == undefined || highlight == '' || highlight == ' ' || highlight == '  ')
+    return text;
+  const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+  return `<span>${parts
+    .map(
+      (part, i) =>
+        `<span key=${i} style=${
+          part.toLowerCase() === highlight.toLowerCase()
+            ? 'color:black;background:gold;font-weight:bold;padding-left:3px;padding-right:3px;'
+            : ''
+        }>${part}</span>`
+    )
+    .join('')}
+    </span>`;
+};
+
+export const isNotUndefined = (...args: Array<any>): boolean => {
+  for (const item of args) {
+    if (item === undefined) return false;
+  }
+  return true;
+};
+
+export const flattenArray = (twoDArray: Array<Array<string>>) => {
+  const oneDArray = [];
+  for (const arr of twoDArray) {
+    for (const item of arr) {
+      oneDArray.push(item);
+    }
+  }
+  return oneDArray;
+};

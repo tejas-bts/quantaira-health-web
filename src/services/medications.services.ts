@@ -32,7 +32,6 @@ export const saveMedication = async (parameters: {
 };
 
 export const fetchMedications = async (parameters: { patientId: string; deviceId: string }) => {
-  console.log('Fetch Medication Params', parameters);
   return new Promise<Array<Medication> | undefined>((resolve, reject) => {
     axios
       .get(getNotesAndMedications, {
@@ -78,6 +77,7 @@ export const searchMedicines = async (searchTerm: string, isNDC: boolean) => {
 };
 
 export const searchPatientsMedications = async (patientId: string | number, query: string) => {
+  console.log('Query', query);
   return new Promise<Array<Medication> | undefined>((resolve, reject) => {
     axios
       .get(searchAddedMedications, {

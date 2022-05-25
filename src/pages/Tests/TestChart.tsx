@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { GiFlamethrowerSoldier } from 'react-icons/gi';
 import Chart from '../../components/core/SimpleChart';
@@ -6,10 +8,8 @@ const TestChart = () => {
   const [data, setData] = useState<Array<any>>([]);
   const [history, setHistory] = useState<Array<any>>([]);
 
-  const onDemand = (time: number) => {
+  const onDemand = (time: number, direction: 'to' | 'from') => {
     return new Promise<void>((resolve) => {
-      console.log('new History', new Date(time));
-
       setTimeout(() => {
         const newHistory: Array<[number, number]> = [];
         for (let i = 0; i < 10; i++) {
@@ -22,17 +22,7 @@ const TestChart = () => {
             Math.random().toFixed(1),
           ]);
         }
-        setHistory((oldHistory) => {
-          if (oldHistory.length > 0) {
-            if (oldHistory[0][0] > newHistory[newHistory.length - 1][0]) {
-              return [...newHistory, ...oldHistory];
-            } else {
-              return oldHistory;
-            }
-          } else {
-            return newHistory;
-          }
-        });
+        setHistory(newHistory);
         resolve();
       }, 200);
     });
@@ -44,7 +34,7 @@ const TestChart = () => {
         const dataItem = [];
         const time = Math.floor(new Date().getTime() / 1000);
         dataItem.push(time);
-        if (Math.floor(time / 1000) % 3 < 2) dataItem.push(Math.random().toFixed(1));
+        dataItem.push(new Date().getSeconds() + parseFloat(Math.random().toFixed(1)));
         return [dataItem];
       });
     }, 1000);
@@ -56,15 +46,17 @@ const TestChart = () => {
   return (
     <div className="h-100 w-100">
       <Chart
+        chartTime={new Date()}
+        isLive={true}
         title={'Test Chart'}
-        color={'red'}
+        color={'white'}
         Icon={GiFlamethrowerSoldier}
         curveType={'smooth'}
-        idealMin={'0.23'}
-        idealMax={'0.8'}
+        idealMax={Infinity}
+        idealMin={-Infinity}
         unit={'test unit'}
         values={data}
-        history={history}
+        history={[]}
         notes={[]}
         medications={[]}
         onDataDemand={onDemand}

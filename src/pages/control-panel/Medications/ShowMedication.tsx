@@ -16,16 +16,13 @@ const ShowNotes = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const medications: Array<Medication> = useSelector((state: any) => state.medications.data);
   const bed: Bed = useSelector((state: any) => state.patient.bed);
 
-  useEffect(() => {
-    console.log('Bed', bed);
-  }, [bed]);
-
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const searchTerm: string = e.target.value;
+  const searchMedications = async () => {
+    console.log('Search Term', searchTerm);
     try {
       setLoading(true);
       if (searchTerm.length < 3) {
@@ -52,6 +49,19 @@ const ShowNotes = () => {
   };
 
   useEffect(() => {
+    console.log('Bed', bed);
+  }, [bed]);
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  useEffect(() => {
+    console.log('Search Terms', searchTerm);
+    searchMedications();
+  }, [searchTerm]);
+
+  useEffect(() => {
     if (medications !== undefined) setLoading(false);
   }, [medications]);
 
@@ -62,6 +72,7 @@ const ShowNotes = () => {
           className="notes-input-field"
           placeholder="Search medications here"
           onChange={handleChange}
+          value={searchTerm}
         />
         {/* <Button
           orientation={'vertical'}
@@ -94,7 +105,9 @@ const ShowNotes = () => {
         </div>
       ) : (
         <div className="notes-list">
-          {medications.length > 0 && <AccordionInDropdown show={true} data={medications} />}
+          {medications.length > 0 && (
+            <AccordionInDropdown show={true} data={medications} searchTerm={searchTerm} />
+          )}
         </div>
       )}
     </div>

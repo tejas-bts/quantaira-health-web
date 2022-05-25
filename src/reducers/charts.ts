@@ -12,7 +12,9 @@ export const chartsState = createSlice({
       const currentSelectedCharts: Array<Array<string>> = [...current(state).selectedCharts];
       const targetScreenIndex: number = action.payload.screen;
       const targetChart = action.payload.chart;
-      const newScreen = [...currentSelectedCharts[targetScreenIndex]].filter((item) => item !== targetChart);
+      const newScreen = [...currentSelectedCharts[targetScreenIndex]].filter(
+        (item) => item !== targetChart
+      );
       currentSelectedCharts[targetScreenIndex] = [...newScreen];
       return { ...state, selectedCharts: currentSelectedCharts };
     },
@@ -22,7 +24,6 @@ export const chartsState = createSlice({
       let index = action.payload.screen;
       const currentSelectedCharts: Array<Array<string>> = [...current(state).selectedCharts];
 
-      console.log('addChartToScreen', currentSelectedCharts);
       if (currentSelectedCharts[index] !== undefined) {
         while (currentSelectedCharts[index] && currentSelectedCharts[index].length >= 3) {
           index++;
@@ -32,10 +33,7 @@ export const chartsState = createSlice({
       const newTargetScreen = [...currentTargetScreen, chart];
       currentSelectedCharts[index] = newTargetScreen;
 
-      console.log('addChartToScreen', { ...state, selectedCharts: currentSelectedCharts });
-
       return { ...state, selectedCharts: currentSelectedCharts };
-
     },
 
     selectScreen: (state, action) => {
@@ -43,15 +41,21 @@ export const chartsState = createSlice({
     },
 
     nextScreen: (state) => {
-      return { ...state, selectedScreen: Math.min(current(state).selectedScreen + 1, current(state).selectedCharts.length - 1) };
+      return {
+        ...state,
+        selectedScreen: Math.min(
+          current(state).selectedScreen + 1,
+          current(state).selectedCharts.length - 1
+        ),
+      };
     },
 
     previousScreen: (state) => {
       return { ...state, selectedScreen: Math.max(0, current(state).selectedScreen - 1) };
-    }
-  }
+    },
+  },
 });
 
-
-export const { addChartToScreen, removeChartFromScreen, selectScreen, nextScreen, previousScreen } = chartsState.actions;
+export const { addChartToScreen, removeChartFromScreen, selectScreen, nextScreen, previousScreen } =
+  chartsState.actions;
 export default chartsState.reducer;

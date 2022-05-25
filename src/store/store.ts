@@ -6,9 +6,9 @@ import medicationsReducer from '../reducers/medications';
 import timeReducer from '../reducers/time';
 import chartReducer from '../reducers/charts';
 import biometricReducer from '../reducers/biometrics';
+import historicReducer from '../reducers/history';
 import appStateReducer from '../reducers/appState';
 import language from '../reducers/language';
-
 
 export default configureStore({
   reducer: {
@@ -19,6 +19,7 @@ export default configureStore({
     time: timeReducer,
     chart: chartReducer,
     biometrics: biometricReducer,
+    history: historicReducer,
     appState: appStateReducer,
     language: language,
   },

@@ -23,13 +23,14 @@ import { addToMedications } from '../reducers/medications';
 import { addToNotes } from '../reducers/notes';
 import { Note } from '../types/Core.types';
 import { fetchNotes } from '../services/notes.services';
+import { appendToHistoricData } from '../reducers/history';
+import { StateReducer } from '../types/Reducer.types';
 
 const App = () => {
-  const user: any = useSelector((state: any) => state.auth);
-  const bed: any = useSelector((state: any) => state.patient.bed);
-  const headerBlur = useSelector((state: any) => state.appState.headerBlur);
-  const contentBlur = useSelector((state: any) => state.appState.contentBlur);
-  console.log('Header Blur', headerBlur);
+  const user: any = useSelector((state: StateReducer) => state.auth);
+  const bed = useSelector((state: StateReducer) => state.patient.bed);
+  const headerBlur = useSelector((state: StateReducer) => state.appState.headerBlur);
+  const contentBlur = useSelector((state: StateReducer) => state.appState.contentBlur);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -80,9 +81,8 @@ const App = () => {
       socket.on('connect', () => {
         toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {
-          console.log('Bed Id', bed.bedId);
           dispatch(appendToBiometricData({ data }));
-          console.log('Raw Biometric data', data);
+          dispatch(appendToHistoricData({ data }));
         });
       });
 

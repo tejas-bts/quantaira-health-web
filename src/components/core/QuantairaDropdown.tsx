@@ -25,6 +25,12 @@ const QuantairaDropdown = ({
     );
   }, [selectedOption]);
 
+  useEffect(() => {
+    if (options.length == 1) {
+      setSelectedOption(options[0]);
+    }
+  }, [options]);
+
   return (
     <div className="quantaira-dropdown">
       <div className="dropdown-container">

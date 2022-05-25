@@ -25,6 +25,12 @@ export const BiometricParameters = {
 export const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
 // const baseUrl = 'localhost';
-const baseUrl = '192.168.1.31';
-export const baseURLws = `http://${baseUrl}:3001`;
+const baseUrl = '192.168.1.47';
+// export const baseURLhttp = 'https://dev-quantio-webdemo-fapp-eus.azurewebsites.net/api';
+// const wsBaseUrl = '192.168.1.31';
+const wsBaseUrl = 'localhost';
+
+export const baseURLws = `http://${wsBaseUrl}:3001`;
 export const baseURLhttp = `http://${baseUrl}:7071/api`;
+
+// export const baseURLhttp = baseUrl;

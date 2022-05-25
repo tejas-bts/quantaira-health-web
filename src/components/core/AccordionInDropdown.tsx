@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
 import { Medication, Note } from '../../types/Core.types';
+import { getHighlightedText } from '../../utils/utilities';
 
-const AccordionItem = ({ icon, label, description, heading, productName, author }: any) => {
+const AccordionItem = ({
+  icon,
+  label,
+  description,
+  heading,
+  productName,
+  author,
+  highlightedText,
+}: any) => {
   const [show, setShow] = useState(false);
   const toggleShow = () => {
     setShow(!show);
   };
+
   return (
     <div className={`drop-item ${show ? 'open' : 'close'}`} onClick={toggleShow}>
       <div className="drop-item-header">
@@ -16,7 +26,12 @@ const AccordionItem = ({ icon, label, description, heading, productName, author 
         </div>
         {!show && <div className="drop-item-content-preview">{description}</div>}
       </div>
-      {show && <div className="drop-item-description">{description}</div>}
+      {show && (
+        <div
+          className="drop-item-description"
+          dangerouslySetInnerHTML={{ __html: getHighlightedText(description, highlightedText) }}
+        />
+      )}
       {show && productName && <div className="drop-item-description">{productName}</div>}
       {show && author && (
         <div className="drop-item-description">
@@ -30,9 +45,11 @@ const AccordionItem = ({ icon, label, description, heading, productName, author 
 const AccordionInDropdown = ({
   show,
   data,
+  searchTerm,
 }: {
   show: boolean;
   data: Array<Medication> | Array<Note>;
+  searchTerm?: string;
 }) => {
   const [showDrop] = useState(show);
 
@@ -61,6 +78,7 @@ const AccordionInDropdown = ({
             heading={item.heading}
             productName={item.productName}
             author={item.author}
+            highlightedText={searchTerm}
           />
         ))}
     </div>

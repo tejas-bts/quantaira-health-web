@@ -1,8 +1,7 @@
-/* eslint-disable no-constant-condition */
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FiChevronsRight, FiChevronsLeft, FiZoomIn, FiZoomOut, FiClock } from 'react-icons/fi';
 import { ChartPropsType } from '../../types/Chart.propsType';
+import { debounce } from 'lodash';
 
 import { localToTime, timeToLocal } from '../../utils/utilities';
 import {
@@ -14,22 +13,21 @@ import {
   SeriesMarker,
   IChartApi,
   IPriceLine,
-  TimeRange,
   Logical,
+  SingleValueData,
+  WhitespaceData,
 } from 'lightweight-charts';
 import { Medication, Note } from '../../types/Core.types';
-import { fetchPastChartData } from '../../services/chart.services';
+import MultiLingualLabel from './MultiLingualLabel';
 
-const leftOffset = 0;
-
-const MAX_ZOOM_LEVEL = 200;
-const MIN_ZOOM_LEVEL = 4;
 const CHART_BACKGROUND_COLOR = '#02162c';
 const GRID_COLOR = '#344456';
 const LABEL_COLOR = '#888';
+const IDEAL_LINES_WIDTH: any = 1;
 
-class Data {
+class StaticData {
   static isLive = true;
+  static warning = false;
 }
 
 const Chart = ({
@@ -47,23 +45,43 @@ const Chart = ({
   onNoteClick,
   onMedicationClick,
   onDataDemand,
+  isLive,
 }: ChartPropsType) => {
-  const [isLive, setLive] = useState(false);
+  const [leftScroll, setLeftScroll] = useState(false);
+  const [rightScroll, setRightScroll] = useState(false);
 
-  const [leftScroll] = useState(0);
-  const [rightScroll, setRightScroll] = useState(0);
-  const [zoomLevel, setZoomLevel] = useState(10);
   const [zoomIn, setZoomIn] = useState(false);
   const [zoomOut, setZoomOut] = useState(false);
 
+  const [isScrolled, setScrolled] = useState(false);
+
   const [currentValue, setCurrentValue] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const [buffer, setBuffer] = useState<(SingleValueData | WhitespaceData)[]>([]);
+
   const [chart, setChart] = useState<IChartApi | undefined>(undefined);
-  const [lineSeries, setLineSeries] = useState<ISeriesApi<'Area'> | undefined>(undefined);
+  const [lineSeries, setLineSeries] = useState<
+    ISeriesApi<'Baseline'> | ISeriesApi<'Area'> | undefined
+  >(undefined);
+  const [dummySeries, setDummySeries] = useState<
+    ISeriesApi<'Baseline'> | ISeriesApi<'Area'> | undefined
+  >(undefined);
   const [timeScale, setTimeScale] = useState<ITimeScaleApi | undefined>(undefined);
 
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [warning, setWarning] = useState(false);
+  const [warningInterval, setWarningInterval] = useState<NodeJS.Timer | null>(null);
 
   const chartDiv = useRef<HTMLDivElement>(null);
+  const chartContainer = useRef<HTMLDivElement>(null);
+
+  const minMaxLineOptions = {
+    color: '#be1238',
+    lineWidth: IDEAL_LINES_WIDTH,
+    lineStyle: LineStyle.LargeDashed,
+    axisLabelVisible: true,
+    lineVisible: true,
+  };
 
   const options = {
     rightPriceScale: {
@@ -73,7 +91,7 @@ const Chart = ({
       visible: true,
     },
     lineColor: 'white',
-    lineStyle: { color: 'red' },
+    lineStyle: { color: 'rgba( 38, 166, 154, 1)' },
     timeScale: {
       visible: true,
       timeVisible: true,
@@ -100,7 +118,6 @@ const Chart = ({
     if (!param.point) {
       return;
     }
-
     if (onClick !== undefined && param.time != undefined) {
       const targetTime = param.time;
       const markerId = param.hoveredMarkerId;
@@ -114,6 +131,94 @@ const Chart = ({
       }
     }
   };
+
+  useEffect(() => {
+    let interval: NodeJS.Timer | undefined = undefined;
+    const intervalTime = 5;
+    if (zoomOut) {
+      interval = setInterval(() => {
+        handleZoomOut();
+      }, intervalTime);
+    } else if (zoomIn) {
+      interval = setInterval(() => {
+        handleZoomIn();
+      }, intervalTime);
+    } else if (leftScroll) {
+      interval = setInterval(() => {
+        handleScrollLeft();
+      }, intervalTime);
+    } else if (rightScroll) {
+      interval = setInterval(() => {
+        handleScrollRight();
+      }, intervalTime);
+    }
+
+    return () => {
+      if (interval != undefined) clearInterval(interval);
+    };
+  }, [zoomOut, zoomIn, leftScroll, rightScroll]);
+
+  const handleZoomOut = () => {
+    if (timeScale != undefined) {
+      const currentTimeScale = timeScale.getVisibleLogicalRange();
+      if (currentTimeScale != null) {
+        timeScale.setVisibleLogicalRange({
+          from: currentTimeScale.from - 1,
+          to: currentTimeScale.to + 1,
+        });
+        console.log('New Time Scale', {
+          from: currentTimeScale.from - 1,
+          to: currentTimeScale.to + 1,
+        });
+      }
+    }
+  };
+
+  const handleZoomIn = () => {
+    if (timeScale != undefined) {
+      const currentTimeScale = timeScale.getVisibleLogicalRange();
+      if (currentTimeScale != null) {
+        timeScale.setVisibleLogicalRange({
+          from: currentTimeScale.from + 1,
+          to: currentTimeScale.to - 1,
+        });
+      }
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (timeScale != undefined) {
+      const currentTimeScale = timeScale.getVisibleLogicalRange();
+      if (currentTimeScale != null) {
+        timeScale.setVisibleLogicalRange({
+          from: currentTimeScale.from - 1,
+          to: currentTimeScale.to - 1,
+        });
+      }
+    }
+  };
+
+  const handleScrollLeft = () => {
+    if (timeScale != undefined) {
+      const currentTimeScale = timeScale.getVisibleLogicalRange();
+      if (currentTimeScale != null) {
+        timeScale.setVisibleLogicalRange({
+          from: currentTimeScale.from + 1,
+          to: currentTimeScale.to + 1,
+        });
+      }
+    }
+  };
+
+  const debouncedDataDemand = debounce((timeStamp, direction) => {
+    if (onDataDemand != undefined) {
+      onDataDemand(localToTime(timeStamp), direction);
+    }
+  }, 1000);
+
+  useEffect(() => {
+    debouncedDataDemand(new Date().getTime(), 'from');
+  }, []);
 
   useEffect(() => {
     if (chartDiv !== null && chartDiv.current != null) {
@@ -140,105 +245,187 @@ const Chart = ({
     if (chart !== undefined) {
       chart.subscribeClick(myClickHandler);
       const timeScale = chart.timeScale();
+
       timeScale.subscribeVisibleLogicalRangeChange((e) => {
-        if (e != null) {
+        const scrolledDistance = timeScale.scrollPosition();
+
+        if (e != null && scrolledDistance != null) {
           const { from, to }: { from: any; to: any } = e;
+
           const range = to - from;
+
+          if (-scrolledDistance > range) {
+            setScrolled(true);
+          } else {
+            setScrolled(false);
+          }
           if (to < range) {
             const co_ordinate = timeScale.logicalToCoordinate(0 as Logical);
             if (co_ordinate != null) {
               const time = timeScale.coordinateToTime(co_ordinate);
               if (onDataDemand != undefined && time != null) {
-                if (!isLoading) {
-                  setLoading(true);
-                  onDataDemand(localToTime(time)).finally(() => setLoading(false));
-                }
+                debouncedDataDemand(time, 'from');
               }
+            }
+          }
+          if (scrolledDistance > 0) {
+            const timeRange = timeScale.getVisibleRange();
+            console.log('New Time Range', timeRange);
+            if (timeRange != null && !StaticData.isLive) {
+              debouncedDataDemand(timeRange.to, 'to');
             }
           }
         }
       });
 
-      timeScale.applyOptions({});
-      const lineSeries = chart.addAreaSeries({
-        lineColor: color,
-        topColor: color,
-        bottomColor: 'transparent',
+      const lineSeries = chart.addBaselineSeries({
+        baseValue: { type: 'price', price: idealMax },
+        topLineColor: 'orange',
+        topFillColor1: 'transparent',
+        topFillColor2: 'transparent',
+        bottomLineColor: 'transparent',
+        bottomFillColor1: 'transparent',
+        bottomFillColor2: 'transparent',
+        lastValueVisible: false,
+        priceLineVisible: false,
       });
 
-      const lineWidth: any = 1;
-
-      if (idealMax !== undefined) {
-        const maxLimitLine: any = {
-          price: idealMax,
-          color: '#be1238',
-          lineWidth: lineWidth,
-          lineStyle: LineStyle.LargeDashed,
-          axisLabelVisible: true,
-          title: 'Upper limit',
-          lineVisible: true,
-        };
-        lineSeries.createPriceLine(maxLimitLine);
-      }
-
-      if (idealMin !== undefined) {
-        const minLimitLine: any = {
-          price: idealMin,
-          color: '#be1238',
-          lineWidth: lineWidth,
-          lineStyle: LineStyle.LargeDashed,
-          axisLabelVisible: true,
-          title: 'Lower limit',
-          lineVisible: true,
-        };
-        lineSeries.createPriceLine(minLimitLine);
-      }
+      const dummySeries = chart.addBaselineSeries({
+        baseValue: { type: 'price', price: idealMin },
+        topLineColor: color,
+        topFillColor1: 'transparent',
+        topFillColor2: 'transparent',
+        bottomLineColor: 'red',
+        bottomFillColor1: 'transparent',
+        bottomFillColor2: 'transparent',
+      });
 
       setTimeScale(timeScale);
       setLineSeries(lineSeries);
+      setDummySeries(dummySeries);
     }
+
+    return () => {
+      if (chart != undefined && lineSeries != undefined && dummySeries != undefined) {
+        lineSeries.setData([]);
+        dummySeries.setData([]);
+        chart.removeSeries(lineSeries);
+        chart.removeSeries(dummySeries);
+        setLineSeries(undefined);
+        setDummySeries(undefined);
+      }
+    };
   }, [chart]);
 
   useEffect(() => {
-    if (timeScale !== undefined) {
-      console.log('Time Scale', timeScale.getVisibleLogicalRange(), timeScale.getVisibleRange());
-    }
-  }, [timeScale]);
+    const newBuffer: Array<SingleValueData> = [];
+    let maxLimitLine: IPriceLine | undefined = undefined;
+    let minLimitLine: IPriceLine | undefined = undefined;
 
-  useEffect(() => {
-    console.log('Values', values);
-    if (lineSeries !== undefined) {
+    if (lineSeries !== undefined && dummySeries != undefined) {
       for (const item of values) {
         const [time, value] = item;
         const zoneTime: Time = timeToLocal(time);
-        lineSeries.update({ time: zoneTime, value });
-        setCurrentValue(value);
-      }
-    }
-  }, [values]);
 
-  useEffect(() => {
-    if (history != undefined && lineSeries != undefined) {
-      if (history.length > 0) {
-        const newHistory = [];
-        for (const item of history) {
-          const [timeStamp, value] = item;
-          const time: Time = timeToLocal(timeStamp);
-
-          newHistory.push({ time, value });
+        if (StaticData.isLive) {
+          console.log('Updating Data', StaticData.isLive, { time: zoneTime, value });
+          lineSeries.update({ time: zoneTime, value });
+          dummySeries.update({ time: zoneTime, value });
+          setCurrentValue(value);
+          setCurrentTime(new Date(time * 1000));
+          if (idealMax !== undefined && idealMin != undefined) {
+            if (value < idealMin || value > idealMax) {
+              setWarning(true);
+            } else {
+              setWarning(false);
+            }
+          }
         }
-        lineSeries.setData(newHistory);
+        newBuffer.push({ time: zoneTime, value });
+      }
+      setBuffer((oldBuffer) => [...oldBuffer, ...newBuffer]);
+
+      if (idealMax !== undefined) {
+        const maxLimitLineOptions = {
+          ...minMaxLineOptions,
+          price: idealMax,
+          title: 'Max',
+        };
+        maxLimitLine = lineSeries.createPriceLine(maxLimitLineOptions);
+      }
+
+      if (idealMin !== undefined) {
+        const minLimitLineOptions = {
+          ...minMaxLineOptions,
+          price: idealMin,
+          title: 'Min',
+        };
+        minLimitLine = lineSeries.createPriceLine(minLimitLineOptions);
       }
     }
-  }, [lineSeries, history]);
+
+    return () => {
+      if (lineSeries != undefined) {
+        if (maxLimitLine != undefined) lineSeries.removePriceLine(maxLimitLine);
+        if (minLimitLine != undefined) lineSeries.removePriceLine(minLimitLine);
+        // lineSeries.setData([]);
+        // dummySeries?.setData([]);
+      }
+    };
+  }, [values, idealMin, idealMax]);
 
   useEffect(() => {
-    console.log('Final History', history);
-  }, [history]);
+    if (history != undefined && history.length > 0) {
+      const newTime = timeToLocal(history[0][0]);
+      const previousTime = buffer[0] ? buffer[0].time : Infinity;
+      if (newTime < previousTime || !StaticData.isLive) {
+        if (lineSeries != undefined && dummySeries != undefined) {
+          const newHistory: (SingleValueData | WhitespaceData)[] = [];
+          for (const item of history) {
+            const [timeStamp, value] = item;
+            const time: Time = timeToLocal(timeStamp);
+            newHistory.push({ time, value });
+          }
+          lineSeries.setData(newHistory);
+          dummySeries.setData(newHistory);
+          setBuffer(newHistory);
+        }
+      }
+    }
+  }, [history, lineSeries, dummySeries, values]);
 
   useEffect(() => {
-    Data.isLive = isLive;
-  }, [isLive]);
+    StaticData.isLive = isLive;
+    StaticData.warning = warning;
+    if (!isLive) {
+      if (warningInterval != null) {
+        setWarning(false);
+        clearInterval(warningInterval);
+      }
+    }
+  }, [isLive, warning]);
+
+  useEffect(() => {
+    if (warning) {
+      const interval = setInterval(() => {
+        if (chartContainer.current != null) {
+          if (chartContainer.current.style.filter == '') {
+            chartContainer.current.style.filter = 'invert(1)';
+          } else {
+            chartContainer.current.style.filter = '';
+          }
+        }
+        setWarningInterval(interval);
+      }, 800);
+    } else {
+      if (warningInterval != null) clearInterval(warningInterval);
+    }
+
+    return () => {
+      if (warningInterval != null) clearInterval(warningInterval);
+      if (chartContainer.current != null) chartContainer.current.style.filter = '';
+    };
+  }, [warning]);
 
   useEffect(() => {
     if (
@@ -250,7 +437,6 @@ const Chart = ({
       const notesMarkers: Array<SeriesMarker<Time>> = notes.reduce(
         (result: Array<SeriesMarker<Time>>, item: Note) => {
           const time: Time = timeToLocal(item.timeStamp);
-          console.log('Is in Graph Note', timeScale.timeToCoordinate(time) !== null);
           if (
             timeScale.timeToCoordinate(time) !== null &&
             result.find((item) => time == item.time) == undefined
@@ -272,8 +458,6 @@ const Chart = ({
       const medicationMarkers: Array<SeriesMarker<Time>> = medications.reduce(
         (result: Array<SeriesMarker<Time>>, item: Medication) => {
           const time: Time = timeToLocal(item.timeStamp);
-
-          console.log('Is in Graph Med', timeScale.timeToCoordinate(time) !== null);
           if (
             timeScale.timeToCoordinate(time) !== null &&
             result.find((item) => time == item.time) == undefined
@@ -283,7 +467,7 @@ const Chart = ({
               time,
               color,
               position: 'aboveBar',
-              shape: 'circle',
+              shape: 'square',
               text: '💊 Medication',
             });
           }
@@ -296,7 +480,6 @@ const Chart = ({
 
     return () => {
       lineSeries?.setMarkers([]);
-      // lineSeries?.removePriceLine(minPriceLine);
     };
   }, [notes, medications, lineSeries, timeScale]);
 
@@ -310,6 +493,7 @@ const Chart = ({
         flexDirection: 'column',
         backgroundColor: CHART_BACKGROUND_COLOR,
       }}
+      ref={chartContainer}
     >
       <div className="chart-header">
         <div className="chart-header-left">
@@ -323,20 +507,18 @@ const Chart = ({
             <div className="chart-header-col-1">
               <div className="zoom-buttons">
                 <button
-                  className={`mt-2 ${zoomIn ? 'is-active' : ''} ${
-                    zoomLevel <= MIN_ZOOM_LEVEL ? 'disabled' : ''
-                  }`}
+                  className={`mt-2 ${zoomIn ? 'is-active' : ''}`}
                   onMouseDown={() => setZoomIn(true)}
                   onMouseUp={() => setZoomIn(false)}
+                  onClick={handleZoomIn}
                 >
                   <FiZoomIn />
                 </button>
                 <button
-                  className={`mt-0 ${zoomOut ? 'is-active' : ''} ${
-                    zoomLevel >= MAX_ZOOM_LEVEL ? 'disabled' : ''
-                  }`}
+                  className={`mt-0 ${zoomOut ? 'is-active' : ''}`}
                   onMouseDown={() => setZoomOut(true)}
                   onMouseUp={() => setZoomOut(false)}
+                  onClick={handleZoomOut}
                 >
                   <FiZoomOut />
                 </button>
@@ -361,19 +543,26 @@ const Chart = ({
         <div className="chart-header-center">
           <div className="chart-header-col-4">
             {isLive ? (
-              <div className="chart-online-status delayed">
-                <FiClock color="yellow" className="m-1" />
-                Delayed
-              </div>
+              isScrolled ? (
+                <button
+                  onClick={() => {
+                    timeScale?.scrollToRealTime();
+                    timeScale?.resetTimeScale();
+                  }}
+                  className="go-live-button chart-online-status"
+                >
+                  Go Live
+                </button>
+              ) : (new Date().getTime() - currentTime.getTime()) / 1000 > 20 ? (
+                <div className="chart-online-status delayed">
+                  <FiClock color="yellow" className="m-1" />
+                  Delayed
+                </div>
+              ) : (
+                <button className="go-live-button chart-online-status">Live</button>
+              )
             ) : (
-              // <div className="chart-online-status delayed">
-              <button
-                onClick={() => timeScale?.scrollToRealTime()}
-                className="go-live-button chart-online-status"
-              >
-                Go Live
-              </button>
-              // </div>
+              'Past Data'
             )}
           </div>
         </div>
@@ -381,16 +570,18 @@ const Chart = ({
           <div className="chart-header-col-5">
             <div className="chart-navigation">
               <button
-                className={`chart-navigation-button ${leftScroll > 0 ? 'is-active' : ''} ${
-                  values.length - leftOffset < zoomLevel ? 'disabled' : ''
-                }`}
+                className={`chart-navigation-button ${leftScroll ? 'is-active' : ''}`}
+                onClick={handleScrollLeft}
+                onMouseDown={() => setLeftScroll(true)}
+                onMouseUp={() => setLeftScroll(false)}
               >
                 <FiChevronsLeft />
               </button>
               <button
-                className={`chart-navigation-button ${rightScroll > 0 ? 'is-active' : ''} ${
-                  leftOffset == 0 ? 'disabled' : ''
-                }`}
+                className={`chart-navigation-button ${rightScroll ? 'is-active' : ''}`}
+                onClick={handleScrollRight}
+                onMouseDown={() => setRightScroll(true)}
+                onMouseUp={() => setRightScroll(false)}
               >
                 <FiChevronsRight />
               </button>
@@ -398,19 +589,14 @@ const Chart = ({
           </div>
         </div>
       </div>
-      <div className="chart-container" ref={chartDiv}>
-        {/* {values.length ? (
-          <div
-            ref={chartDiv}
-            className="chtoba"
-            style={{ width: '100%', height: '250px', background: 'grey' }}
-          />
-        ) : (
-          <div className="h-100 w-100 d-flex justify-content-center align-items-center">
-            <MultiLingualLabel id="NO_DATA_AVAILABLE" />
-          </div>
-        )} */}
-      </div>
+
+      {values.length || buffer.length ? (
+        <div className="chart-container" ref={chartDiv} />
+      ) : (
+        <div className="h-100 w-100 d-flex justify-content-center align-items-center">
+          <MultiLingualLabel id="NO_DATA_AVAILABLE" />
+        </div>
+      )}
     </div>
   );
 };

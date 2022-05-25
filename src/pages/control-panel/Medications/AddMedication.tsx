@@ -69,13 +69,11 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
 
   const loadMedication = async (inputValue: any) => {
     const data = await searchMedicines(inputValue, isNDC);
-    setMedicationOptions(() => {
-      return data;
-    });
+    setMedicationOptions(data);
   };
 
   useEffect(() => {
-    if (inputValue && inputValue.length > 1 && inputValue.length < 8) {
+    if (inputValue && inputValue.length > 1) {
       loadMedication(inputValue);
     }
   }, [inputValue, isNDC]);

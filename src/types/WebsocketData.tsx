@@ -8,6 +8,8 @@ export interface BiometricData {
   currentValue: number | undefined;
 }
 
+export type HistoricData = BiometricData;
+
 export class BioMetricDataObj implements BiometricData {
   label: string;
   description: string | undefined;

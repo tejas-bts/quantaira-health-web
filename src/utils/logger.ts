@@ -1,5 +1,5 @@
 export const logBiometricData = (data: any, exclusions: Array<string> = []) => {
-  console.clear();
+  // console.clear();
   const processedData: any = {};
   for (const i of data) {
     const label: string = i.label;

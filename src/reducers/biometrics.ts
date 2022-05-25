@@ -32,10 +32,6 @@ export const biometrics = createSlice({
           oldData[targetIndex] = newTarget;
         }
       }
-      console.log(
-        'Old Data',
-        oldData.find((item: any) => item.label === 'Temp')
-      );
 
       return {
         ...state,

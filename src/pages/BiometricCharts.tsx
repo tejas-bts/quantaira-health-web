@@ -15,8 +15,11 @@ import Alarms from '../pages/control-panel/Alarms';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPastChartData } from '../services/chart.services';
 import { prependToBiometricData } from '../reducers/biometrics';
-import { localToTime, timeToLocal } from '../utils/utilities';
+import { flattenArray, localToTime, timeToLocal } from '../utils/utilities';
 import { Time } from 'lightweight-charts';
+import { Bed } from '../types/Core.types';
+import { StateReducer } from '../types/Reducer.types';
+import { appendToHistoricData, prependToHistoricData, setHistoricData } from '../reducers/history';
 // import { logBiometricData } from '../utils/logger';
 
 const BiometricCharts = () => {
@@ -28,10 +31,13 @@ const BiometricCharts = () => {
 
   const chartSelections = useSelector((state: any) => state.chart.selectedCharts);
   const selectedScreen = useSelector((state: any) => state.chart.selectedScreen);
-  const bed: any = useSelector((state: any) => state.patient.bed);
+  const bed: Bed = useSelector((state: any) => state.patient.bed);
   const notes = useSelector((state: any) => state.notes.data);
   const medications = useSelector((state: any) => state.medications.data);
   const biometricData: any = useSelector((state: any) => state.biometrics.biometricData);
+  const historicData = useSelector((state: StateReducer) => state.history.historicData);
+  const isLive = useSelector((state: StateReducer) => state.time.isLive);
+  const time = useSelector((state: StateReducer) => state.time.currentTime);
 
   const navigateTo = (address: To) => {
     navigate(address, {
@@ -55,96 +61,63 @@ const BiometricCharts = () => {
     setBuffer(biometricData.map((item: any) => item.values));
   }, [biometricData]);
 
+  useEffect(() => {
+    console.log('Is Live : : : :', isLive, time);
+    if (!isLive) {
+      const biometricIds = flattenArray(chartSelections).map(
+        (title: string) =>
+          biometricData.find((item: BiometricData) => item.label === title)?.biometricId
+      );
+      const params = new URLSearchParams();
+
+      for (const item of biometricIds) params.append('biometricId', item);
+      params.append('bed_id', bed.bedId);
+      params.append('limit', '100');
+      params.append('pid', `${bed.patientID}`);
+      params.append('to', `${time}`);
+
+      fetchPastChartData(params)
+        .then((historicData) => {
+          dispatch(setHistoricData({ data: historicData }));
+        })
+        .catch((e) => console.error(e));
+    }
+  }, [isLive, time]);
+
   const getIndex = (label: string) => {
     const index = biometricData.findIndex((item: any) => item.label === label);
     return index;
-  };
-
-  const handleDataDemand = async (biometricId: any, time: number) => {
-    try {
-      const newData = await fetchPastChartData({
-        bedId: bed.bedId,
-        patientId: bed.patientID,
-        fromDate: time,
-        limit: 4,
-        biometricId,
-      });
-      console.log('Data demanded fullfiled with', newData);
-      dispatch(prependToBiometricData({ data: [newData] }));
-    } catch (e) {
-      console.log('Error fetching Past chart data', e);
-    }
   };
 
   if (!bed) {
     navigate('/app/patient', { replace: true });
   }
 
-  const [history, setHistory] = useState<Array<any>>([]);
+  const onDemand = (biometricId: any, time: number, direction: 'to' | 'from') => {
+    console.log('On Demand', direction);
+    return new Promise<void>((resolve) => {
+      const params = new URLSearchParams();
+      params.append('bedId', bed.bedId);
+      params.append('limit', '100');
+      params.append('pid', `${bed.patientID}`);
+      if (direction == 'from') {
+        params.append('fromDate', `${time}`);
+      } else {
+        params.append('to', `${time}`);
+      }
+      params.append('biometricId', `${biometricId}`);
 
-  const onDemand = (biometricId: any, time: number) => {
-    return new Promise<void>((resolve, reject) => {
-      fetchPastChartData({
-        bedId: bed.bedId,
-        patientId: bed.patientID,
-        fromDate: time,
-        limit: 4,
-        biometricId,
-      })
-        .then((data) => {
-          const { values } = data;
-          if (values != undefined && values.length > 0) {
-            const newHistory: Array<[Time, number]> = [];
-            for (const item of values) {
-              const [timeStamp, value] = item;
-              newHistory.push([timeToLocal(timeStamp), value]);
-            }
-            console.log('New History', newHistory);
-            setHistory((oldHistory) => {
-              if (oldHistory.length > 0) {
-                if (oldHistory[0][0] > newHistory[newHistory.length - 1][0]) {
-                  return [...newHistory, ...oldHistory];
-                } else {
-                  console.log('Final History', 'Order was incorrect', oldHistory, newHistory);
-                  return oldHistory;
-                }
-              } else {
-                return newHistory;
-              }
-            });
+      fetchPastChartData(params)
+        .then((historicData) => {
+          if (direction == 'from') {
+            dispatch(prependToHistoricData({ data: [historicData] }));
+          } else {
+            dispatch(appendToHistoricData({ data: [historicData] }));
           }
+          resolve();
         })
         .catch((e) => console.error(e));
     });
-
-    // return new Promise<void>((resolve) => {
-    //   console.log('new History', new Date(time));
-    //   setTimeout(() => {
-    //     const newHistory: Array<[number, number]> = [];
-    //     for (let i = 0; i < 10; i++) {
-    //       newHistory.push([
-    //         Math.floor(time / 1000) - (10 - i),
-    //         parseFloat(Math.random().toFixed(1)),
-    //       ]);
-    //       console.log('Target Time', [
-    //         Math.floor(time / 1000) - (10 - i),
-    //         Math.random().toFixed(1),
-    //       ]);
-    //     }
-    //     setHistory((oldHistory) => {
-    //       if (oldHistory.length > 0) {
-    //         if (oldHistory[0][0] > newHistory[newHistory.length - 1][0]) {
-    //           return [...newHistory, ...oldHistory];
-    //         } else {
-    //           return oldHistory;
-    //         }
-    //       } else {
-    //         return newHistory;
-    //       }
-    //     });
-    //     resolve();
-    //   }, 500);
-    // });
   };
 
   return (
@@ -153,6 +126,8 @@ const BiometricCharts = () => {
         {chartSelections[selectedScreen] && chartSelections[selectedScreen][0] && (
           <Chart
             color={colors[0]}
+            chartTime={isLive ? new Date() : new Date(time)}
+            isLive={isLive}
             curveType="smooth"
             Icon={getIcon(chartSelections[selectedScreen][0])}
             title={chartSelections[selectedScreen][0]}
@@ -169,24 +144,19 @@ const BiometricCharts = () => {
             }}
             notes={notes}
             medications={medications}
-            // onDataDemand={(time) => {
-            //   handleDataDemand(
-            //     biometricData[getIndex(chartSelections[selectedScreen][0])].biometricId,
-            //     time
-            //   );
-            // }}
-            onDataDemand={(time) => {
-              console.log('Demand Time', time);
-              return onDemand(
+            onDataDemand={(time, direction) =>
+              onDemand(
                 biometricData[getIndex(chartSelections[selectedScreen][0])].biometricId,
-                time
-              );
-            }}
-            history={history}
+                time,
+                direction
+              )
+            }
+            history={historicData[getIndex(chartSelections[selectedScreen][0])].values}
+            // history={[]}
           />
         )}
       </div>
-      <div>
+      <div className="overflow-hidden">
         <div className="h-100 w-100 p-3 controls-box">
           <Routes>
             <Route path="/notes/*" element={<Notes />} />
@@ -200,6 +170,8 @@ const BiometricCharts = () => {
         {chartSelections[selectedScreen] && chartSelections[selectedScreen][1] && (
           <Chart
             color={colors[1]}
+            isLive={isLive}
+            chartTime={isLive ? new Date() : new Date(time)}
             curveType="smooth"
             Icon={getIcon(chartSelections[selectedScreen][1])}
             title={chartSelections[selectedScreen][1]}
@@ -209,21 +181,21 @@ const BiometricCharts = () => {
             values={bufferData[getIndex(chartSelections[selectedScreen][1])] || []}
             onClick={(time: number) => navigateTo(`/app/charts/notes/add/${time}`)}
             onNoteClick={(time: number) => {
-              console.log('Note Clicked');
               navigateTo(`/app/charts/notes/view/${time}`);
             }}
             onMedicationClick={(time: number) => {
-              console.log('Medicine Clicked');
               navigateTo(`/app/charts/medications/view/${time}`);
             }}
             notes={notes}
             medications={medications}
-            // onDataDemand={(time) =>
-            //   handleDataDemand(
-            //     biometricData[getIndex(chartSelections[selectedScreen][1])].biometricId,
-            //     time
-            //   )
-            // }
+            onDataDemand={(time, direction) =>
+              onDemand(
+                biometricData[getIndex(chartSelections[selectedScreen][1])].biometricId,
+                time,
+                direction
+              )
+            }
+            // history={historicData[getIndex(chartSelections[selectedScreen][1])].values}
             history={[]}
           />
         )}
@@ -232,6 +204,8 @@ const BiometricCharts = () => {
         {chartSelections[selectedScreen] && chartSelections[selectedScreen][2] && (
           <Chart
             color={colors[2]}
+            isLive={isLive}
+            chartTime={isLive ? new Date() : new Date(time)}
             curveType="smooth"
             Icon={getIcon(chartSelections[selectedScreen][2])}
             title={chartSelections[selectedScreen][2]}
@@ -241,21 +215,21 @@ const BiometricCharts = () => {
             values={bufferData[getIndex(chartSelections[selectedScreen][2])] || []}
             onClick={(time: number) => navigateTo(`/app/charts/notes/add/${time}`)}
             onNoteClick={(time: number) => {
-              console.log('Note Clicked');
               navigateTo(`/app/charts/notes/view/${time}`);
             }}
             onMedicationClick={(time: number) => {
-              console.log('Medicine Clicked');
               navigateTo(`/app/charts/medications/view/${time}`);
             }}
             notes={notes}
             medications={medications}
-            // onDataDemand={(time) =>
-            //   handleDataDemand(
-            //     biometricData[getIndex(chartSelections[selectedScreen][2])].biometricId,
-            //     time
-            //   )
-            // }
+            onDataDemand={(time, direction) =>
+              onDemand(
+                biometricData[getIndex(chartSelections[selectedScreen][2])].biometricId,
+                time,
+                direction
+              )
+            }
+            // history={historicData[getIndex(chartSelections[selectedScreen][2])].values}
             history={[]}
           />
         )}

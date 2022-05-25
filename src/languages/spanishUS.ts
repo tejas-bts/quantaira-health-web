@@ -37,7 +37,9 @@ export const spanishUS: Record<string, string> = {
   NOTES: 'Notas',
   MEDICATION: 'Medicamentos',
   SELECT_GRAPH: 'Seleccionar gráfico',
+  COMBINE_VIEW: 'Combinar vista',
   SETTINGS: 'Ajustes',
+  ABOUT: 'Acerca de',
   LANGUAGE: 'Idioma',
 
   ADD_NOTES: 'Agregar nota',
