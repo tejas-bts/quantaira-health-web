@@ -1,4 +1,5 @@
 export interface BiometricData {
+  biometricId?: string;
   label: string;
   description: string | undefined;
   unit: string | undefined;

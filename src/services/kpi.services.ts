@@ -3,13 +3,27 @@ import { baseURLhttp } from '../utils/constants';
 
 const getKPIdata = `${baseURLhttp}/FetchKPIPastData`;
 
-export const fetchKpi = async ({ bedId, patientId, fromDate, limit }: { bedId: string | number, patientId: string | number, fromDate: string | number, limit: number }) => {
+export const fetchKpi = async ({
+  bedId,
+  patientId,
+  fromDate,
+  limit,
+}: {
+  bedId: string | number;
+  patientId: string | number;
+  fromDate: string | number;
+  limit: number;
+}) => {
   return new Promise<void>((resolve, reject) => {
-    axios.get(getKPIdata, {
-      params: {
-        bed_id: bedId, pid: patientId, fromDate, limit
-      }
-    })
+    axios
+      .get(getKPIdata, {
+        params: {
+          bedId,
+          pid: patientId,
+          fromDate,
+          limit,
+        },
+      })
       .then((response) => {
         resolve(response.data.data.data);
       })

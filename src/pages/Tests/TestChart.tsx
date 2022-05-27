@@ -28,20 +28,20 @@ const TestChart = () => {
     });
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setData(() => {
-        const dataItem = [];
-        const time = Math.floor(new Date().getTime() / 1000);
-        dataItem.push(time);
-        dataItem.push(new Date().getSeconds() + parseFloat(Math.random().toFixed(1)));
-        return [dataItem];
-      });
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setData(() => {
+  //       const dataItem = [];
+  //       const time = Math.floor(new Date().getTime() / 1000);
+  //       dataItem.push(time);
+  //       dataItem.push(new Date().getSeconds() + parseFloat(Math.random().toFixed(1)));
+  //       return [dataItem];
+  //     });
+  //   }, 1000);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, []);
 
   return (
     <div className="h-100 w-100">
@@ -55,11 +55,15 @@ const TestChart = () => {
         idealMax={Infinity}
         idealMin={-Infinity}
         unit={'test unit'}
-        values={data}
+        values={[
+          [1234567890, 1],
+          [1234567891, 2],
+          [1234567892, 4],
+        ]}
         history={[]}
         notes={[]}
         medications={[]}
-        onDataDemand={onDemand}
+        // onDataDemand={onDemand}
       />
     </div>
   );

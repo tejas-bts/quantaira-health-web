@@ -82,3 +82,17 @@ export const flattenArray = (twoDArray: Array<Array<string>>) => {
   }
   return oneDArray;
 };
+
+export const isTimeInOrder = (data: Array<[number, number]>): boolean => {
+  let lastTime = 0;
+  for (let i = 0; i < data.length; i++) {
+    const currentTime = data[i][0];
+    if (currentTime <= lastTime) {
+      console.error('Time out of order at', i, data[i - 1], data[i], data[i + 1]);
+      return false;
+    } else {
+      lastTime = currentTime;
+    }
+  }
+  return true;
+};

@@ -26,11 +26,16 @@ import { fetchNotes } from '../services/notes.services';
 import { appendToHistoricData } from '../reducers/history';
 import { StateReducer } from '../types/Reducer.types';
 
+class StaticData {
+  static isLive = false;
+}
+
 const App = () => {
   const user: any = useSelector((state: StateReducer) => state.auth);
   const bed = useSelector((state: StateReducer) => state.patient.bed);
   const headerBlur = useSelector((state: StateReducer) => state.appState.headerBlur);
   const contentBlur = useSelector((state: StateReducer) => state.appState.contentBlur);
+  const isLive = useSelector((state: StateReducer) => state.time.isLive);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -76,13 +81,17 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    StaticData.isLive = isLive;
+  }, [isLive]);
+
+  useEffect(() => {
     const socket = Client(baseURLws);
     if (bed !== undefined) {
       socket.on('connect', () => {
         toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {
           dispatch(appendToBiometricData({ data }));
-          dispatch(appendToHistoricData({ data }));
+          if (StaticData.isLive) dispatch(appendToHistoricData({ data }));
         });
       });
 
@@ -99,7 +108,6 @@ const App = () => {
     };
   }, [bed]);
 
-  // const language = useSelector((state: any) => state.language.selectedLanguage);
   const locale = useSelector((state: any) => state.language.selectedLocale);
 
   return (

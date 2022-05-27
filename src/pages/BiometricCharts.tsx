@@ -55,6 +55,26 @@ const BiometricCharts = () => {
     return icons[label] || FaNotesMedical;
   };
 
+  const loadHistoricData = async () => {
+    try {
+      const params = new URLSearchParams();
+      const biometricIds = flattenArray(chartSelections).map(
+        (title: string) =>
+          biometricData.find((item: BiometricData) => item.label === title)?.biometricId
+      );
+
+      for (const item of biometricIds) params.append('biometricId', item);
+      params.append('bedId', bed.bedId);
+      params.append('limit', '100');
+      params.append('pid', `${bed.patientID}`);
+      params.append('toDate', `${time}`);
+      const data = await fetchPastChartData(params);
+      dispatch(setHistoricData({ data }));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     const availableCharts: any = [];
     biometricData.map((item: BiometricData) => availableCharts.push(item.label));
@@ -62,25 +82,8 @@ const BiometricCharts = () => {
   }, [biometricData]);
 
   useEffect(() => {
-    console.log('Is Live : : : :', isLive, time);
     if (!isLive) {
-      const biometricIds = flattenArray(chartSelections).map(
-        (title: string) =>
-          biometricData.find((item: BiometricData) => item.label === title)?.biometricId
-      );
-      const params = new URLSearchParams();
-
-      for (const item of biometricIds) params.append('biometricId', item);
-      params.append('bed_id', bed.bedId);
-      params.append('limit', '100');
-      params.append('pid', `${bed.patientID}`);
-      params.append('to', `${time}`);
-
-      fetchPastChartData(params)
-        .then((historicData) => {
-          dispatch(setHistoricData({ data: historicData }));
-        })
-        .catch((e) => console.error(e));
+      loadHistoricData();
     }
   }, [isLive, time]);
 
@@ -103,16 +106,16 @@ const BiometricCharts = () => {
       if (direction == 'from') {
         params.append('fromDate', `${time}`);
       } else {
-        params.append('to', `${time}`);
+        params.append('toDate', `${time}`);
       }
       params.append('biometricId', `${biometricId}`);
 
       fetchPastChartData(params)
-        .then((historicData) => {
+        .then((data) => {
           if (direction == 'from') {
-            dispatch(prependToHistoricData({ data: [historicData] }));
+            dispatch(prependToHistoricData({ data }));
           } else {
-            dispatch(appendToHistoricData({ data: [historicData] }));
+            dispatch(appendToHistoricData({ data }));
           }
           resolve();
         })
@@ -152,7 +155,6 @@ const BiometricCharts = () => {
               )
             }
             history={historicData[getIndex(chartSelections[selectedScreen][0])].values}
-            // history={[]}
           />
         )}
       </div>
@@ -195,8 +197,7 @@ const BiometricCharts = () => {
                 direction
               )
             }
-            // history={historicData[getIndex(chartSelections[selectedScreen][1])].values}
-            history={[]}
+            history={historicData[getIndex(chartSelections[selectedScreen][1])].values}
           />
         )}
       </div>
@@ -229,8 +230,7 @@ const BiometricCharts = () => {
                 direction
               )
             }
-            // history={historicData[getIndex(chartSelections[selectedScreen][2])].values}
-            history={[]}
+            history={historicData[getIndex(chartSelections[selectedScreen][2])].values}
           />
         )}
       </div>

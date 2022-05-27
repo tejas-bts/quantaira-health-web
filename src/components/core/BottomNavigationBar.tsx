@@ -23,7 +23,6 @@ const BottomNavigationBar = () => {
   };
 
   const handleSettings = () => {
-    console.log('showSettings', settingsShown);
     if (settingsShown) {
       dispatch(hideSettings());
     } else {

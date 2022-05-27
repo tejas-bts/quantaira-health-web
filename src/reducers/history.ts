@@ -8,13 +8,13 @@ export const history = createSlice({
     historicData: [],
   },
   reducers: {
-    appendToHistoricData: (state, action) => {
+    appendToHistoricData: (state, action: { payload: { data: Array<BiometricData> } }) => {
       const oldData: any = [...current(state).historicData];
       const newData: Array<BiometricData> = [...action.payload.data];
 
       for (const newItem of newData) {
-        const targetIndex: number = oldData.findIndex(
-          (item: BiometricData) => item.label == newItem.label
+        const targetIndex: any = oldData.findIndex(
+          (item: BiometricData) => item.biometricId == newItem.biometricId
         );
         if (targetIndex < 0) {
           oldData.push(newItem);
@@ -38,11 +38,13 @@ export const history = createSlice({
     },
 
     setHistoricData: (state, action) => {
+      console.log('New Data', action.payload.data);
       const oldData: any = [...current(state).historicData];
       const newData: any = [...action.payload.data];
-
       for (const newItem of newData) {
-        const targetIndex: any = oldData.findIndex((item: any) => item.label == newItem.label);
+        const targetIndex: any = oldData.findIndex(
+          (item: BiometricData) => item.biometricId == newItem.biometricId
+        );
         if (targetIndex < 0) {
           oldData.push(newItem);
         } else {
@@ -54,13 +56,16 @@ export const history = createSlice({
         }
       }
 
+      console.log('Setting Hostoric Data', oldData);
+
       return {
         ...state,
         historicData: oldData,
       };
     },
 
-    prependToHistoricData: (state, action) => {
+    prependToHistoricData: (state, action: { payload: { data: Array<BiometricData> } }) => {
+      console.log('PrePEND DATA ::: ', action.payload.data);
       const oldData: any = [...current(state).historicData];
       const newData: any = [...action.payload.data];
 

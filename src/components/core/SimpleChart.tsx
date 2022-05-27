@@ -28,6 +28,7 @@ const IDEAL_LINES_WIDTH: any = 1;
 class StaticData {
   static isLive = true;
   static warning = false;
+  static isLoading = false;
 }
 
 const Chart = ({
@@ -71,6 +72,8 @@ const Chart = ({
 
   const [warning, setWarning] = useState(false);
   const [warningInterval, setWarningInterval] = useState<NodeJS.Timer | null>(null);
+
+  const [isLoading, setLoading] = useState(false);
 
   const chartDiv = useRef<HTMLDivElement>(null);
   const chartContainer = useRef<HTMLDivElement>(null);
@@ -212,13 +215,13 @@ const Chart = ({
 
   const debouncedDataDemand = debounce((timeStamp, direction) => {
     if (onDataDemand != undefined) {
-      onDataDemand(localToTime(timeStamp), direction);
+      setLoading(true);
+      if (direction == 'to')
+        onDataDemand(localToTime(timeStamp), 'to').finally(() => setLoading(false));
+      if (direction == 'from')
+        onDataDemand(localToTime(timeStamp), 'from').finally(() => setLoading(false));
     }
   }, 1000);
-
-  useEffect(() => {
-    debouncedDataDemand(new Date().getTime(), 'from');
-  }, []);
 
   useEffect(() => {
     if (chartDiv !== null && chartDiv.current != null) {
@@ -234,10 +237,6 @@ const Chart = ({
 
       window.addEventListener('resize', handleResize);
       setChart(chart);
-      return () => {
-        chart.remove();
-        window.removeEventListener('resize', handleResize);
-      };
     }
   }, [chartDiv]);
 
@@ -270,7 +269,6 @@ const Chart = ({
           }
           if (scrolledDistance > 0) {
             const timeRange = timeScale.getVisibleRange();
-            console.log('New Time Range', timeRange);
             if (timeRange != null && !StaticData.isLive) {
               debouncedDataDemand(timeRange.to, 'to');
             }
@@ -278,35 +276,40 @@ const Chart = ({
         }
       });
 
-      const lineSeries = chart.addBaselineSeries({
-        baseValue: { type: 'price', price: idealMax },
-        topLineColor: 'orange',
-        topFillColor1: 'transparent',
-        topFillColor2: 'transparent',
-        bottomLineColor: 'transparent',
-        bottomFillColor1: 'transparent',
-        bottomFillColor2: 'transparent',
-        lastValueVisible: false,
-        priceLineVisible: false,
-      });
+      if (lineSeries === undefined) {
+        const lineSeries = chart.addBaselineSeries({
+          baseValue: { type: 'price', price: idealMax },
+          topLineColor: 'orange',
+          topFillColor1: 'transparent',
+          topFillColor2: 'transparent',
+          bottomLineColor: color,
+          bottomFillColor1: 'transparent',
+          bottomFillColor2: 'transparent',
+          lastValueVisible: false,
+          priceLineVisible: false,
+        });
+        setLineSeries(lineSeries);
+      }
 
-      const dummySeries = chart.addBaselineSeries({
-        baseValue: { type: 'price', price: idealMin },
-        topLineColor: color,
-        topFillColor1: 'transparent',
-        topFillColor2: 'transparent',
-        bottomLineColor: 'red',
-        bottomFillColor1: 'transparent',
-        bottomFillColor2: 'transparent',
-      });
+      if (dummySeries === undefined) {
+        const dummySeries = chart.addBaselineSeries({
+          baseValue: { type: 'price', price: idealMin },
+          topLineColor: 'transparent',
+          topFillColor1: 'transparent',
+          topFillColor2: 'transparent',
+          bottomLineColor: 'red',
+          bottomFillColor1: 'transparent',
+          bottomFillColor2: 'transparent',
+        });
+        setDummySeries(dummySeries);
+      }
 
       setTimeScale(timeScale);
-      setLineSeries(lineSeries);
-      setDummySeries(dummySeries);
     }
 
     return () => {
       if (chart != undefined && lineSeries != undefined && dummySeries != undefined) {
+        console.log('Resetting Data');
         lineSeries.setData([]);
         dummySeries.setData([]);
         chart.removeSeries(lineSeries);
@@ -326,9 +329,7 @@ const Chart = ({
       for (const item of values) {
         const [time, value] = item;
         const zoneTime: Time = timeToLocal(time);
-
         if (StaticData.isLive) {
-          console.log('Updating Data', StaticData.isLive, { time: zoneTime, value });
           lineSeries.update({ time: zoneTime, value });
           dummySeries.update({ time: zoneTime, value });
           setCurrentValue(value);
@@ -365,11 +366,9 @@ const Chart = ({
     }
 
     return () => {
-      if (lineSeries != undefined) {
+      if (lineSeries != undefined && dummySeries != undefined) {
         if (maxLimitLine != undefined) lineSeries.removePriceLine(maxLimitLine);
         if (minLimitLine != undefined) lineSeries.removePriceLine(minLimitLine);
-        // lineSeries.setData([]);
-        // dummySeries?.setData([]);
       }
     };
   }, [values, idealMin, idealMax]);
@@ -377,33 +376,61 @@ const Chart = ({
   useEffect(() => {
     if (history != undefined && history.length > 0) {
       const newTime = timeToLocal(history[0][0]);
-      const previousTime = buffer[0] ? buffer[0].time : Infinity;
-      if (newTime < previousTime || !StaticData.isLive) {
-        if (lineSeries != undefined && dummySeries != undefined) {
-          const newHistory: (SingleValueData | WhitespaceData)[] = [];
-          for (const item of history) {
-            const [timeStamp, value] = item;
-            const time: Time = timeToLocal(timeStamp);
-            newHistory.push({ time, value });
+      const oldestTime = buffer[0] ? buffer[0].time : Infinity;
+      const newestTime = buffer.length > 0 ? buffer[buffer.length - 1] : -Infinity;
+
+      if (StaticData.isLive) {
+        if (newTime < oldestTime) {
+          if (lineSeries != undefined && dummySeries != undefined) {
+            const newHistory: (SingleValueData | WhitespaceData)[] = [];
+            for (const item of history) {
+              const [timeStamp, value] = item;
+              const time: Time = timeToLocal(timeStamp);
+              newHistory.push({ time, value });
+            }
+            lineSeries.setData(newHistory);
+            dummySeries.setData(newHistory);
+            setBuffer(newHistory);
           }
+        } else {
+          if (lineSeries != undefined && dummySeries != undefined) {
+            const newHistory: (SingleValueData | WhitespaceData)[] = [];
+            for (const item of history) {
+              const [timeStamp, value] = item;
+              const time: Time = timeToLocal(timeStamp);
+              newHistory.push({ time, value });
+              if (newestTime < time) lineSeries.update({ time, value });
+              if (newestTime < time) dummySeries.update({ time, value });
+            }
+            setBuffer(newHistory);
+          }
+        }
+      } else {
+        const newHistory: (SingleValueData | WhitespaceData)[] = [];
+        for (const item of history) {
+          const [timeStamp, value] = item;
+          const time: Time = timeToLocal(timeStamp);
+          newHistory.push({ time, value });
+        }
+        if (lineSeries !== undefined && dummySeries != undefined) {
           lineSeries.setData(newHistory);
           dummySeries.setData(newHistory);
-          setBuffer(newHistory);
         }
       }
     }
-  }, [history, lineSeries, dummySeries, values]);
+  }, [history]);
 
   useEffect(() => {
     StaticData.isLive = isLive;
     StaticData.warning = warning;
+    StaticData.isLoading = isLoading;
     if (!isLive) {
       if (warningInterval != null) {
         setWarning(false);
         clearInterval(warningInterval);
       }
     }
-  }, [isLive, warning]);
+  }, [isLive, warning, isLoading]);
 
   useEffect(() => {
     if (warning) {
