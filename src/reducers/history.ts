@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { createSlice, current } from '@reduxjs/toolkit';
 import { BiometricData } from '../types/WebsocketData';
+import { isTimeInOrder } from '../utils/utilities';
 
 export const history = createSlice({
   name: 'history',
@@ -26,7 +27,10 @@ export const history = createSlice({
             .sort((a: [number, number], b: [number, number]) => a[0] - b[0]);
           // const newValuesReversed = newItem.values.slice().sort((a: [number, number], b: [number, number]) => b[0] - a[0]);
 
-          newTarget.values = [...existingValues, ...newValues];
+          newTarget.values = isTimeInOrder([...newValues, ...existingValues])
+            ? [...newValues, ...existingValues]
+            : [...existingValues];
+
           oldData[targetIndex] = newTarget;
         }
       }
@@ -80,7 +84,9 @@ export const history = createSlice({
           if (newValues) newValues.sort((a: [number, number], b: [number, number]) => a[0] - b[0]);
           if (existingValues.length > 0) {
             if (existingValues[0][0] > newValues[0][0])
-              newTarget.values = [...newValues, ...existingValues];
+              newTarget.values = isTimeInOrder([...newValues, ...existingValues])
+                ? [...newValues, ...existingValues]
+                : [...existingValues];
           } else {
             newTarget.values = [...newValues];
           }
