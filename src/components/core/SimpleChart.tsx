@@ -59,8 +59,6 @@ const Chart = ({
   const [currentValue, setCurrentValue] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const [buffer, setBuffer] = useState<(SingleValueData | WhitespaceData)[]>([]);
-
   const [chart, setChart] = useState<IChartApi | undefined>(undefined);
   const [lineSeries, setLineSeries] = useState<
     ISeriesApi<'Baseline'> | ISeriesApi<'Area'> | undefined
@@ -344,7 +342,6 @@ const Chart = ({
         }
         newBuffer.push({ time: zoneTime, value });
       }
-      setBuffer((oldBuffer) => [...oldBuffer, ...newBuffer]);
 
       if (idealMax !== undefined) {
         const maxLimitLineOptions = {
@@ -374,51 +371,65 @@ const Chart = ({
   }, [values, idealMin, idealMax]);
 
   useEffect(() => {
-    if (history != undefined && history.length > 0) {
-      const newTime = timeToLocal(history[0][0]);
-      const oldestTime = buffer[0] ? buffer[0].time : Infinity;
-      const newestTime = buffer.length > 0 ? buffer[buffer.length - 1] : -Infinity;
+    // if (history != undefined && history.length > 0) {
+    //   const newTime = timeToLocal(history[0][0]);
+    //   const oldestTime = buffer[0] ? buffer[0].time : Infinity;
+    //   const newestTime = buffer.length > 0 ? buffer[buffer.length - 1] : -Infinity;
 
-      if (StaticData.isLive) {
-        if (newTime < oldestTime) {
-          if (lineSeries != undefined && dummySeries != undefined) {
-            const newHistory: (SingleValueData | WhitespaceData)[] = [];
-            for (const item of history) {
-              const [timeStamp, value] = item;
-              const time: Time = timeToLocal(timeStamp);
-              newHistory.push({ time, value });
-            }
-            lineSeries.setData(newHistory);
-            dummySeries.setData(newHistory);
-            setBuffer(newHistory);
-          }
-        } else {
-          if (lineSeries != undefined && dummySeries != undefined) {
-            const newHistory: (SingleValueData | WhitespaceData)[] = [];
-            for (const item of history) {
-              const [timeStamp, value] = item;
-              const time: Time = timeToLocal(timeStamp);
-              newHistory.push({ time, value });
-              if (newestTime < time) lineSeries.update({ time, value });
-              if (newestTime < time) dummySeries.update({ time, value });
-            }
-            setBuffer(newHistory);
-          }
-        }
-      } else {
-        const newHistory: (SingleValueData | WhitespaceData)[] = [];
-        for (const item of history) {
-          const [timeStamp, value] = item;
-          const time: Time = timeToLocal(timeStamp);
-          newHistory.push({ time, value });
-        }
-        if (lineSeries !== undefined && dummySeries != undefined) {
-          lineSeries.setData(newHistory);
-          dummySeries.setData(newHistory);
-        }
+    //   if (StaticData.isLive) {
+    //     if (newTime < oldestTime) {
+    //       if (lineSeries != undefined && dummySeries != undefined) {
+    //         const newHistory: (SingleValueData | WhitespaceData)[] = [];
+    //         for (const item of history) {
+    //           const [timeStamp, value] = item;
+    //           const time: Time = timeToLocal(timeStamp);
+    //           newHistory.push({ time, value });
+    //         }
+    //         lineSeries.setData(newHistory);
+    //         dummySeries.setData(newHistory);
+    //         setBuffer(newHistory);
+    //       }
+    //     } else {
+    //       if (lineSeries != undefined && dummySeries != undefined) {
+    //         const newHistory: (SingleValueData | WhitespaceData)[] = [];
+    //         for (const item of history) {
+    //           const [timeStamp, value] = item;
+    //           const time: Time = timeToLocal(timeStamp);
+    //           newHistory.push({ time, value });
+    //           if (newestTime < time) lineSeries.update({ time, value });
+    //           if (newestTime < time) dummySeries.update({ time, value });
+    //         }
+    //         setBuffer(newHistory);
+    //       }
+    //     }
+    //   } else {
+    //     const newHistory: (SingleValueData | WhitespaceData)[] = [];
+    //     for (const item of history) {
+    //       const [timeStamp, value] = item;
+    //       const time: Time = timeToLocal(timeStamp);
+    //       newHistory.push({ time, value });
+    //     }
+    //     if (lineSeries !== undefined && dummySeries != undefined) {
+    //       lineSeries.setData(newHistory);
+    //       dummySeries.setData(newHistory);
+    //     }
+    //   }
+    // }
+
+    if (history != undefined && history.length > 0) {
+      console.log('History', history);
+      const newHistory: (SingleValueData | WhitespaceData)[] = [];
+      for (const item of history) {
+        const [timeStamp, value] = item;
+        const time: Time = timeToLocal(timeStamp);
+        newHistory.push({ time, value });
+      }
+      if (lineSeries !== undefined && dummySeries != undefined) {
+        lineSeries.setData(newHistory);
+        dummySeries.setData(newHistory);
       }
     }
-  }, [history]);
+  }, [history, lineSeries, dummySeries]);
 
   useEffect(() => {
     StaticData.isLive = isLive;
@@ -617,7 +628,7 @@ const Chart = ({
         </div>
       </div>
 
-      {values.length || buffer.length ? (
+      {values.length || (history != undefined && history.length) ? (
         <div className="chart-container" ref={chartDiv} />
       ) : (
         <div className="h-100 w-100 d-flex justify-content-center align-items-center">

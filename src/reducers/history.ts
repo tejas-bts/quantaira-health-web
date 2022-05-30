@@ -27,13 +27,20 @@ export const history = createSlice({
             .sort((a: [number, number], b: [number, number]) => a[0] - b[0]);
           // const newValuesReversed = newItem.values.slice().sort((a: [number, number], b: [number, number]) => b[0] - a[0]);
 
-          newTarget.values = isTimeInOrder([...newValues, ...existingValues])
-            ? [...newValues, ...existingValues]
+          newTarget.values = isTimeInOrder([...existingValues, ...newValues])
+            ? [...existingValues, ...newValues]
             : [...existingValues];
 
           oldData[targetIndex] = newTarget;
         }
       }
+
+      console.log(
+        'Websocket Data',
+        oldData.find(
+          (item: BiometricData) => item.biometricId == 'B39CFD8E-0F78-4AB4-B2F6-C2CBE40A4445'
+        ).values
+      );
 
       return {
         ...state,
