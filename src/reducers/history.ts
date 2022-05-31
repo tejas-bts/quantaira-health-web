@@ -26,7 +26,7 @@ export const history = createSlice({
             .slice()
             .sort((a: [number, number], b: [number, number]) => a[0] - b[0]);
           // const newValuesReversed = newItem.values.slice().sort((a: [number, number], b: [number, number]) => b[0] - a[0]);
-
+          console.log('Append History : PROPOSED ARRAY ', existingValues, newValues);
           newTarget.values = isTimeInOrder([...existingValues, ...newValues])
             ? [...existingValues, ...newValues]
             : [...existingValues];
@@ -76,29 +76,32 @@ export const history = createSlice({
     },
 
     prependToHistoricData: (state, action: { payload: { data: Array<BiometricData> } }) => {
-      console.log('PrePEND DATA ::: ', action.payload.data);
       const oldData: any = [...current(state).historicData];
       const newData: any = [...action.payload.data];
 
+      console.log('Prepend History : Incoming Data ', newData);
       for (const newItem of newData) {
+        console.log('Prepend History : Looking for ', newItem.label, newItem);
         const targetIndex: any = oldData.findIndex((item: any) => item.label == newItem.label);
         if (targetIndex < 0) {
+          console.log('Prepend History : Not Found Item ', newItem);
           oldData.push(newItem);
         } else {
           const newTarget = { ...oldData[targetIndex] };
+
           const existingValues = oldData[targetIndex].values;
           const newValues = newItem.values;
-          if (newValues) newValues.sort((a: [number, number], b: [number, number]) => a[0] - b[0]);
-          if (existingValues.length > 0) {
-            if (existingValues[0][0] > newValues[0][0])
-              newTarget.values = isTimeInOrder([...newValues, ...existingValues])
-                ? [...newValues, ...existingValues]
-                : [...existingValues];
-          } else {
-            newTarget.values = [...newValues];
-          }
+          const values = [...newValues, ...existingValues];
 
+          console.log('Prepend History : VALUES ', newTarget.label, values);
+
+          if (isTimeInOrder(values)) {
+            newTarget.values = values;
+          } else {
+            newTarget.values = existingValues;
+          }
           oldData[targetIndex] = newTarget;
+          console.log('PrePEND DATA ::: updated', oldData);
         }
       }
 

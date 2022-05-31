@@ -12,7 +12,7 @@ export const fetchPastChartData = async (params: URLSearchParams) => {
       .get(getPastChartdata, { params })
       .then((response) => {
         if (params.get('fromDate') != null) {
-          resolve([response.data.data]);
+          resolve(response.data.data);
         } else {
           resolve(response.data.data);
         }

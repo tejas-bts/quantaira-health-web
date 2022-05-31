@@ -97,7 +97,7 @@ const BiometricCharts = () => {
   }
 
   const onDemand = (biometricId: any, time: number, direction: 'to' | 'from') => {
-    console.log('On Demand', direction);
+    console.log('On Demand', biometricId, direction);
     return new Promise<void>((resolve) => {
       const params = new URLSearchParams();
       params.append('bedId', bed.bedId);
@@ -112,10 +112,12 @@ const BiometricCharts = () => {
 
       fetchPastChartData(params)
         .then((data) => {
-          if (direction == 'from') {
-            dispatch(prependToHistoricData({ data }));
-          } else {
+          if (direction == 'from' && !isLive) {
+            console.log('APPENDING');
             dispatch(appendToHistoricData({ data }));
+          } else {
+            console.log('PREPENDING');
+            dispatch(prependToHistoricData({ data }));
           }
           resolve();
         })

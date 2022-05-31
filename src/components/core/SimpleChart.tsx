@@ -261,14 +261,14 @@ const Chart = ({
             if (co_ordinate != null) {
               const time = timeScale.coordinateToTime(co_ordinate);
               if (onDataDemand != undefined && time != null) {
-                debouncedDataDemand(time, 'from');
+                debouncedDataDemand(time, 'to');
               }
             }
           }
           if (scrolledDistance > 0) {
             const timeRange = timeScale.getVisibleRange();
             if (timeRange != null && !StaticData.isLive) {
-              debouncedDataDemand(timeRange.to, 'to');
+              debouncedDataDemand(timeRange.to, 'from');
             }
           }
         }
@@ -328,8 +328,8 @@ const Chart = ({
         const [time, value] = item;
         const zoneTime: Time = timeToLocal(time);
         if (StaticData.isLive) {
-          lineSeries.update({ time: zoneTime, value });
-          dummySeries.update({ time: zoneTime, value });
+          //   lineSeries.update({ time: zoneTime, value });
+          //   dummySeries.update({ time: zoneTime, value });
           setCurrentValue(value);
           setCurrentTime(new Date(time * 1000));
           if (idealMax !== undefined && idealMin != undefined) {
@@ -417,7 +417,6 @@ const Chart = ({
     // }
 
     if (history != undefined && history.length > 0) {
-      console.log('History', history);
       const newHistory: (SingleValueData | WhitespaceData)[] = [];
       for (const item of history) {
         const [timeStamp, value] = item;
