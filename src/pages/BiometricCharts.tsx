@@ -113,11 +113,11 @@ const BiometricCharts = () => {
       fetchPastChartData(params)
         .then((data) => {
           if (direction == 'from' && !isLive) {
-            console.log('APPENDING');
-            dispatch(appendToHistoricData({ data }));
+            if (data[0].pid && data[0].pid === bed.patientID)
+              dispatch(appendToHistoricData({ data }));
           } else {
-            console.log('PREPENDING');
-            dispatch(prependToHistoricData({ data }));
+            if (data[0].pid && data[0].pid === bed.patientID)
+              dispatch(prependToHistoricData({ data }));
           }
           resolve();
         })
@@ -156,7 +156,11 @@ const BiometricCharts = () => {
                 direction
               )
             }
-            history={historicData[getIndex(chartSelections[selectedScreen][0])].values}
+            history={
+              historicData[getIndex(chartSelections[selectedScreen][0])]
+                ? historicData[getIndex(chartSelections[selectedScreen][0])].values
+                : []
+            }
           />
         )}
       </div>
@@ -199,7 +203,11 @@ const BiometricCharts = () => {
                 direction
               )
             }
-            history={historicData[getIndex(chartSelections[selectedScreen][1])].values}
+            history={
+              historicData[getIndex(chartSelections[selectedScreen][1])]
+                ? historicData[getIndex(chartSelections[selectedScreen][1])].values
+                : []
+            }
           />
         )}
       </div>
@@ -232,7 +240,11 @@ const BiometricCharts = () => {
                 direction
               )
             }
-            history={historicData[getIndex(chartSelections[selectedScreen][2])].values}
+            history={
+              historicData[getIndex(chartSelections[selectedScreen][2])]
+                ? historicData[getIndex(chartSelections[selectedScreen][2])].values
+                : []
+            }
           />
         )}
       </div>

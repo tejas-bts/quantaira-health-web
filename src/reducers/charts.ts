@@ -8,6 +8,10 @@ export const chartsState = createSlice({
     selectedScreen: 0,
   },
   reducers: {
+    clearChartSelection: () => {
+      return { selectedCharts: [new Array()], selectedScreen: 0 };
+    },
+
     removeChartFromScreen: (state, action) => {
       const currentSelectedCharts: Array<Array<string>> = [...current(state).selectedCharts];
       const targetScreenIndex: number = action.payload.screen;
@@ -56,6 +60,12 @@ export const chartsState = createSlice({
   },
 });
 
-export const { addChartToScreen, removeChartFromScreen, selectScreen, nextScreen, previousScreen } =
-  chartsState.actions;
+export const {
+  addChartToScreen,
+  clearChartSelection,
+  removeChartFromScreen,
+  selectScreen,
+  nextScreen,
+  previousScreen,
+} = chartsState.actions;
 export default chartsState.reducer;

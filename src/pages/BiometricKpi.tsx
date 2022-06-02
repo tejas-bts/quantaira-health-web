@@ -60,7 +60,11 @@ const BiometricKpi = () => {
   const [pastKpiData, setPastKpiData] = useState<any>([]);
   const [pastKpiTime, setPastKpiTime] = useState<any>([]);
 
-  const [selectedPastTime, setPastTime] = useState(new Date().getTime());
+  const [selectedPastTime, setPastTime] = useState(Math.floor(new Date().getTime() / 1000));
+
+  useEffect(() => {
+    console.log('Selected Past Time', selectedPastTime);
+  }, []);
 
   const isLive = useSelector((state: any) => state.time.isLive);
   const time = useSelector((state: any) => state.time.currentTime);
@@ -499,7 +503,7 @@ const BiometricKpi = () => {
     <div className="kpi-container">
       {!isLive && (
         <div className="kpi-badge">
-          {time && <DateTimePicker defaultDate={new Date(selectedPastTime)} size="lg" />}
+          {time && <DateTimePicker defaultDate={new Date(selectedPastTime * 1000)} size="lg" />}
           <Slider
             size="small"
             defaultValue={0}

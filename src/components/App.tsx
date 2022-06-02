@@ -23,8 +23,9 @@ import { addToMedications } from '../reducers/medications';
 import { addToNotes } from '../reducers/notes';
 import { Note } from '../types/Core.types';
 import { fetchNotes } from '../services/notes.services';
-import { appendToHistoricData } from '../reducers/history';
+import { appendToHistoricData, clearHistoricData } from '../reducers/history';
 import { StateReducer } from '../types/Reducer.types';
+import { clearChartSelection } from '../reducers/charts';
 
 class StaticData {
   static isLive = false;
@@ -87,6 +88,8 @@ const App = () => {
   useEffect(() => {
     const socket = Client(baseURLws);
     if (bed !== undefined) {
+      dispatch(clearChartSelection());
+      dispatch(clearHistoricData());
       socket.on('connect', () => {
         toast(<MultiLingualLabel id="SUCCESSFULLY_CONNECTED_TO_SERVER" />);
         socket.on(bed.bedId, ({ data }: any) => {

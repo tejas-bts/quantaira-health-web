@@ -223,6 +223,7 @@ const Chart = ({
 
   useEffect(() => {
     if (chartDiv !== null && chartDiv.current != null) {
+      console.log('Chart Div True', chartDiv);
       const chart = createChart(chartDiv.current, options);
       const handleResize = () => {
         if (chartDiv !== null && chartDiv.current != null) {
@@ -235,11 +236,14 @@ const Chart = ({
 
       window.addEventListener('resize', handleResize);
       setChart(chart);
+    } else {
+      console.log('Chart Div False');
     }
-  }, [chartDiv]);
+  }, []);
 
   useEffect(() => {
     if (chart !== undefined) {
+      console.log('Chart Component True');
       chart.subscribeClick(myClickHandler);
       const timeScale = chart.timeScale();
 
@@ -303,19 +307,21 @@ const Chart = ({
       }
 
       setTimeScale(timeScale);
+    } else {
+      console.log('Chart Component False');
     }
 
-    return () => {
-      if (chart != undefined && lineSeries != undefined && dummySeries != undefined) {
-        console.log('Resetting Data');
-        lineSeries.setData([]);
-        dummySeries.setData([]);
-        chart.removeSeries(lineSeries);
-        chart.removeSeries(dummySeries);
-        setLineSeries(undefined);
-        setDummySeries(undefined);
-      }
-    };
+    // return () => {
+    //   if (chart != undefined && lineSeries != undefined && dummySeries != undefined) {
+    //     console.log('Resetting Data');
+    //     lineSeries.setData([]);
+    //     dummySeries.setData([]);
+    //     chart.removeSeries(lineSeries);
+    //     chart.removeSeries(dummySeries);
+    //     setLineSeries(undefined);
+    //     setDummySeries(undefined);
+    //   }
+    // };
   }, [chart]);
 
   useEffect(() => {
@@ -424,8 +430,18 @@ const Chart = ({
         newHistory.push({ time, value });
       }
       if (lineSeries !== undefined && dummySeries != undefined) {
-        lineSeries.setData(newHistory);
-        dummySeries.setData(newHistory);
+        if (newHistory.length > 0) {
+          lineSeries.setData(newHistory);
+          dummySeries.setData(newHistory);
+        } else {
+          lineSeries.setData([]);
+          dummySeries.setData([]);
+        }
+      }
+    } else {
+      if (lineSeries !== undefined && dummySeries != undefined) {
+        lineSeries.setData([]);
+        dummySeries.setData([]);
       }
     }
   }, [history, lineSeries, dummySeries]);
@@ -520,7 +536,7 @@ const Chart = ({
     };
   }, [notes, medications, lineSeries, timeScale]);
 
-  return (
+  return history != undefined && history.length ? (
     <div
       id="chart-container-div"
       className="chart-div"
@@ -626,14 +642,11 @@ const Chart = ({
           </div>
         </div>
       </div>
-
-      {values.length || (history != undefined && history.length) ? (
-        <div className="chart-container" ref={chartDiv} />
-      ) : (
-        <div className="h-100 w-100 d-flex justify-content-center align-items-center">
-          <MultiLingualLabel id="NO_DATA_AVAILABLE" />
-        </div>
-      )}
+      <div className="chart-container" ref={chartDiv} />
+    </div>
+  ) : (
+    <div className="h-100 w-100 d-flex justify-content-center align-items-center">
+      <MultiLingualLabel id="NO_DATA_AVAILABLE" />
     </div>
   );
 };
