@@ -11,11 +11,7 @@ export const fetchPastChartData = async (params: URLSearchParams) => {
     axios
       .get(getPastChartdata, { params })
       .then((response) => {
-        if (params.get('fromDate') != null) {
-          resolve(response.data.data);
-        } else {
-          resolve(response.data.data);
-        }
+        resolve(response.data.data);
       })
       .catch((e) => reject(e));
   });

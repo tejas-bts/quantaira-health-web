@@ -1,5 +1,5 @@
 export interface BiometricData {
-  pid?: string;
+  patientId?: string;
   biometricId?: string;
   label: string;
   description: string | undefined;
@@ -13,6 +13,7 @@ export interface BiometricData {
 export type HistoricData = BiometricData;
 
 export class BioMetricDataObj implements BiometricData {
+  patientId?: string;
   label: string;
   description: string | undefined;
   unit: string | undefined;

@@ -112,14 +112,15 @@ const BiometricCharts = () => {
 
       fetchPastChartData(params)
         .then((data) => {
-          if (direction == 'from' && !isLive) {
-            if (data[0].pid && data[0].pid === bed.patientID)
+          console.log('Past Chart Data', data);
+          if (data[0].patientId === bed.patientID) {
+            if (direction == 'from' && !isLive) {
               dispatch(appendToHistoricData({ data }));
-          } else {
-            if (data[0].pid && data[0].pid === bed.patientID)
+            } else {
               dispatch(prependToHistoricData({ data }));
+            }
+            resolve();
           }
-          resolve();
         })
         .catch((e) => console.error(e));
     });
