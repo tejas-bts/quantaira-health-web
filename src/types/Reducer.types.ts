@@ -1,4 +1,4 @@
-import { Bed, Building, Floor, Hospital, Medication, Room } from './Core.types';
+import { Bed, Building, Floor, Hospital, Medication, Permission, Room } from './Core.types';
 import { BiometricData } from './WebsocketData';
 
 export interface AppStateReducer {
@@ -49,7 +49,7 @@ export interface LanguageReducer {
 
 export interface AuthReducer {
   loggedIn: boolean;
-  permissions: Array<any>;
+  permissions: Array<Permission>;
   userName: string;
 }
 

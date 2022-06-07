@@ -119,7 +119,7 @@ const Chart = ({
     if (!param.point) {
       return;
     }
-    if (onClick !== undefined && param.time != undefined) {
+    if (onClick !== undefined && param.time !== undefined) {
       const targetTime = param.time;
       const markerId = param.hoveredMarkerId;
 

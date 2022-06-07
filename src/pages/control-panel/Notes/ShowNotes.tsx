@@ -1,13 +1,16 @@
+/* eslint-disable indent */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
 import Button from '../../../components/core/Button';
+import ConditionalRender from '../../../components/core/ConditionalRender';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 import { addToNotes } from '../../../reducers/notes';
 import { fetchNotes, searchPatientsNotes } from '../../../services/notes.services';
 import { Bed, Note } from '../../../types/Core.types';
+import { userPermissions } from '../../../utils/constants';
 
 const ShowNotes = () => {
   const navigate = useNavigate();
@@ -17,6 +20,7 @@ const ShowNotes = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const notes: Array<Note> = useSelector((state: any) => state.notes.data);
+
   const bed: Bed = useSelector((state: any) => state.patient.bed);
 
   const performSearch = async () => {
@@ -71,20 +75,22 @@ const ShowNotes = () => {
           shape={'rectangular'}
           cssBorder="none"
         /> */}
-        <Button
-          label={<MultiLingualLabel id="ADD_NOTES" />}
-          onClick={() => {
-            navigate('/app/charts/notes/add', {
-              replace: true,
-            });
-          }}
-          icon="/images/notes-icon.svg"
-          orientation={'horizontle'}
-          size={'lg'}
-          type={'primary'}
-          shape={'rectangular'}
-          cssWidth="12rem"
-        />
+        <ConditionalRender permission={userPermissions.NOTES_WRITE}>
+          <Button
+            label={<MultiLingualLabel id="ADD_NOTES" />}
+            onClick={() => {
+              navigate('/app/charts/notes/add', {
+                replace: true,
+              });
+            }}
+            icon="/images/notes-icon.svg"
+            orientation={'horizontle'}
+            size={'lg'}
+            type={'primary'}
+            shape={'rectangular'}
+            cssWidth="12rem"
+          />
+        </ConditionalRender>
       </div>
       {loading ? (
         <div className="d-flex flex-1 justify-content-center align-items-center m-9">

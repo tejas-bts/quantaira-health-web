@@ -50,3 +50,8 @@ export interface Medication extends Note {
     strength: string;
   };
 }
+
+export interface Permission {
+  permissionId: string;
+  permissionName: string;
+}

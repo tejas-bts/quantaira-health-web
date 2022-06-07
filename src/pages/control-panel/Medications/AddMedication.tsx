@@ -11,6 +11,8 @@ import QuantairaAutoSuggest from '../../../components/core/QuantairaAutoSuggest.
 import { useSelector } from 'react-redux';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 import QuantairaSwitch from '../../../components/core/QuantairaSwitch';
+import ConditionalRender from '../../../components/core/ConditionalRender';
+import { userPermissions } from '../../../utils/constants';
 
 const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
   let selectedTime = new Date().getTime();
@@ -123,7 +125,9 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
       </div>
       <div className="add-notes-buttons">
         <Link to={`/app/charts/notes/add/${selectedTime}`} className="add-pointer-option-link">
-          <MultiLingualLabel id="ADD_NOTES" />
+          <ConditionalRender permission={userPermissions.NOTES_WRITE}>
+            <MultiLingualLabel id="ADD_NOTES" />
+          </ConditionalRender>
         </Link>
         <div className="d-flex gap-2">
           <Button

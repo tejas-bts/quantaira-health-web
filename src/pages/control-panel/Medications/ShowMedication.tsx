@@ -1,9 +1,11 @@
+/* eslint-disable indent */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AccordionInDropdown from '../../../components/core/AccordionInDropdown';
 import Button from '../../../components/core/Button';
+import ConditionalRender from '../../../components/core/ConditionalRender';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 import { addToMedications } from '../../../reducers/medications';
 import {
@@ -11,6 +13,7 @@ import {
   searchPatientsMedications,
 } from '../../../services/medications.services';
 import { Bed, Medication } from '../../../types/Core.types';
+import { userPermissions } from '../../../utils/constants';
 
 const ShowNotes = () => {
   const navigate = useNavigate();
@@ -83,20 +86,22 @@ const ShowNotes = () => {
           shape={'rectangular'}
           cssBorder="none"
         /> */}
-        <Button
-          label={<MultiLingualLabel id="ADD_MEDICATION" />}
-          onClick={() => {
-            navigate('/app/charts/medications/add', {
-              replace: true,
-            });
-          }}
-          icon="/images/notes-icon.svg"
-          orientation={'horizontle'}
-          size={'lg'}
-          type={'primary'}
-          shape={'rectangular'}
-          cssWidth="14rem"
-        />
+        <ConditionalRender permission={userPermissions.MEDICATIONS_WRITE}>
+          <Button
+            label={<MultiLingualLabel id="ADD_MEDICATION" />}
+            onClick={() => {
+              navigate('/app/charts/medications/add', {
+                replace: true,
+              });
+            }}
+            icon="/images/notes-icon.svg"
+            orientation={'horizontle'}
+            size={'lg'}
+            type={'primary'}
+            shape={'rectangular'}
+            cssWidth="14rem"
+          />
+        </ConditionalRender>
       </div>
 
       {loading ? (

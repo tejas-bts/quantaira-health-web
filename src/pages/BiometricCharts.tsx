@@ -15,11 +15,12 @@ import Alarms from '../pages/control-panel/Alarms';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPastChartData } from '../services/chart.services';
 import { prependToBiometricData } from '../reducers/biometrics';
-import { flattenArray, localToTime, timeToLocal } from '../utils/utilities';
+import { flattenArray, getCurrentUser, localToTime, timeToLocal } from '../utils/utilities';
 import { Time } from 'lightweight-charts';
-import { Bed } from '../types/Core.types';
+import { Bed, Permission } from '../types/Core.types';
 import { StateReducer } from '../types/Reducer.types';
 import { appendToHistoricData, prependToHistoricData, setHistoricData } from '../reducers/history';
+import { userPermissions } from '../utils/constants';
 // import { logBiometricData } from '../utils/logger';
 
 const BiometricCharts = () => {
@@ -38,6 +39,24 @@ const BiometricCharts = () => {
   const historicData = useSelector((state: StateReducer) => state.history.historicData);
   const isLive = useSelector((state: StateReducer) => state.time.isLive);
   const time = useSelector((state: StateReducer) => state.time.currentTime);
+
+  const handleChartClick = (time: number) => {
+    const { permissions } = getCurrentUser();
+
+    const permissionToCreateNote = permissions.find(
+      (item: Permission) => item.permissionId === userPermissions.NOTES_WRITE
+    );
+    if (permissionToCreateNote != undefined) {
+      navigateTo(`/app/charts/notes/add/${time}`);
+    } else {
+      const permissionToCreateMedication = permissions.find(
+        (item: Permission) => item.permissionId === userPermissions.MEDICATIONS_WRITE
+      );
+      if (permissionToCreateMedication != undefined) {
+        navigateTo(`/app/charts/medications/add/${time}`);
+      }
+    }
+  };
 
   const navigateTo = (address: To) => {
     navigate(address, {
@@ -141,7 +160,7 @@ const BiometricCharts = () => {
             idealMax={biometricData[getIndex(chartSelections[selectedScreen][0])].idealMax ?? ''}
             idealMin={biometricData[getIndex(chartSelections[selectedScreen][0])].idealMin ?? ''}
             values={bufferData[getIndex(chartSelections[selectedScreen][0])] || []}
-            onClick={(time: number) => navigateTo(`/app/charts/medications/add/${time}`)}
+            onClick={handleChartClick}
             onNoteClick={(time: number) => {
               navigateTo(`/app/charts/notes/view/${time}`);
             }}
@@ -188,7 +207,7 @@ const BiometricCharts = () => {
             idealMax={biometricData[getIndex(chartSelections[selectedScreen][1])].idealMax ?? ''}
             idealMin={biometricData[getIndex(chartSelections[selectedScreen][1])].idealMin ?? ''}
             values={bufferData[getIndex(chartSelections[selectedScreen][1])] || []}
-            onClick={(time: number) => navigateTo(`/app/charts/notes/add/${time}`)}
+            onClick={handleChartClick}
             onNoteClick={(time: number) => {
               navigateTo(`/app/charts/notes/view/${time}`);
             }}
@@ -225,7 +244,7 @@ const BiometricCharts = () => {
             idealMax={biometricData[getIndex(chartSelections[selectedScreen][2])].idealMax ?? ''}
             idealMin={biometricData[getIndex(chartSelections[selectedScreen][2])].idealMin ?? ''}
             values={bufferData[getIndex(chartSelections[selectedScreen][2])] || []}
-            onClick={(time: number) => navigateTo(`/app/charts/notes/add/${time}`)}
+            onClick={handleChartClick}
             onNoteClick={(time: number) => {
               navigateTo(`/app/charts/notes/view/${time}`);
             }}

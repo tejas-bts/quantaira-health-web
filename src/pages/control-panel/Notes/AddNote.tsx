@@ -8,6 +8,8 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 import { Bed } from '../../../types/Core.types';
+import ConditionalRender from '../../../components/core/ConditionalRender';
+import { userPermissions } from '../../../utils/constants';
 
 const AddNote = ({ onUpdate }: { onUpdate: () => void }) => {
   let selectedTime = new Date().getTime();
@@ -84,7 +86,9 @@ const AddNote = ({ onUpdate }: { onUpdate: () => void }) => {
           to={`/app/charts/medications/add/${selectedTime}`}
           className="add-pointer-option-link"
         >
-          <MultiLingualLabel id="ADD_MEDICATION" />
+          <ConditionalRender permission={userPermissions.MEDICATIONS_WRITE}>
+            <MultiLingualLabel id="ADD_MEDICATION" />
+          </ConditionalRender>
         </Link>
         <div className="d-flex gap-2">
           <Button
