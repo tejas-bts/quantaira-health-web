@@ -9,14 +9,16 @@ const ViewNote = () => {
   const notes: Array<Note> = useSelector((state: any) => state.notes.data);
   const [targetNotes, setTargetNotes] = useState<Array<Note>>([]);
 
-  console.log('Note Id', selectedTime, notes);
+  useEffect(() => {
+    console.log('Target Notes', targetNotes);
+  }, [targetNotes]);
 
   useEffect(() => {
     if (selectedTime !== undefined && notes !== undefined) {
-      const targetNotes = notes.filter((item: Note) => item.timeStamp == parseInt(selectedTime));
+      const targetNotes = notes.filter((item: Note) => item.timeStamp === parseInt(selectedTime));
       setTargetNotes(targetNotes);
     }
-  }, []);
+  }, [selectedTime]);
 
   return targetNotes.length > 0 ? (
     <div className="show-notes-page">

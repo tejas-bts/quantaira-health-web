@@ -51,7 +51,7 @@ const ChartSelector = () => {
   }, [biometricData]);
 
   return (
-    <div className="flex-1 w-100 overflow-hidden">
+    <div className="flex-1 w-100 overflow-y-scroll quantaira-scroll-bar">
       <div className="chart-selector-container">
         <Dropdown
           options={availableCharts}
