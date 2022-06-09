@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import Chart from '../components/core/SimpleChart';
+import Chart from '../components/core/SimpleChart.2';
 import { GiLungs, GiHeartOrgan, GiMedicalThermometer } from 'react-icons/gi';
 import { FaNotesMedical } from 'react-icons/fa';
 import { BiPulse } from 'react-icons/bi';

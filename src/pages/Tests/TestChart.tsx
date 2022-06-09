@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { GiFlamethrowerSoldier } from 'react-icons/gi';
-import Chart from '../../components/core/SimpleChart';
+import Chart from '../../components/core/SimpleChart.2';
 
 const TestChart = () => {
   const [data, setData] = useState<Array<any>>([]);
@@ -17,20 +17,12 @@ const TestChart = () => {
             Math.floor(time / 1000) - (10 - i),
             parseFloat(Math.random().toFixed(1)),
           ]);
-          console.log('Target Time', [
-            Math.floor(time / 1000) - (10 - i),
-            Math.random().toFixed(1),
-          ]);
         }
         setHistory((oldHistory) => [...oldHistory, ...newHistory]);
         resolve();
       }, 200);
     });
   };
-
-  useEffect(() => {
-    console.log('History', history);
-  }, [history]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -56,14 +48,14 @@ const TestChart = () => {
         color={'white'}
         Icon={GiFlamethrowerSoldier}
         curveType={'smooth'}
-        idealMax={Infinity}
-        idealMin={-Infinity}
+        idealMax={44}
+        idealMin={16}
         unit={'test unit'}
         values={[]}
         history={history}
         notes={[]}
         medications={[]}
-        // onDataDemand={onDemand}
+        onDataDemand={onDemand}
       />
     </div>
   );

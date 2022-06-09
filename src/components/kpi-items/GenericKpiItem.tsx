@@ -5,14 +5,11 @@ const GenericKpiItem = ({
   title,
   color,
   currentValue,
-  currentTime,
   idealMin,
   idealMax,
   unit,
   isLive,
 }: KPIitemProp) => {
-  console.log('Current Value', title, currentValue, currentTime);
-
   const kpiBox = useRef<HTMLDivElement>(null);
   const [warningInterval, setWarningInterval] = useState<NodeJS.Timer | null>(null);
   const [warning, setWarning] = useState(false);

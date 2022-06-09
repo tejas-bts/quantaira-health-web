@@ -29,8 +29,9 @@ import {
   handleZoomOut,
 } from '../../utils/chart-utils';
 import { servicesVersion } from 'typescript';
+import { minMaxLineOptions } from '../../utils/chart-options';
 
-const CHART_BACKGROUND_COLOR = '#02162c';
+const CHART_BACKGROUND_COLOR = 'transparent'; //'#02162c';
 const GRID_COLOR = '#344456';
 const LABEL_COLOR = '#888';
 const IDEAL_LINES_WIDTH: any = 1;
@@ -44,17 +45,73 @@ class StaticData {
 class MinMaxSeries {
   topSeries: ISeriesApi<'Baseline'> | null = null;
   bottomSeries: ISeriesApi<'Baseline'> | null = null;
+  topLine: IPriceLine | null = null;
+  bottomLine: IPriceLine | null = null;
+  idealMin: number | undefined;
+  idealMax: number | undefined;
+  chart: IChartApi | undefined;
+
   setData = (data: (SingleValueData | WhitespaceData)[]): void => {
-    this.topSeries?.setData(data);
-    this.bottomSeries?.setData(data);
+    if (this.topSeries !== null && this.bottomSeries !== null) {
+      this.topSeries.setData(data);
+      this.bottomSeries.setData(data);
+    } else {
+      throw new Error('Series is null');
+    }
   };
 
   update = (data: { time: Time; value: number }): void => {
-    this.topSeries?.update(data);
-    this.bottomSeries?.update(data);
+    if (this.topSeries !== null && this.bottomSeries !== null) {
+      this.topSeries?.update(data);
+      this.bottomSeries?.update(data);
+    } else {
+      throw new Error('Series is null');
+    }
+  };
+
+  setMarkers = (markers: SeriesMarker<Time>[]): void => {
+    if (this.topSeries !== null && this.bottomSeries !== null) {
+      this.topSeries.setMarkers(markers);
+      this.bottomSeries.setMarkers(markers);
+    } else {
+      throw new Error('Series is null');
+    }
+  };
+
+  removeRangeLines = (): void => {
+    if (this.topLine !== null) this.topSeries?.removePriceLine(this.topLine);
+    if (this.bottomLine != null) this.bottomSeries?.removePriceLine(this.bottomLine);
+  };
+
+  removeSeries = (): void => {
+    if (this.bottomSeries != undefined) this.chart?.removeSeries(this.bottomSeries);
+    if (this.topSeries != undefined) this.chart?.removeSeries(this.topSeries);
+  };
+
+  addRangeLines = (idealMin?: number, idealMax?: number): void => {
+    if (idealMax != undefined) {
+      const maxLimitLineOptions = {
+        ...minMaxLineOptions,
+        price: idealMax,
+        title: 'Max',
+      };
+      this.topLine = this.topSeries?.createPriceLine(maxLimitLineOptions) || null;
+    }
+    if (idealMin != undefined) {
+      const minLimitLineOptions = {
+        ...minMaxLineOptions,
+        price: idealMin,
+        title: 'Min',
+      };
+      this.bottomLine = this.bottomSeries?.createPriceLine(minLimitLineOptions) || null;
+    }
   };
 
   constructor(chart: IChartApi, color: string, idealMin?: number, idealMax?: number) {
+    console.log('Contructor called');
+    this.chart = chart;
+    this.idealMax = idealMax;
+    this.idealMin = idealMin;
     this.topSeries = chart.addBaselineSeries({
       baseValue: { type: 'price', price: idealMax },
       topLineColor: 'orange',
@@ -100,6 +157,7 @@ const Chart = ({
 
   const [leftScroll, setLeftScroll] = useState(false);
   const [rightScroll, setRightScroll] = useState(false);
+  const [isChartShown, setChartShown] = useState(false);
 
   const [zoomIn, setZoomIn] = useState(false);
   const [zoomOut, setZoomOut] = useState(false);
@@ -109,37 +167,16 @@ const Chart = ({
   const [currentValue, setCurrentValue] = useState<number | undefined>(undefined);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const [startTime, setStartTime] = useState(undefined);
-  const [endTime, setEndTime] = useState(undefined);
-
-  const [buffer, setBuffer] = useState<(SingleValueData | WhitespaceData)[]>([]);
-
   const [chart, setChart] = useState<IChartApi | undefined>(undefined);
-  const [lineSeries, setLineSeries] = useState<
-    ISeriesApi<'Baseline'> | ISeriesApi<'Area'> | undefined
-  >(undefined);
-  const [dummySeries, setDummySeries] = useState<
-    ISeriesApi<'Baseline'> | ISeriesApi<'Area'> | undefined
-  >(undefined);
+
   const [minMaxSeries, setSeries] = useState<MinMaxSeries | undefined>(undefined);
 
   const [timeScale, setTimeScale] = useState<ITimeScaleApi | undefined>(undefined);
 
   const [warning, setWarning] = useState(false);
-  const [warningInterval, setWarningInterval] = useState<NodeJS.Timer | null>(null);
-
-  const [isLoading, setLoading] = useState(false);
 
   const chartDiv = useRef<HTMLDivElement>(null);
   const chartContainer = useRef<HTMLDivElement>(null);
-
-  const minMaxLineOptions = {
-    color: '#be1238',
-    lineWidth: IDEAL_LINES_WIDTH,
-    lineStyle: LineStyle.LargeDashed,
-    axisLabelVisible: true,
-    lineVisible: true,
-  };
 
   const options = {
     rightPriceScale: {
@@ -172,6 +209,13 @@ const Chart = ({
     },
   };
 
+  const cleanUp = () => {
+    setCurrentValue(undefined);
+    setWarning(false);
+    minMaxSeries?.removeRangeLines();
+    chart?.unsubscribeClick(myClickHandler);
+  };
+
   const myClickHandler: any = (param: { point: any; time: any; hoveredMarkerId: any }) => {
     if (!param.point) {
       return;
@@ -190,17 +234,16 @@ const Chart = ({
     }
   };
 
-  const getTargetDom = (): HTMLElement => {
-    if (chartDiv != null && chartDiv.current != null) {
-      return chartDiv.current;
-    }
-    return document.getElementById(`chart-${id}`)!;
-  };
+  // const getTargetDom = (): HTMLElement => {
+  //   if (chartDiv != null && chartDiv.current != null) {
+  //     return chartDiv.current;
+  //   }
+  // };
 
   const getChart = (): IChartApi => {
     if (chart == undefined) {
-      const targetDom = getTargetDom();
-      const newChart = createChart(targetDom, options);
+      console.log('getChart : : : Generating new Chart');
+      const newChart = createChart(chartDiv!.current!, options);
       const handleResize = () => {
         if (chartDiv !== null && chartDiv.current != null) {
           newChart.applyOptions({
@@ -212,223 +255,164 @@ const Chart = ({
       window.addEventListener('resize', handleResize);
       setChart(newChart);
       return newChart;
+    } else {
+      console.log('getChart : : : Providing old Chart');
     }
     return chart;
   };
 
-  const getTimeScale = (): ITimeScaleApi => {
-    if (timeScale == undefined) {
-      const chart = getChart();
-      const newTimeScale = chart.timeScale();
-      setTimeScale(newTimeScale);
-      return newTimeScale;
-    }
-    return timeScale;
-  };
+  const getSeriesAndTimeScale = (): [MinMaxSeries, ITimeScaleApi] => {
+    let series, scale;
+    const chart = getChart();
 
-  const getMinMaxSeries = (): MinMaxSeries => {
     if (minMaxSeries == undefined) {
-      const chart = getChart();
+      console.log('getSeriesAndTimeScale : : : Generating new Series');
       const newMinMaxSeries = new MinMaxSeries(chart, color, idealMin, idealMax);
       setSeries(newMinMaxSeries);
-      return newMinMaxSeries;
+      series = newMinMaxSeries;
+    } else {
+      console.log('getSeriesAndTimeScale : : : Using old Series');
+      series = minMaxSeries;
     }
-    return minMaxSeries;
+
+    if (timeScale == undefined) {
+      console.log('getSeriesAndTimeScale : : : Generating new Scale');
+      const newTimeScale = chart.timeScale();
+      setTimeScale(newTimeScale);
+      scale = newTimeScale;
+    } else {
+      console.log('getSeriesAndTimeScale : : : Using old Scale');
+      scale = timeScale;
+    }
+
+    return [series, scale];
   };
 
-  useEffect(() => {
-    let interval: NodeJS.Timer | undefined = undefined;
-    const intervalTime = 5;
-    const timeScale = getTimeScale();
-    if (zoomOut) {
-      interval = setInterval(() => {
-        handleZoomOut(timeScale);
-      }, intervalTime);
-    } else if (zoomIn) {
-      interval = setInterval(() => {
-        handleZoomIn(timeScale);
-      }, intervalTime);
-    } else if (leftScroll) {
-      interval = setInterval(() => {
-        handleScrollLeft(timeScale);
-      }, intervalTime);
-    } else if (rightScroll) {
-      interval = setInterval(() => {
-        handleScrollRight(timeScale);
-      }, intervalTime);
-    }
+  // useEffect(() => {
+  //   let interval: NodeJS.Timer | undefined = undefined;
+  //   const intervalTime = 5;
+  //   const timeScale = getTimeScale();
+  //   if (zoomOut) {
+  //     interval = setInterval(() => {
+  //       handleZoomOut(timeScale);
+  //     }, intervalTime);
+  //   } else if (zoomIn) {
+  //     interval = setInterval(() => {
+  //       handleZoomIn(timeScale);
+  //     }, intervalTime);
+  //   } else if (leftScroll) {
+  //     interval = setInterval(() => {
+  //       handleScrollLeft(timeScale);
+  //     }, intervalTime);
+  //   } else if (rightScroll) {
+  //     interval = setInterval(() => {
+  //       handleScrollRight(timeScale);
+  //     }, intervalTime);
+  //   }
 
-    return () => {
-      if (interval != undefined) clearInterval(interval);
-    };
-  }, [zoomOut, zoomIn, leftScroll, rightScroll]);
+  //   return () => {
+  //     if (interval != undefined) clearInterval(interval);
+  //   };
+  // }, [zoomOut, zoomIn, leftScroll, rightScroll]);
 
   const debouncedDataDemand = debounce((timeStamp, direction) => {
     if (onDataDemand != undefined) {
-      setLoading(true);
-      if (direction == 'to')
-        onDataDemand(localToTime(timeStamp), 'to').finally(() => setLoading(false));
-      if (direction == 'from')
-        onDataDemand(localToTime(timeStamp), 'from').finally(() => setLoading(false));
+      if (direction == 'to') onDataDemand(localToTime(timeStamp), 'to');
+      if (direction == 'from') onDataDemand(localToTime(timeStamp), 'from');
     }
   }, 1000);
 
   useEffect(() => {
-    if (chartDiv !== null && chartDiv.current != null) {
-      const chart = createChart(chartDiv.current, options);
-      const handleResize = () => {
-        if (chartDiv !== null && chartDiv.current != null) {
-          chart.applyOptions({
-            width: chartDiv.current.clientWidth,
-            height: chartDiv.current.clientHeight,
-          });
-        }
-      };
-
-      window.addEventListener('resize', handleResize);
-      setChart(chart);
+    if (minMaxSeries != undefined) {
+      minMaxSeries.addRangeLines(idealMax, idealMin);
     }
-  }, [chartDiv]);
+    return cleanUp;
+  }, [idealMax, idealMin, minMaxSeries]);
+
+  // useEffect(() => {
+  //   if (chartDiv !== null && chartDiv.current != null) {
+  //     const chart = createChart(chartDiv.current, options);
+  //     const handleResize = () => {
+  //       if (chartDiv !== null && chartDiv.current != null) {
+  //         chart.applyOptions({
+  //           width: chartDiv.current.clientWidth,
+  //           height: chartDiv.current.clientHeight,
+  //         });
+  //       }
+  //     };
+
+  //     window.addEventListener('resize', handleResize);
+  //     setChart(chart);
+  //   }
+  // }, [chartDiv]);
 
   useEffect(() => {
-    if (chartDiv != null) {
-      const series = getMinMaxSeries();
-      const timeScale = getTimeScale();
+    if (chartDiv != null && chartDiv.current != null && history !== undefined) {
+      const [series, scale] = getSeriesAndTimeScale();
+
+      const newHistory: (SingleValueData | WhitespaceData)[] = [];
+      for (const item of history) {
+        const [timeStamp, value] = item;
+        const time: Time = timeToLocal(timeStamp);
+        newHistory.push({ time, value });
+        setCurrentValue(value);
+        if (idealMax !== undefined && idealMin != undefined) {
+          if (value < idealMin || value > idealMax) {
+            setWarning(true);
+          } else {
+            setWarning(false);
+          }
+        }
+      }
+      series.setData(newHistory);
+
+      // scale.subscribeVisibleLogicalRangeChange((e) => {
+      //   const scrolledDistance = scale.scrollPosition();
+
+      //   if (e != null && scrolledDistance != null) {
+      //     const { from, to }: { from: any; to: any } = e;
+
+      //     const range = to - from;
+
+      //     if (-scrolledDistance > range) {
+      //       setScrolled(true);
+      //     } else {
+      //       setScrolled(false);
+      //     }
+      //     if (to < range) {
+      //       const co_ordinate = scale.logicalToCoordinate(0 as Logical);
+      //       if (co_ordinate != null) {
+      //         const time = scale.coordinateToTime(co_ordinate);
+      //         if (onDataDemand != undefined && time != null) {
+      //           debouncedDataDemand(time, 'from');
+      //         }
+      //       }
+      //     }
+      //     if (scrolledDistance > 0) {
+      //       const timeRange = scale.getVisibleRange();
+      //       if (timeRange != null && !StaticData.isLive) {
+      //         debouncedDataDemand(timeRange.to, 'to');
+      //       }
+      //     }
+      //   }
+      // });
+      setChartShown(true);
+    } else {
+      setChartShown(false);
+      setCurrentValue(undefined);
+      setWarning(false);
     }
-  }, [chartDiv]);
+    if (history !== undefined && history.length == 0) {
+      setWarning(false);
+    }
+  }, [chartDiv, history, idealMax, idealMin]);
 
   useEffect(() => {
     if (chart !== undefined) {
       chart.subscribeClick(myClickHandler);
-      const timeScale = chart.timeScale();
-
-      timeScale.subscribeVisibleLogicalRangeChange((e) => {
-        const scrolledDistance = timeScale.scrollPosition();
-
-        if (e != null && scrolledDistance != null) {
-          const { from, to }: { from: any; to: any } = e;
-
-          const range = to - from;
-
-          if (-scrolledDistance > range) {
-            setScrolled(true);
-          } else {
-            setScrolled(false);
-          }
-          if (to < range) {
-            const co_ordinate = timeScale.logicalToCoordinate(0 as Logical);
-            if (co_ordinate != null) {
-              const time = timeScale.coordinateToTime(co_ordinate);
-              if (onDataDemand != undefined && time != null) {
-                debouncedDataDemand(time, 'from');
-              }
-            }
-          }
-          if (scrolledDistance > 0) {
-            const timeRange = timeScale.getVisibleRange();
-            if (timeRange != null && !StaticData.isLive) {
-              debouncedDataDemand(timeRange.to, 'to');
-            }
-          }
-        }
-      });
-
-      if (lineSeries === undefined) {
-        const lineSeries = chart.addBaselineSeries({
-          baseValue: { type: 'price', price: idealMax },
-          topLineColor: 'orange',
-          topFillColor1: 'transparent',
-          topFillColor2: 'transparent',
-          bottomLineColor: color,
-          bottomFillColor1: 'transparent',
-          bottomFillColor2: 'transparent',
-          lastValueVisible: false,
-          priceLineVisible: false,
-        });
-        setLineSeries(lineSeries);
-      }
-
-      if (dummySeries === undefined) {
-        const dummySeries = chart.addBaselineSeries({
-          baseValue: { type: 'price', price: idealMin },
-          topLineColor: 'transparent',
-          topFillColor1: 'transparent',
-          topFillColor2: 'transparent',
-          bottomLineColor: 'red',
-          bottomFillColor1: 'transparent',
-          bottomFillColor2: 'transparent',
-        });
-        setDummySeries(dummySeries);
-      }
-
-      setTimeScale(timeScale);
     }
-
-    return () => {
-      if (chart != undefined && lineSeries != undefined && dummySeries != undefined) {
-        console.log('Resetting Data');
-        // lineSeries.setData([]);
-        // dummySeries.setData([]);
-        chart.removeSeries(lineSeries);
-        chart.removeSeries(dummySeries);
-        setLineSeries(undefined);
-        setDummySeries(undefined);
-      }
-    };
+    return cleanUp;
   }, [chart]);
-
-  // useEffect(() => {
-  //   const newBuffer: Array<SingleValueData> = [];
-  //   let maxLimitLine: IPriceLine | undefined = undefined;
-  //   let minLimitLine: IPriceLine | undefined = undefined;
-
-  //   if (lineSeries !== undefined && dummySeries != undefined) {
-  //     for (const item of values) {
-  //       const [time, value] = item;
-  //       const zoneTime: Time = timeToLocal(time);
-  //       if (StaticData.isLive) {
-  //         lineSeries.update({ time: zoneTime, value });
-  //         dummySeries.update({ time: zoneTime, value });
-  //         setCurrentValue(value);
-  //         setCurrentTime(new Date(time * 1000));
-  //         if (idealMax !== undefined && idealMin != undefined) {
-  //           if (value < idealMin || value > idealMax) {
-  //             setWarning(true);
-  //           } else {
-  //             setWarning(false);
-  //           }
-  //         }
-  //       }
-  //       newBuffer.push({ time: zoneTime, value });
-  //     }
-  //     setBuffer((oldBuffer) => [...oldBuffer, ...newBuffer]);
-
-  //     if (idealMax !== undefined) {
-  //       const maxLimitLineOptions = {
-  //         ...minMaxLineOptions,
-  //         price: idealMax,
-  //         title: 'Max',
-  //       };
-  //       maxLimitLine = lineSeries.createPriceLine(maxLimitLineOptions);
-  //     }
-
-  //     if (idealMin !== undefined) {
-  //       const minLimitLineOptions = {
-  //         ...minMaxLineOptions,
-  //         price: idealMin,
-  //         title: 'Min',
-  //       };
-  //       minLimitLine = lineSeries.createPriceLine(minLimitLineOptions);
-  //     }
-  //   }
-
-  //   return () => {
-  //     if (lineSeries != undefined && dummySeries != undefined) {
-  //       if (maxLimitLine != undefined) lineSeries.removePriceLine(maxLimitLine);
-  //       if (minLimitLine != undefined) lineSeries.removePriceLine(minLimitLine);
-  //     }
-  //   };
-  // }, [values, idealMin, idealMax]);
 
   // useEffect(() => {
   //   if (history != undefined && history.length > 0) {
@@ -478,59 +462,59 @@ const Chart = ({
   //   }
   // }, [history]);
 
-  useEffect(() => {
-    if (history != undefined && chartDiv != null) {
-      const newHistory: (SingleValueData | WhitespaceData)[] = [];
-      for (const item of history) {
-        const [timeStamp, value] = item;
-        const time: Time = timeToLocal(timeStamp);
-        newHistory.push({ time, value });
-        setCurrentValue(value);
-      }
-      const series = getMinMaxSeries();
-      series.setData(newHistory);
-    }
-  }, [history, chartDiv]);
+  // useEffect(() => {
+  //   if (history != undefined && chartDiv != null) {
+  //     const newHistory: (SingleValueData | WhitespaceData)[] = [];
+  //     for (const item of history) {
+  //       const [timeStamp, value] = item;
+  //       const time: Time = timeToLocal(timeStamp);
+  //       newHistory.push({ time, value });
+  //       setCurrentValue(value);
+  //     }
+  //     const series = getMinMaxSeries();
+  //     series.setData(newHistory);
+  //   }
+  // }, [history, chartDiv]);
 
-  useEffect(() => {
-    StaticData.isLive = isLive;
-    StaticData.warning = warning;
-    StaticData.isLoading = isLoading;
-    if (!isLive) {
-      if (warningInterval != null) {
-        setWarning(false);
-        clearInterval(warningInterval);
-      }
-    }
-  }, [isLive, warning, isLoading]);
+  // useEffect(() => {
+  //   StaticData.isLive = isLive;
+  //   StaticData.warning = warning;
+  //   StaticData.isLoading = isLoading;
+  //   if (!isLive) {
+  //     if (warningInterval != null) {
+  //       setWarning(false);
+  //       clearInterval(warningInterval);
+  //     }
+  //   }
+  // }, [isLive, warning, isLoading]);
 
-  useEffect(() => {
-    if (warning) {
-      const interval = setInterval(() => {
-        if (chartContainer.current != null) {
-          if (chartContainer.current.style.filter == '') {
-            chartContainer.current.style.filter = 'invert(1)';
-          } else {
-            chartContainer.current.style.filter = '';
-          }
-        }
-        setWarningInterval(interval);
-      }, 800);
-    } else {
-      if (warningInterval != null) clearInterval(warningInterval);
-    }
+  // useEffect(() => {
+  //   if (warning) {
+  //     const interval = setInterval(() => {
+  //       if (chartContainer.current != null) {
+  //         if (chartContainer.current.style.filter == '') {
+  //           chartContainer.current.style.filter = 'invert(1)';
+  //         } else {
+  //           chartContainer.current.style.filter = '';
+  //         }
+  //       }
+  //       setWarningInterval(interval);
+  //     }, 800);
+  //   } else {
+  //     if (warningInterval != null) clearInterval(warningInterval);
+  //   }
 
-    return () => {
-      if (warningInterval != null) clearInterval(warningInterval);
-      if (chartContainer.current != null) chartContainer.current.style.filter = '';
-    };
-  }, [warning]);
+  //   return () => {
+  //     if (warningInterval != null) clearInterval(warningInterval);
+  //     if (chartContainer.current != null) chartContainer.current.style.filter = '';
+  //   };
+  // }, [warning]);
 
   useEffect(() => {
     if (
       notes !== undefined &&
       timeScale !== undefined &&
-      lineSeries !== undefined &&
+      minMaxSeries !== undefined &&
       medications !== undefined
     ) {
       const notesMarkers: Array<SeriesMarker<Time>> = notes.reduce(
@@ -574,13 +558,11 @@ const Chart = ({
         },
         []
       );
-      lineSeries.setMarkers([...medicationMarkers, ...notesMarkers]);
+      minMaxSeries.setMarkers([...medicationMarkers, ...notesMarkers]);
     }
 
-    return () => {
-      lineSeries?.setMarkers([]);
-    };
-  }, [notes, medications, lineSeries, timeScale]);
+    return cleanUp;
+  }, [notes, medications, minMaxSeries, timeScale]);
 
   return (
     <div
@@ -691,13 +673,7 @@ const Chart = ({
         </div>
       )}
 
-      {values.length || (history != undefined && history.length) ? (
-        <div className="chart-container" ref={chartDiv} id={`chart-${id}`} />
-      ) : (
-        <div className="h-100 w-100 d-flex justify-content-center align-items-center">
-          <MultiLingualLabel id="NO_DATA_AVAILABLE" />
-        </div>
-      )}
+      <div className={`chart-container${warning && isLive ? ' warning' : ''}`} ref={chartDiv} />
     </div>
   );
 };

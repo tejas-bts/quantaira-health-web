@@ -37,7 +37,7 @@ export const baseURLhttp = 'https://demo-quantio-funcapp-eus.azurewebsites.net/a
 // const wsBaseUrl = baseUrl;
 // const wsBaseUrl = 'localhost';
 
-export const baseURLws = `http://${'40.76.196.190'}:3001`;
+export const baseURLws = `https://${'socketdemo.quantaira.io'}:3001`;
 // export const baseURLhttp = `http://${baseUrl}:7071/api`;
 
 // export const baseURLhttp = baseUrl;

@@ -129,6 +129,17 @@
   transform: translate(-18%, -50%);
 }
 
+
+@keyframes warning-animation {
+  0% {background-color: transparent;}
+  50% {background-color: white;}
+  100% {background-color: transparent;}
+}
+
+.warning {
+  animation: warning-animation 1s infinite;
+}
+
 /* XL DEVICES */
 @media only screen and (min-width: 1450px) {
   .tabs__wrapper {
