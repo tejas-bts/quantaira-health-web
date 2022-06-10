@@ -30,6 +30,7 @@ import {
 } from '../../utils/chart-utils';
 import { servicesVersion } from 'typescript';
 import { minMaxLineOptions } from '../../utils/chart-options';
+import { delayThreshold } from '../../utils/constants';
 
 const CHART_BACKGROUND_COLOR = 'transparent'; //'#02162c';
 const GRID_COLOR = '#344456';
@@ -174,6 +175,7 @@ const Chart = ({
   const [timeScale, setTimeScale] = useState<ITimeScaleApi | undefined>(undefined);
 
   const [warning, setWarning] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   const chartDiv = useRef<HTMLDivElement>(null);
   const chartContainer = useRef<HTMLDivElement>(null);
@@ -213,7 +215,7 @@ const Chart = ({
     setCurrentValue(undefined);
     setWarning(false);
     minMaxSeries?.removeRangeLines();
-    chart?.unsubscribeClick(myClickHandler);
+    // chart?.unsubscribeClick(myClickHandler);
   };
 
   const myClickHandler: any = (param: { point: any; time: any; hoveredMarkerId: any }) => {
@@ -317,8 +319,11 @@ const Chart = ({
 
   const debouncedDataDemand = debounce((timeStamp, direction) => {
     if (onDataDemand != undefined) {
-      if (direction == 'to') onDataDemand(localToTime(timeStamp), 'to');
-      if (direction == 'from') onDataDemand(localToTime(timeStamp), 'from');
+      setLoading(true);
+      if (direction == 'to')
+        onDataDemand(localToTime(timeStamp), 'to').finally(() => setLoading(false));
+      if (direction == 'from')
+        onDataDemand(localToTime(timeStamp), 'from').finally(() => setLoading(false));
     }
   }, 1000);
 
@@ -356,6 +361,7 @@ const Chart = ({
         const time: Time = timeToLocal(timeStamp);
         newHistory.push({ time, value });
         setCurrentValue(value);
+        setCurrentTime(new Date((time as number) * 1000));
         if (idealMax !== undefined && idealMin != undefined) {
           if (value < idealMin || value > idealMax) {
             setWarning(true);
@@ -366,36 +372,36 @@ const Chart = ({
       }
       series.setData(newHistory);
 
-      // scale.subscribeVisibleLogicalRangeChange((e) => {
-      //   const scrolledDistance = scale.scrollPosition();
+      scale.subscribeVisibleLogicalRangeChange((e) => {
+        const scrolledDistance = scale.scrollPosition();
 
-      //   if (e != null && scrolledDistance != null) {
-      //     const { from, to }: { from: any; to: any } = e;
+        if (e != null && scrolledDistance != null) {
+          const { from, to }: { from: any; to: any } = e;
 
-      //     const range = to - from;
+          const range = to - from;
 
-      //     if (-scrolledDistance > range) {
-      //       setScrolled(true);
-      //     } else {
-      //       setScrolled(false);
-      //     }
-      //     if (to < range) {
-      //       const co_ordinate = scale.logicalToCoordinate(0 as Logical);
-      //       if (co_ordinate != null) {
-      //         const time = scale.coordinateToTime(co_ordinate);
-      //         if (onDataDemand != undefined && time != null) {
-      //           debouncedDataDemand(time, 'from');
-      //         }
-      //       }
-      //     }
-      //     if (scrolledDistance > 0) {
-      //       const timeRange = scale.getVisibleRange();
-      //       if (timeRange != null && !StaticData.isLive) {
-      //         debouncedDataDemand(timeRange.to, 'to');
-      //       }
-      //     }
-      //   }
-      // });
+          if (-scrolledDistance > range) {
+            setScrolled(true);
+          } else {
+            setScrolled(false);
+          }
+          if (to < range) {
+            const co_ordinate = scale.logicalToCoordinate(0 as Logical);
+            if (co_ordinate != null) {
+              const time = scale.coordinateToTime(co_ordinate);
+              if (onDataDemand != undefined && time != null) {
+                debouncedDataDemand(time, 'to');
+              }
+            }
+          }
+          if (scrolledDistance > 0) {
+            const timeRange = scale.getVisibleRange();
+            if (timeRange != null && !StaticData.isLive) {
+              debouncedDataDemand(timeRange.to, 'from');
+            }
+          }
+        }
+      });
       setChartShown(true);
     } else {
       setChartShown(false);
@@ -635,7 +641,7 @@ const Chart = ({
                   >
                     Go Live
                   </button>
-                ) : (new Date().getTime() - currentTime.getTime()) / 1000 > 20 ? (
+                ) : (new Date().getTime() - currentTime.getTime()) / 1000 > delayThreshold ? (
                   <div className="chart-online-status delayed">
                     <FiClock color="yellow" className="m-1" />
                     Delayed

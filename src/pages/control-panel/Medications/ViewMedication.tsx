@@ -19,7 +19,7 @@ const ViewMedication = () => {
       );
       setMedications(targetMedications);
     }
-  }, []);
+  }, [selectedTime]);
 
   return targetMedications.length > 0 ? (
     <div className="show-notes-page">

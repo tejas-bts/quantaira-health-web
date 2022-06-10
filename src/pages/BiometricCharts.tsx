@@ -86,7 +86,7 @@ const BiometricCharts = () => {
       params.append('bedId', bed.bedId);
       params.append('limit', '100');
       params.append('pid', `${bed.patientID}`);
-      params.append('toDate', `${time}`);
+      params.append('fromDate', `${time}`);
       const data = await fetchPastChartData(params);
       dispatch(setHistoricData({ data }));
     } catch (e) {

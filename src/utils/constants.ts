@@ -1,3 +1,5 @@
+export const delayThreshold = 10; // In seconds
+
 export const BiometricParameters = {
   Temp: 'Temp',
   Temp2: 'Temp 2',
