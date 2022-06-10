@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FiChevronsRight, FiChevronsLeft, FiZoomIn, FiZoomOut, FiClock } from 'react-icons/fi';
 import { ChartPropsType } from '../../types/Chart.propsType';
 import { debounce } from 'lodash';
@@ -19,6 +19,7 @@ import {
   SingleValueData,
   WhitespaceData,
   SeriesDataItemTypeMap,
+  LogicalRange,
 } from 'lightweight-charts';
 import { Medication, Note } from '../../types/Core.types';
 import MultiLingualLabel from './MultiLingualLabel';
@@ -352,6 +353,7 @@ const Chart = ({
   // }, [chartDiv]);
 
   useEffect(() => {
+    let handleRangeChange = undefined;
     if (chartDiv != null && chartDiv.current != null && history !== undefined) {
       const [series, scale] = getSeriesAndTimeScale();
 
@@ -372,9 +374,8 @@ const Chart = ({
       }
       series.setData(newHistory);
 
-      scale.subscribeVisibleLogicalRangeChange((e) => {
+      handleRangeChange = (e: LogicalRange | null) => {
         const scrolledDistance = scale.scrollPosition();
-
         if (e != null && scrolledDistance != null) {
           const { from, to }: { from: any; to: any } = e;
 
@@ -401,7 +402,9 @@ const Chart = ({
             }
           }
         }
-      });
+      };
+
+      scale.subscribeVisibleLogicalRangeChange(handleRangeChange);
       setChartShown(true);
     } else {
       setChartShown(false);
@@ -410,6 +413,10 @@ const Chart = ({
     }
     if (history !== undefined && history.length == 0) {
       setWarning(false);
+    }
+
+    if (handleRangeChange != undefined && timeScale != undefined) {
+      timeScale?.unsubscribeVisibleLogicalRangeChange(handleRangeChange);
     }
   }, [chartDiv, history, idealMax, idealMin]);
 
