@@ -82,7 +82,7 @@ const Login = () => {
           <div className="login-card-header">
             <MultiLingualLabel id="LOGIN_TO_YOUR_ACCOUNT" />
           </div>
-          <p className="field-label">
+          {/* <p className="field-label">
             <MultiLingualLabel id="SELECT_WHO_YOU_ARE" />
           </p>
           <div className="user-role">
@@ -137,7 +137,7 @@ const Login = () => {
               <input type="checkbox" name="" id="switch" checked={true} readOnly />
               <label htmlFor="switch"></label>
             </span>
-          </div>
+          </div> */}
           <p className="field-label">
             <MultiLingualLabel id="EMAIL_ADDRESS" />
           </p>

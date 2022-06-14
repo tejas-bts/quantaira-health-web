@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Settings from '../../pages/control-panel/Settings';
 import { hideSettings, showSettings } from '../../reducers/appState';
 import { logOut } from '../../reducers/auth';
 import { nextScreen, previousScreen } from '../../reducers/charts';
 import { deAuthenticateAxios } from '../../services/authenticatedAxios';
 import MultiLingualLabel from './MultiLingualLabel';
+import NavigationDropDown from './NavigationDropDown';
 
 const BottomNavigationBar = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const settingsShown = useSelector((state: any) => state.appState.showSettings);
+
+  const [showViewOptions, setShowViewOptions] = useState(false);
 
   const handleLogOut = () => {
     // Logic for destroying session here
@@ -33,25 +35,15 @@ const BottomNavigationBar = () => {
   return (
     <div className="bottom-nav-bar">
       <div className="bottom-nav-item">
-        <button
-          onClick={() => {
-            navigate(location.pathname.toLowerCase().includes('charts') ? 'kpi' : 'charts', {
-              replace: true,
-            });
-          }}
-        >
+        {showViewOptions && <NavigationDropDown />}
+        <button onClick={() => setShowViewOptions(!showViewOptions)}>
           <div
             style={{
-              backgroundImage: `url('/images/navbar/${
-                location.pathname.toLowerCase().includes('charts') ? 'kpi.svg' : 'chart.svg'
-              }')`,
+              backgroundImage: 'url("/images/navbar/kpi.svg")',
             }}
           />
-          {location.pathname.toLowerCase().includes('charts') ? (
-            <MultiLingualLabel id="SHOW_KPI" />
-          ) : (
-            <MultiLingualLabel id="SHOW_CHARTS" />
-          )}
+
+          <MultiLingualLabel id="SELECT_VIEW" />
         </button>
       </div>
       <div className="bottom-nav-item">
@@ -122,7 +114,7 @@ const BottomNavigationBar = () => {
         Patient View */}
         </button>
       </div>
-      <div className="bottom-nav-item">
+      {/* <div className="bottom-nav-item">
         <button
           onClick={() => {
             navigate('/app/combined-charts', {
@@ -133,8 +125,8 @@ const BottomNavigationBar = () => {
           <div style={{ backgroundImage: 'url("/images/navbar/combine-view.svg")' }} />
           <MultiLingualLabel id="COMBINE_VIEW" />
         </button>
-      </div>
-      <div className="bottom-nav-item">
+      </div> */}
+      {/* <div className="bottom-nav-item">
         <button
           onClick={() => {
             navigate('/app/charts', {
@@ -145,7 +137,7 @@ const BottomNavigationBar = () => {
           <div style={{ backgroundImage: 'url("/images/navbar/select-graph.svg")' }} />
           <MultiLingualLabel id="SELECT_GRAPH" />
         </button>
-      </div>
+      </div> */}
       <div className="bottom-nav-item">
         {settingsShown && <Settings />}
         <button onClick={handleSettings}>

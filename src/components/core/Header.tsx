@@ -4,8 +4,8 @@ import { setLive, setTime } from '../../reducers/time';
 import BreadCrumbs from './BreadCrumbs';
 import DateTimePicker from './DateTimePicker';
 import PatientIdInput from './PatientIdInput';
-import QuantairaSwitch from './QuantairaSwitch';
-import MultiLingualLabel from './MultiLingualLabel';
+// import QuantairaSwitch from './QuantairaSwitch';
+// import MultiLingualLabel from './MultiLingualLabel';
 import { Patient } from '../../types/Core.types';
 
 const Header = ({ onDateTimeChange }: any) => {
@@ -45,15 +45,15 @@ const Header = ({ onDateTimeChange }: any) => {
 
   return (
     <div className="header-container">
-      <div className="m-2">
+      {/* <div className="m-2">
         <QuantairaSwitch
           disabled
           onChange={() => console.log('Changed')}
           label1={<MultiLingualLabel id="CLOUD_DATA" />}
           label2={<MultiLingualLabel id="REAL_TIME" />}
         />
-      </div>
-      <div className="d-flex flex-1">
+      </div> */}
+      <div className="d-flex flex-1 m-2">
         <BreadCrumbs
           hospital={hospital}
           building={building}

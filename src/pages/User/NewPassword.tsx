@@ -79,9 +79,16 @@ const NewPassword = () => {
             <MultiLingualLabel id="NEW_PASSWORD_TITLE" />
           </div>
           <div className="d-flex">
-            <p className="field-label">
-              <MultiLingualLabel id="NEW_PASSWORD" />
-            </p>
+            <div className="d-flex flex-1 flex-column">
+              <p className="field-label">
+                <MultiLingualLabel id="NEW_PASSWORD" />
+              </p>
+            </div>
+            <div>
+              <p className="field-label text-small text-no-wrap">
+                (<MultiLingualLabel id="HINT" />)
+              </p>
+            </div>
           </div>
           <div>
             <input
