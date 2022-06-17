@@ -1,0 +1,51 @@
+.cv-nav-item {
+    display: flex;
+    height: 100%;
+    width: 5rem;
+    flex: 1;
+    & > button {
+      cursor: pointer;
+      flex: 1;
+      background: $background4;
+      height: 100%;
+      margin-right: 0.3rem;
+      border-radius: 0.5rem;
+      border: none;
+      color: $light-text1;
+      flex-direction: column;
+      padding: 0.4rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.6;
+      font-size: 0.9rem;
+
+      &:hover, &.active {
+        background: linear-gradient($gradient-start, $gradient-end);
+        opacity: 1;
+      }
+
+      div {
+        height: 2rem;
+        width: 5rem;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        margin-bottom: 0.2rem;
+        margin-top: 0.3rem;
+      }
+    }
+  }
+
+  .cv-banner {
+      max-width: 93%;
+      .accordion-drop-container{
+          max-height: unset;
+      }
+  }
+
+  .cv-wrapper {
+    background-color: #07203c;
+    margin: 1rem;
+    border-radius: 1rem;
+  }

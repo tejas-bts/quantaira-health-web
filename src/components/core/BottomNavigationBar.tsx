@@ -114,10 +114,10 @@ const BottomNavigationBar = () => {
         Patient View */}
         </button>
       </div>
-      {/* <div className="bottom-nav-item">
+      <div className="bottom-nav-item">
         <button
           onClick={() => {
-            navigate('/app/combined-charts', {
+            navigate('/app/combined/notes', {
               replace: true,
             });
           }}
@@ -125,7 +125,7 @@ const BottomNavigationBar = () => {
           <div style={{ backgroundImage: 'url("/images/navbar/combine-view.svg")' }} />
           <MultiLingualLabel id="COMBINE_VIEW" />
         </button>
-      </div> */}
+      </div>
       {/* <div className="bottom-nav-item">
         <button
           onClick={() => {

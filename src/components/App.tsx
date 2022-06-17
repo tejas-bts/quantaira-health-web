@@ -26,6 +26,7 @@ import { fetchNotes } from '../services/notes.services';
 import { appendToHistoricData, clearHistoricData } from '../reducers/history';
 import { StateReducer } from '../types/Reducer.types';
 import { clearChartSelection } from '../reducers/charts';
+import CombinedNotesMedicationsView from '../pages/CombinedNotesMedicationsView';
 
 class StaticData {
   static isLive = false;
@@ -135,6 +136,7 @@ const App = () => {
             <Route path="patient" element={<PatientSelection />} />
             <Route path="charts/*" element={<BiometricCharts />} />
             <Route path="combined-charts" element={<CombinedBiometricCharts />} />
+            <Route path="combined/*" element={<CombinedNotesMedicationsView />} />
             <Route path="kpi" element={<BiometricKpi />} />
             <Route path="/" element={<Navigate to="patient" />} />
           </Routes>

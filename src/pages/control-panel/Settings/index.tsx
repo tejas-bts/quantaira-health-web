@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectLanguage } from '../../../reducers/language';
 import MultiLingualLabel from '../../../components/core/MultiLingualLabel';
 import { useNavigate } from 'react-router-dom';
+import { getCurrentUser } from '../../../utils/utilities';
+import { FiUser } from 'react-icons/fi';
 
 const Settings = () => {
   const language = useSelector((state: any) => state.language.selectedLanguage);
@@ -16,6 +18,16 @@ const Settings = () => {
 
   return (
     <div className="settings-wrapper">
+      <div className="user-details m-3 text-white">
+        <div className="user-icon ">
+          <FiUser />
+        </div>
+        <div>
+          <span className="bold">
+            <strong>{getCurrentUser().name}</strong>
+          </span>
+        </div>
+      </div>
       <SettingsItem
         title={<MultiLingualLabel id="LANGUAGE" />}
         icon="/images/settings/language.svg"

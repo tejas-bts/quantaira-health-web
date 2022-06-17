@@ -93,7 +93,7 @@ const ShowNotes = () => {
         </ConditionalRender>
       </div>
       {loading ? (
-        <div className="d-flex flex-1 justify-content-center align-items-center m-9">
+        <div className="d-flex flex-1 justify-content-center align-items-center m-9 text-white">
           Loading...
         </div>
       ) : (
