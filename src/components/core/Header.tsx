@@ -5,8 +5,9 @@ import BreadCrumbs from './BreadCrumbs';
 import DateTimePicker from './DateTimePicker';
 import PatientIdInput from './PatientIdInput';
 // import QuantairaSwitch from './QuantairaSwitch';
-// import MultiLingualLabel from './MultiLingualLabel';
+import MultiLingualLabel from './MultiLingualLabel';
 import { Patient } from '../../types/Core.types';
+
 
 const Header = ({ onDateTimeChange }: any) => {
   const hospital = useSelector((state: { patient: Patient }) => state.patient.hospital);
@@ -20,6 +21,10 @@ const Header = ({ onDateTimeChange }: any) => {
 
   const isLive = useSelector((state: any) => state.time.isLive);
   const time = useSelector((state: any) => state.time.currentTime);
+  const selectedScreen = useSelector((state: any) => state.chart.selectedScreen);
+  const chartSelections = useSelector((state: any) => state.chart.selectedCharts);
+
+ 
 
   const handleGoLive = () => {
     dispatch(setLive(true));
@@ -64,6 +69,15 @@ const Header = ({ onDateTimeChange }: any) => {
         />
         <div className="m-2">{bed && <PatientIdInput value={bed.patientID} />}</div>
       </div>
+
+      {chartSelections[0].length > 0  ? (
+        <div className="d-flex flex-column justify-content-center m-2 mh-80">
+          <h5 className='m-0 align-self-center white-text  mh-80' style={{color:'white'}}>{selectedScreen + 1}</h5>
+          <p className='m-0 white-text  mh-80'  style={{color:'white'}}><MultiLingualLabel id="SCREEN_NUMBER" /></p>
+        </div>
+      ) : null}
+
+      
       {!isLive && (
         <div>
           <button className="go-live-button" onClick={handleGoLive}>

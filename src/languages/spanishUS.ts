@@ -39,7 +39,7 @@ export const spanishUS: Record<string, string> = {
   MEDICATION: 'Medicamentos',
   SELECT_VIEW: 'Seleccione Ver',
   SELECT_GRAPH: 'Seleccionar gráfico',
-  COMBINE_VIEW: 'Combinar vista',
+  COMBINE_VIEW: 'información vista',
   SETTINGS: 'Ajustes',
   ABOUT: 'Acerca de',
   LANGUAGE: 'Idioma',
@@ -61,4 +61,6 @@ export const spanishUS: Record<string, string> = {
   ERROR_FETCHING_NOTES: '¡Uy! ¡Hubo un problema al buscar notas anteriores!',
 
   NO_DATA_AVAILABLE: 'No hay datos disponibles',
+
+  SCREEN_NUMBER: 'Pantalla actual',
 };

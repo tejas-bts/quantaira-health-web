@@ -35,7 +35,7 @@ const BottomNavigationBar = () => {
   return (
     <div className="bottom-nav-bar">
       <div className="bottom-nav-item">
-        {showViewOptions && <NavigationDropDown />}
+        {showViewOptions && <NavigationDropDown/>}
         <button onClick={() => setShowViewOptions(!showViewOptions)}>
           <div
             style={{

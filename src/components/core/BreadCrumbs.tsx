@@ -50,6 +50,7 @@ const BreadCrumbItem = ({
         showDrop ? 'open' : value == undefined ? 'closed' : 'selected-option'
       }`}
       onClick={() => setShow(!showDrop)}
+      
     >
       <span>{value ? value.label : title}</span>
 

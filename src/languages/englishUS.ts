@@ -37,7 +37,7 @@ export const englishUS: Record<string, string> = {
   NO_ITEMS_TO_SHOW: 'No items to show!',
 
   SHOW_CHARTS: 'Show Charts',
-  SHOW_KPI: 'Show KPIs',
+  SHOW_KPI: 'Show Biometrics',
   PREV_SCREEN: 'Previous Screen',
   NEXT_SCREEN: 'Next Screen',
   LOCK_SCREEN: 'Lock Screen',
@@ -45,7 +45,7 @@ export const englishUS: Record<string, string> = {
   MEDICATION: 'Medications',
   SELECT_VIEW: 'Select View',
   SELECT_GRAPH: 'Select Graph',
-  COMBINE_VIEW: 'Combine View',
+  COMBINE_VIEW: 'Info View',
   SETTINGS: 'Settings',
   ABOUT: 'About',
   LANGUAGE: 'Language',
@@ -70,4 +70,6 @@ export const englishUS: Record<string, string> = {
   ERROR_SEARCHING_NOTES: 'Oops!There was a problem during notes search!',
 
   NO_DATA_AVAILABLE: 'No data available',
+
+  SCREEN_NUMBER: 'Current Screen',
 };
