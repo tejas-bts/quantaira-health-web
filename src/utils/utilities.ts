@@ -50,20 +50,24 @@ export const isSameArray = (item1: Array<unknown>, item2: Array<unknown>): boole
 
 export const getHighlightedText = (text: string, highlight: string): string => {
   // Split on highlight term and include term into parts, ignore case
-  if (highlight == undefined || highlight == '' || highlight == ' ' || highlight == '  ')
-    return text;
-  const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
-  return `<span>${parts
-    .map(
-      (part, i) =>
-        `<span key=${i} style=${
-          part.toLowerCase() === highlight.toLowerCase()
-            ? 'color:black;background:gold;font-weight:bold;padding-left:3px;padding-right:3px;'
-            : ''
-        }>${part}</span>`
-    )
-    .join('')}
+  try {
+    if (highlight == undefined || highlight == '' || highlight == ' ' || highlight == '  ')
+      return text;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return `<span>${parts
+      .map(
+        (part, i) =>
+          `<span key=${i} style=${
+            part.toLowerCase() === highlight.toLowerCase()
+              ? 'color:black;background:gold;font-weight:bold;padding-left:3px;padding-right:3px;'
+              : ''
+          }>${part}</span>`
+      )
+      .join('')}
     </span>`;
+  } catch (e) {
+    return text;
+  }
 };
 
 export const isNotUndefined = (...args: Array<any>): boolean => {
@@ -88,7 +92,7 @@ export const isTimeInOrder = (data: Array<[number, number]>): boolean => {
   for (let i = 0; i < data.length; i++) {
     const currentTime = data[i][0];
     if (currentTime <= lastTime) {
-      console.error('Time out of order at', i, data[i - 1], data[i], data[i + 1]);
+      console.error('Time out of order at', i, data[i - 1], data[i], data[i + 1], data);
       return false;
     } else {
       lastTime = currentTime;

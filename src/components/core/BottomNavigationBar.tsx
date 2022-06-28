@@ -35,7 +35,7 @@ const BottomNavigationBar = () => {
   return (
     <div className="bottom-nav-bar">
       <div className="bottom-nav-item">
-        {showViewOptions && <NavigationDropDown/>}
+        {showViewOptions && <NavigationDropDown />}
         <button onClick={() => setShowViewOptions(!showViewOptions)}>
           <div
             style={{
@@ -151,6 +151,15 @@ const BottomNavigationBar = () => {
           <MultiLingualLabel id="LOG_OUT" />
         </button>
       </div>
+      {(settingsShown || showViewOptions) && (
+        <div
+          className="modal-backdrop"
+          onClick={() => {
+            dispatch(hideSettings());
+            setShowViewOptions(false);
+          }}
+        />
+      )}
     </div>
   );
 };

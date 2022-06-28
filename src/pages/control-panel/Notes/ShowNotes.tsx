@@ -97,7 +97,7 @@ const ShowNotes = () => {
           Loading...
         </div>
       ) : (
-        <div className="notes-list">
+        <div className="notes-list overflow-y-scroll mt-1">
           {notes.length > 0 && (
             <AccordionInDropdown show={true} data={notes} searchTerm={searchTerm} />
           )}

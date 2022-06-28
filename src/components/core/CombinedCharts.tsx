@@ -144,7 +144,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
       }}
     >
       <div className="chart-header flex-column">
-        <div className="d-flex flex-row flex-wrap">
+        <div className="d-flex flex-row flex-wrap p-1">
           {combinedChartData &&
             combinedChartData
               .filter((item) => item.showOnchart)
@@ -197,7 +197,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
           </div> */}
           <div className="chart-header-right">
             <div className="chart-header-col-5">
-              <div className="chart-navigation">
+              {/* <div className="chart-navigation">
                 <button
                   className={`chart-navigation-button disabled${leftScroll > 0 ? 'is-active' : ''}`}
                 >
@@ -210,7 +210,7 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
                 >
                   <FiChevronsRight />
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

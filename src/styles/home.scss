@@ -1,6 +1,7 @@
 .main-container {
   background-color: #02162c;
   width: 100%;
+  height: calc(90vh - 60px);
   flex: 1;
   display: grid;
   transition: all 300ms;

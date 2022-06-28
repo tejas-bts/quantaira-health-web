@@ -102,7 +102,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
           placeHolder="Search available medicines"
           options={medicationOptions.map((item: any) => {
             return {
-              label: `${item.proprietary_name} (${item.nonproprietary_name}) - ${item.manufacturer}`,
+              label: `${item.proprietary_name} (${item.nonproprietary_name}) | 🏭 ${item.manufacturer} | 💪 ${item.strength} `,
               value: item,
             };
           })}

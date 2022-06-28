@@ -34,7 +34,23 @@
 
 
 .overflow-y-scroll {
-  overflow-y: scroll;  
+
+  // overflow-y: scroll !important;
+
+  &::-webkit-scrollbar {
+    width: 0.3rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #02162c4a;
+    border-radius: 10px;
+    margin: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #0f8bfe;
+    border-radius: 10px;
+  }
 }
 
 .no-scroll-bar {
@@ -518,3 +534,11 @@
 .text-no-wrap {
   white-space: nowrap;
 }
+
+.modal-backdrop {
+  z-index: 0 !important;
+  position: fixed !important;
+  background-color: transparent !important;
+}
+
+

@@ -145,7 +145,6 @@ const Chart = ({
   idealMin,
   idealMax,
   unit,
-  values,
   history,
   notes,
   medications,
@@ -427,6 +426,10 @@ const Chart = ({
     return cleanUp;
   }, [chart]);
 
+  useEffect(() => {
+    console.log('History', title, history);
+  }, [history]);
+
   // useEffect(() => {
   //   if (history != undefined && history.length > 0) {
   //     console.log('history', isTimeInOrder(history), history.length);
@@ -543,7 +546,8 @@ const Chart = ({
               color,
               position: 'belowBar',
               shape: 'circle',
-              text: '📝 Note',
+              text: '📝 Notes',
+              size: 2,
             });
           }
           return result;
@@ -565,6 +569,7 @@ const Chart = ({
               position: 'aboveBar',
               shape: 'square',
               text: '💊 Medication',
+              size: 2,
             });
           }
           return result;
@@ -593,10 +598,10 @@ const Chart = ({
         <div className="chart-header">
           <div className="chart-header-left">
             <div>
-              <div className="chart-title" style={{ color }}>
+              {/* <div className="chart-title" style={{ color }}>
                 <Icon />
                 <span>{title}</span>
-              </div>
+              </div> */}
             </div>
             <div className="d-flex">
               <div className="chart-header-col-1">
@@ -620,8 +625,14 @@ const Chart = ({
                 </div>
               </div>
               <div className="chart-header-col-2">
-                <div className="chart-current-value" style={{ color }}>
-                  {currentValue != undefined ? currentValue : '?'}
+                <div className="d-flex flex-row">
+                  <div className="chart-title" style={{ color }}>
+                    <Icon />
+                    <span>{title}</span>
+                  </div>
+                  <div className="chart-current-value" style={{ color }}>
+                    {currentValue != undefined ? currentValue : '?'}
+                  </div>
                 </div>
               </div>
               <div className="chart-header-col-3">

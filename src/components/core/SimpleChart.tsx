@@ -500,7 +500,8 @@ const Chart = ({
               color,
               position: 'belowBar',
               shape: 'circle',
-              text: '📝 Note',
+              text: '📝 Notes',
+              size: 2,
             });
           }
           return result;
@@ -522,6 +523,7 @@ const Chart = ({
               position: 'aboveBar',
               shape: 'square',
               text: '💊 Medication',
+              size: 2,
             });
           }
           return result;

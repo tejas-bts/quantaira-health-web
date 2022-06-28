@@ -16,27 +16,25 @@ const QuantairaDropdown = ({
   const [showDrop, setShow] = useState(false);
 
   return (
-    <div className="quantaira-dropdown" >
+    <div className="quantaira-dropdown">
       <div className="dropdown-container">
         <button
           className="dropdown-btn"
           onClick={() => {
             setShow(!showDrop);
           }}
-          // onBlur={() => { if(showDrop){setShow(false);}}}
         >
           <div>
             <MultiLingualLabel id="SELECT_PATIENT_REPORT" />
           </div>
           <div className="dropdown-arrow">{showDrop ? <BiChevronUp /> : <BiChevronDown />}</div>
         </button>
-        <div className={`drop-container ${showDrop ? 'shown' : 'hidden'}`}  >
+        <div className={`drop-container ${showDrop ? 'shown' : 'hidden'}`}>
           {showDrop && options.length ? (
             options.map((item, index) => (
               <label htmlFor={`chekbox-${index}`} key={index} className="drop-item">
                 <div className="drop-item-header">
                   <input
-                    
                     className="form-check-input drop-item-check"
                     type="checkbox"
                     checked={selectedCharts && selectedCharts.includes(item)}

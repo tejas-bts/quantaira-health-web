@@ -43,7 +43,7 @@ const CombinedNotesMedicationsView = () => {
           </div>
         </div>
       </div>
-      <div className="cv-banner p-3 flex-1">
+      <div className="cv-banner overflow-y-scroll p-3 flex-1">
         <Routes>
           <Route path="notes" element={<ShowNotes />} />
           <Route path="medications" element={<ShowMedications />} />

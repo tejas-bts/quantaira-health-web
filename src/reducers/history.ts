@@ -9,6 +9,22 @@ export const history = createSlice({
     historicData: [],
   },
   reducers: {
+    clearHistoricData: (state) => {
+      const oldData: any = [...current(state).historicData];
+      const newData: any = [];
+      for (const oldItem of oldData) {
+        const newItem = { ...oldItem };
+        newItem.values = [];
+        newData.push(newItem);
+      }
+      const retValue = {
+        ...state,
+        historicData: newData,
+      };
+      console.log('Clear History Retvalue', retValue);
+      return retValue;
+    },
+
     appendToHistoricData: (state, action: { payload: { data: Array<BiometricData> } }) => {
       const oldData: any = [...current(state).historicData];
       const newData: Array<BiometricData> = [...action.payload.data];
@@ -63,13 +79,6 @@ export const history = createSlice({
       return {
         ...state,
         historicData: oldData,
-      };
-    },
-
-    clearHistoricData: (state) => {
-      return {
-        ...state,
-        historicData: [],
       };
     },
 
