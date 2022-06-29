@@ -3,6 +3,7 @@ import { IoMdCloseCircle } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 import { addChartToScreen, removeChartFromScreen, selectScreen } from '../../reducers/charts';
 import { BiometricData } from '../../types/WebsocketData';
+import Analytics from '../../utils/Analytics';
 import Dropdown from './../../components/core/Dropdown';
 
 const ChartSelector = () => {
@@ -15,12 +16,18 @@ const ChartSelector = () => {
   const dispatch = useDispatch();
 
   const handleChartAddition = (chart: string) => {
+    Analytics.track('biometricaddedtowatchlist', `Added ${chart} on screen ${selectedScreen + 1}`);
+    // console.warn('handleChartAddition :: Chart ', chart, selectedScreen + 1);
     dispatch(addChartToScreen({ screen: selectedScreen, chart }));
   };
   const handleChartRemoval = (chart: string) => {
+    Analytics.track('biometricaddedtowatchlist', `Removed ${chart} from screen ${selectedScreen + 1}`);
+    // console.warn('handleChartRemoval :: Remove ', chart);
     dispatch(removeChartFromScreen({ screen: selectedScreen, chart }));
   };
   const handleScreenSelection = (screen: number) => {
+    Analytics.track('selectionviewchanged', `Switched to screen ${selectedScreen + 1}`);
+    // console.warn('handleScreenSelection :: Screen ', screen + 1);
     dispatch(selectScreen(screen));
   };
 

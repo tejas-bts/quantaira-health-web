@@ -11,6 +11,7 @@ import {
 } from '../reducers/patient';
 import { useNavigate } from 'react-router-dom';
 import MultiLingualLabel from '../components/core/MultiLingualLabel';
+import Analytics from '../utils/Analytics';
 
 const PatientSelection = () => {
   const hospital = useSelector((state: any) => state.patient.hospital);
@@ -81,6 +82,7 @@ const PatientSelection = () => {
           <QuantairaDropdown
             options={room ? room.beds.map((item: any) => item.patientID) : []}
             onChange={(selectedOption: any, index: any) => {
+              Analytics.track('patientselected', room ? room.beds[index] : '');
               if (room) localStorage.setItem('bed', JSON.stringify(room.beds[index]));
               dispatch(selectBed(room ? room.beds[index] : undefined));
             }}

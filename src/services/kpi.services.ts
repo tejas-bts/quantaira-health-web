@@ -1,5 +1,6 @@
 import axios from './authenticatedAxios';
 import { baseURLhttp } from '../utils/constants';
+import Analytics from '../utils/Analytics';
 
 const getKPIdata = `${baseURLhttp}/FetchKPIPastData`;
 
@@ -25,6 +26,12 @@ export const fetchKpi = async ({
         },
       })
       .then((response) => {
+        Analytics.track('reqpastkpidata', {
+          bedId,
+          pid: patientId,
+          fromDate,
+          limit,
+        });
         resolve(response.data.data.data);
       })
       .catch((e) => {

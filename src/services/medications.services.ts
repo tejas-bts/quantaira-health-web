@@ -1,6 +1,7 @@
 import axios from './authenticatedAxios';
 import { baseURLhttp } from '../utils/constants';
 import { Medication } from '../types/Core.types';
+import Analytics from '../utils/Analytics';
 
 const saveMedications = `${baseURLhttp}/AddMedication`;
 const getNotesAndMedications = `${baseURLhttp}/FetchNotesMedication`;
@@ -26,7 +27,20 @@ export const saveMedication = async (parameters: {
         content: parameters.content,
         device: parameters.deviceId,
       })
-      .then(() => resolve())
+      .then(() => {
+        Analytics.track(
+          'addnotesmedication',
+          JSON.stringify({
+            pid: parameters.patientId,
+            categoryId: '54AA1262-73DA-49ED-8D96-FD0D2261A16D',
+            inputTime: parameters.inputTimeStamp,
+            item_id: parameters.item,
+            ndc: parameters.isNDC,
+            content: parameters.content,
+          })
+        );
+        resolve();
+      })
       .catch((e) => reject(e));
   });
 };
@@ -43,6 +57,7 @@ export const fetchMedications = async (parameters: { patientId: string; deviceId
         },
       })
       .then((response) => {
+        Analytics.track('reqmedication', parameters.patientId);
         const medications = response.data.data.map((item: any) => {
           return {
             product: {
@@ -70,6 +85,7 @@ export const searchMedicines = async (searchTerm: string, isNDC: boolean) => {
     axios
       .get(searchAvailableMedicines, { params: { searchTerm, ndc: isNDC } })
       .then((response) => {
+        Analytics.track('srhmedications', `Keyword : ${searchTerm}`);
         resolve(response.data.data);
       })
       .catch((e) => reject(e));

@@ -23,6 +23,8 @@ const QuantairaDropdown = ({
       selectedOption,
       options.findIndex((item) => item === selectedOption)
     );
+
+
   }, [selectedOption]);
 
   useEffect(() => {

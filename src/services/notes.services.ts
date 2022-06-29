@@ -1,6 +1,7 @@
 import axios from './authenticatedAxios';
 import { baseURLhttp } from '../utils/constants';
 import { Note } from '../types/Core.types';
+import Analytics from '../utils/Analytics';
 
 const saveNotesAndMedications = `${baseURLhttp}/AddNotes`;
 const getNotesAndMedications = `${baseURLhttp}/FetchNotesMedication`;
@@ -22,7 +23,20 @@ export const saveNote = async (parameters: {
         inputTime: parameters.inputTimeStamp,
         content: parameters.content,
       })
-      .then(() => resolve())
+      .then(() => {
+        Analytics.track(
+          'addnotesmedication',
+          JSON.stringify({
+            device: parameters.deviceId,
+            ipType: '803F6D90-1F23-42D3-BA18-63954638CF4F',
+            categoryId: '54AA1262-73DA-49ED-8D96-FD0D2261A16D',
+            pid: parameters.patientId,
+            inputTime: parameters.inputTimeStamp,
+            content: parameters.content,
+          })
+        );
+        resolve();
+      })
       .catch((e) => reject(e));
   });
 };
@@ -39,6 +53,7 @@ export const fetchNotes = async (parameters: { patientId: string; deviceId: stri
         },
       })
       .then((response) => {
+        Analytics.track('reqnotes', parameters.patientId);
         const notes: undefined | Array<Note> = response.data.data.map((item: any) => {
           return {
             id: item.row_id,
@@ -62,6 +77,7 @@ export const searchPatientsNotes = async (patientId: string | number, query: str
     axios
       .get(searchAddedNotes, { params: { searchType: 'notes', searchTerm: query, pid: patientId } })
       .then((response) => {
+        Analytics.track('srhnotes', `Keyword : ${query}`);
         const notes: undefined | Array<Note> = response.data.data.map((item: any) => {
           return {
             product: {

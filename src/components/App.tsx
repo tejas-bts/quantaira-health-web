@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Header from './core/Header';
 import { io as Client } from 'socket.io-client';
 import BottomNavigationBar from './core/BottomNavigationBar';
-import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import BiometricCharts from '../pages/BiometricCharts';
 import PatientSelection from '../pages/PatientSelection';
 
@@ -27,12 +27,16 @@ import { appendToHistoricData, clearHistoricData } from '../reducers/history';
 import { StateReducer } from '../types/Reducer.types';
 import { clearChartSelection } from '../reducers/charts';
 import CombinedNotesMedicationsView from '../pages/CombinedNotesMedicationsView';
+import Analytics from '../utils/Analytics';
 
 class StaticData {
   static isLive = false;
 }
 
 const App = () => {
+
+  Analytics.init('https://demo-quantio-funcapp-eus.azurewebsites.net');
+  const location = useLocation();
   const user: any = useSelector((state: StateReducer) => state.auth);
   const bed = useSelector((state: StateReducer) => state.patient.bed);
   const headerBlur = useSelector((state: StateReducer) => state.appState.headerBlur);
@@ -113,6 +117,12 @@ const App = () => {
   }, [bed]);
 
   const locale = useSelector((state: any) => state.language.selectedLocale);
+
+  useEffect(() => {
+    Analytics.track('selectionviewchanged',`Switched to ${location.pathname}`);
+  
+  }, [location]);
+  
 
   return (
     <IntlProvider locale="en" messages={locale}>
