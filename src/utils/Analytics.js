@@ -12,44 +12,21 @@ import Cookies from 'js-cookie';
 const getIpV6 = () => {
   return new Promise((resolve, reject) => {
     // Make a request for a user with a given ID
+
     axios
-      .get('https://www.cloudflare.com/cdn-cgi/trace')
+      .get('https://geolocation-db.com/json/', { headers: [] })
       .then(function (response) {
-        let data = response.data
-          .trim()
-          .split('\n')
-          .reduce(function (obj, pair) {
-            pair = pair.split('=');
-            return (obj[pair[0]] = pair[1]), obj;
-          }, {});
-        // console.log("IP V6", data);
-        resolve(data.ip);
+        resolve(response.data.IPv4);
       })
       .catch(function (error) {
         // console.log(error);
         reject(error);
       })
-      .then(function () {
+      .finally(function () {
         // always executed
       });
   });
 };
-
-// const getIpV4 = () => {
-//   return new Promise((resolve, reject) => {
-//     // Make a request for a user with a given ID
-//     axios
-//       .get('https://api.db-ip.com/v2/free/self')
-//       .then(function (response) {
-//         let data = response.data;
-//         resolve(data.ipAddress);
-//       })
-//       .catch(function (error) {
-//         // console.log(error);
-//         reject(error);
-//       });
-//   });
-// };
 
 const getLocation = (ip) => {
   return new Promise((resolve, reject) => {
@@ -69,10 +46,8 @@ let getDeviceInfo = () => {
   return new Promise(function (resolve) {
     let deviceDetector = new DeviceDetector();
     let userAgent = navigator.userAgent;
-    //   "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0"
-    //   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.81 Safari/537.36";
     let device = deviceDetector.parse(userAgent);
-    console.log('Device :: ', device);
+    // console.log('Device :: ', device);
     let deviceDetails = {
       deviceType: device.device.type,
       browser: device.client.name,
@@ -122,7 +97,7 @@ const Session = () => {
             data: dataToSend,
           };
 
-          console.log('Config ::::::', config);
+          // console.log('Config ::::::', config);
 
           axios(config)
             .then((response) => {
@@ -192,7 +167,7 @@ let init = (baseURL) => {
   if (!!baseURL) {
     console.log('Init called');
     localStorage.setItem('baseUrl', baseURL);
-    console.log(localStorage.getItem('baseUrl'));
+    // console.log(localStorage.getItem('baseUrl'));
   } else {
     return 'Requires Base Url';
   }
