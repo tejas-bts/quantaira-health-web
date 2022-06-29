@@ -26,12 +26,15 @@ export const fetchKpi = async ({
         },
       })
       .then((response) => {
-        Analytics.track('reqpastkpidata', {
-          bedId,
-          pid: patientId,
-          fromDate,
-          limit,
-        });
+        Analytics.track(
+          'reqpastkpidata',
+          JSON.stringify({
+            bedId,
+            pid: patientId,
+            fromDate,
+            limit,
+          })
+        );
         resolve(response.data.data.data);
       })
       .catch((e) => {

@@ -32,6 +32,7 @@ const DateTimePicker = ({
   return (
     <div className="quantaira-date-time-picker-wrapper">
       <DatePicker
+        fixedHeight
         selected={selectedDate}
         onChange={handleChange}
         timeInputLabel="Time:"

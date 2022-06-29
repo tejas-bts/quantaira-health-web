@@ -36,4 +36,4 @@ export const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#
 export const baseURLws = 'https://socketdemo.quantaira.io:3001';
 // export const baseURLws = 'https://40.76.196.190:3001';
 // export const baseURLws = 'http://localhost:3001';
-export const baseURLhttp = 'https://demo-quantio-funcapp-eus.azurewebsites.net/api/';
+export const baseURLhttp = 'https://demo-quantio-funcapp-eus.azurewebsites.net/api';

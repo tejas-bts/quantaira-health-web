@@ -70,6 +70,7 @@
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
+    "@types/js-cookie": "^3.0.2",
     "@types/react-datepicker": "^4.3.4",
     "@types/react-highlighter": "^0.3.5",
     "@typescript-eslint/eslint-plugin": "^5.11.0",

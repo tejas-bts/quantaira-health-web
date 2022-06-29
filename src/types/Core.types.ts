@@ -51,6 +51,17 @@ export interface Medication extends Note {
   };
 }
 
+export interface Analytics {
+  actionName: string;
+  actionInfo: string;
+  sessionId: string;
+  timeStamp: number;
+  deviceType: string;
+  browserType: string;
+  os: string;
+  ipAddress: string;
+}
+
 export interface Permission {
   permissionId: string;
   permissionName: string;

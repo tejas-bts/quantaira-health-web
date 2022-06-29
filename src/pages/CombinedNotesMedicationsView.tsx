@@ -4,6 +4,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import MultiLingualLabel from '../components/core/MultiLingualLabel';
 import ShowNotes from './control-panel/Notes/ShowNotes';
 import ShowMedications from './control-panel/Medications/ShowMedication';
+import ShowAnalytics from './control-panel/Analytics/ShowAnalytics';
 
 const CombinedNotesMedicationsView = () => {
   const navigate = useNavigate();
@@ -41,12 +42,26 @@ const CombinedNotesMedicationsView = () => {
               <MultiLingualLabel id="MEDICATION" />
             </button>
           </div>
+          <div className="cv-nav-item">
+            <button
+              onClick={() => {
+                navigate('/app/combined/analytics', {
+                  replace: true,
+                });
+              }}
+              className={path?.includes('analytics') ? 'active' : 'null'}
+            >
+              <div style={{ backgroundImage: 'url("/images/navbar/combine-view.svg")' }} />
+              <MultiLingualLabel id="ANALYTICS" />
+            </button>
+          </div>
         </div>
       </div>
       <div className="cv-banner overflow-y-scroll p-3 flex-1">
         <Routes>
           <Route path="notes" element={<ShowNotes />} />
           <Route path="medications" element={<ShowMedications />} />
+          <Route path="analytics" element={<ShowAnalytics />} />
         </Routes>
       </div>
     </div>
