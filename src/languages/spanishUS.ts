@@ -63,5 +63,5 @@ export const spanishUS: Record<string, string> = {
   NO_DATA_AVAILABLE: 'No hay datos disponibles',
 
   SCREEN_NUMBER: 'Pantalla actual',
-  ANALYTICS: 'Analítica',
+  USER_LOGS: 'Registros de usuario',
 };

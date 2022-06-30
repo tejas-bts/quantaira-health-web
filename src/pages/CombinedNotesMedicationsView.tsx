@@ -45,14 +45,14 @@ const CombinedNotesMedicationsView = () => {
           <div className="cv-nav-item">
             <button
               onClick={() => {
-                navigate('/app/combined/analytics', {
+                navigate('/app/combined/logs', {
                   replace: true,
                 });
               }}
               className={path?.includes('analytics') ? 'active' : 'null'}
             >
               <div style={{ backgroundImage: 'url("/images/navbar/combine-view.svg")' }} />
-              <MultiLingualLabel id="ANALYTICS" />
+              <MultiLingualLabel id="USER_LOGS" />
             </button>
           </div>
         </div>
@@ -61,7 +61,7 @@ const CombinedNotesMedicationsView = () => {
         <Routes>
           <Route path="notes" element={<ShowNotes />} />
           <Route path="medications" element={<ShowMedications />} />
-          <Route path="analytics" element={<ShowAnalytics />} />
+          <Route path="logs" element={<ShowAnalytics />} />
         </Routes>
       </div>
     </div>

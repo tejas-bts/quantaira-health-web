@@ -37,6 +37,7 @@ export interface CombinedChartData {
 
 export interface CombinedChartPropsType {
   combinedChartData?: Array<CombinedChartData>;
+  onDataDemand?: (time: number, direction: 'to' | 'from') => Promise<void>;
 }
 
 export interface SelectedChartItem {

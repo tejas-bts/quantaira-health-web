@@ -72,5 +72,5 @@ export const englishUS: Record<string, string> = {
   NO_DATA_AVAILABLE: 'No data available',
 
   SCREEN_NUMBER: 'Current Screen',
-  ANALYTICS: 'Analytics',
+  USER_LOGS: 'User Logs',
 };

@@ -11,49 +11,22 @@ const GenericKpiItem = ({
   isLive,
 }: KPIitemProp) => {
   const kpiBox = useRef<HTMLDivElement>(null);
-  const [warningInterval, setWarningInterval] = useState<NodeJS.Timer | null>(null);
   const [warning, setWarning] = useState(false);
 
   useEffect(() => {
     if (currentValue != undefined && idealMax != undefined && idealMin != undefined) {
       if (currentValue > idealMax || currentValue < idealMin) {
-        const interval = setInterval(() => {
-          if (kpiBox.current != null) {
-            if (kpiBox.current.style.filter == '') {
-              kpiBox.current.style.filter = 'invert(1)';
-            } else {
-              kpiBox.current.style.filter = '';
-            }
-          }
-        }, 800);
-        setWarningInterval(interval);
+        setWarning(true);
       } else {
-        if (warningInterval != null) clearInterval(warningInterval);
-        setWarningInterval(null);
-      }
-    }
-
-    return () => {
-      if (warningInterval != null) clearInterval(warningInterval);
-      if (kpiBox.current != null) kpiBox.current.style.filter = '';
-    };
-  }, [currentValue, idealMax, idealMin]);
-
-  useEffect(() => {
-    if (!isLive) {
-      if (warningInterval != null) {
         setWarning(false);
-        clearInterval(warningInterval);
-        setWarningInterval(null);
-        console.log('Is LIVE', isLive, warningInterval);
       }
     }
-  }, [isLive, warning]);
+  }, [currentValue, idealMax, idealMin]);
 
   return (
     <div
       ref={kpiBox}
-      className={`kpi-item ${isLive ? 'live' : 'delayed'}`}
+      className={`kpi-item ${isLive ? 'live' : 'delayed'} ${warning ? 'warning' : ''}`}
       style={{
         color: isLive && currentValue !== undefined ? color : 'grey',
         borderColor: isLive && currentValue !== undefined ? color : 'grey',

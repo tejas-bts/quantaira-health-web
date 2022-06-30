@@ -500,7 +500,7 @@ const BiometricKpi = () => {
   }, [slider]);
 
   return (
-    <div className="kpi-container">
+    <div className="kpi-container gap-2 p-2">
       {!isLive && (
         <div className="kpi-badge">
           {time && <DateTimePicker defaultDate={new Date(selectedPastTime * 1000)} size="lg" />}
@@ -516,103 +516,108 @@ const BiometricKpi = () => {
           />
         </div>
       )}
-      <GenericKpiItem
-        title={'HR'}
-        color={colors[0]}
-        currentValue={hr.currentValue}
-        idealMin={hr.idealMin ?? undefined}
-        idealMax={hr.idealMax ?? undefined}
-        unit={hr.unit ?? undefined}
-        isLive={hr.lastTimeStamp === latestTimestamp && isLive}
-      />
-      <GenericKpiItem
-        title={'PR'}
-        color={colors[1]}
-        currentValue={pr.currentValue}
-        idealMin={pr.idealMin ?? undefined}
-        idealMax={pr.idealMax ?? undefined}
-        unit={pr.unit ?? undefined}
-        isLive={pr.lastTimeStamp === latestTimestamp && isLive}
-      />
-      <QTInterval
-        color={colors[6]}
-        qtcValue={qtc.currentValue}
-        idealQtc={qtc.idealMax}
-        qtcUnit={qtc.unit}
-        deltaQtcValue={deltaQtc.currentValue}
-        idealDeltaQtc={deltaQtc.idealMax}
-        deltaQtcUnit={deltaQtc.unit}
-        qtValue={qt.currentValue}
-        idealQt={qt.idealMax}
-        qtUnit={qt.unit}
-        isLive={
-          Math.max(qtc.lastTimeStamp, deltaQtc.lastTimeStamp, qt.lastTimeStamp) ===
-            latestTimestamp && isLive
-        }
-      />
-      <GenericKpiItem
-        title={'Temp'}
-        color={colors[2]}
-        currentValue={temp.currentValue !== undefined ? temp.currentValue : temp2.currentValue}
-        latestTimestamp={
-          temp.lastTimeStamp !== undefined ? temp.lastTimeStamp : temp2.lastTimeStamp
-        }
-        idealMin={temp.idealMin !== undefined ? temp.idealMin : temp2.idealMin ?? undefined}
-        idealMax={temp.idealMax !== undefined ? temp.idealMax : temp2.idealMax ?? undefined}
-        unit={temp.unit ? temp.unit : temp2.unit ?? undefined}
-        isLive={
-          (temp.lastTimeStamp === latestTimestamp || temp2.lastTimeStamp === latestTimestamp) &&
-          isLive
-        }
-      />
-      <GenericKpiItem
-        title={'SpO2'}
-        color={colors[3]}
-        currentValue={spo2.currentValue}
-        idealMin={spo2.idealMin ?? undefined}
-        idealMax={spo2.idealMax ?? undefined}
-        unit={spo2.unit ?? undefined}
-        isLive={spo2.lastTimeStamp === latestTimestamp && isLive}
-      />
-      <GenericKpiItem
-        title={BiometricParameters.RR}
-        color={colors[4]}
-        currentValue={rr.currentValue}
-        idealMin={rr.idealMin ?? undefined}
-        idealMax={rr.idealMax ?? undefined}
-        unit={rr.unit ?? undefined}
-        isLive={rr.lastTimeStamp === latestTimestamp && isLive}
-      />
-      <NIBP
-        isLive={false}
-        systolicValue={nibpSys.currentValue}
-        diastolicValue={nibpDia.currentValue}
-        unit={nibpSys.unit}
-        idealSystolicValue={undefined}
-        idealDiastolicValue={undefined}
-      />
-      <STsegment
-        unit={st1.unit}
-        color={colors[1]}
-        st1Value={st1.currentValue}
-        st2Value={st2.currentValue}
-        st3Value={st3.currentValue}
-        stAVRValue={staVR.currentValue}
-        stAVLValue={staVL.currentValue}
-        stAVFValue={staVF.currentValue}
-        stVvalue={staV.currentValue}
-        isLive={
-          Math.max(
-            st1.lastTimeStamp,
-            st2.lastTimeStamp,
-            st3.lastTimeStamp,
-            staV.lastTimeStamp,
-            staVR.lastTimeStamp,
-            staVL.lastTimeStamp,
-            staVF.lastTimeStamp
-          ) === latestTimestamp && isLive
-        }
-      />
+      <div className="d-flex flex-1 gap-2 w-100">
+        <GenericKpiItem
+          title={'HR'}
+          color={colors[0]}
+          currentValue={hr.currentValue}
+          idealMin={hr.idealMin ?? undefined}
+          idealMax={hr.idealMax ?? undefined}
+          unit={hr.unit ?? undefined}
+          isLive={hr.lastTimeStamp === latestTimestamp && isLive}
+        />
+        <GenericKpiItem
+          title={'PR'}
+          color={colors[1]}
+          currentValue={pr.currentValue}
+          idealMin={pr.idealMin ?? undefined}
+          idealMax={pr.idealMax ?? undefined}
+          unit={pr.unit ?? undefined}
+          isLive={pr.lastTimeStamp === latestTimestamp && isLive}
+        />
+        <GenericKpiItem
+          title={'SpO2'}
+          color={colors[3]}
+          currentValue={spo2.currentValue}
+          idealMin={spo2.idealMin ?? undefined}
+          idealMax={spo2.idealMax ?? undefined}
+          unit={spo2.unit ?? undefined}
+          isLive={spo2.lastTimeStamp === latestTimestamp && isLive}
+        />
+        <GenericKpiItem
+          title={BiometricParameters.RR}
+          color={colors[4]}
+          currentValue={rr.currentValue}
+          idealMin={rr.idealMin ?? undefined}
+          idealMax={rr.idealMax ?? undefined}
+          unit={rr.unit ?? undefined}
+          isLive={rr.lastTimeStamp === latestTimestamp && isLive}
+        />
+        <NIBP
+          isLive={false}
+          systolicValue={nibpSys.currentValue}
+          diastolicValue={nibpDia.currentValue}
+          unit={nibpSys.unit}
+          idealSystolicValue={undefined}
+          idealDiastolicValue={undefined}
+        />
+      </div>
+
+      <div className="d-flex flex-1 gap-2 w-100">
+        <GenericKpiItem
+          title={'Temp'}
+          color={colors[2]}
+          currentValue={temp.currentValue !== undefined ? temp.currentValue : temp2.currentValue}
+          latestTimestamp={
+            temp.lastTimeStamp !== undefined ? temp.lastTimeStamp : temp2.lastTimeStamp
+          }
+          idealMin={temp.idealMin !== undefined ? temp.idealMin : temp2.idealMin ?? undefined}
+          idealMax={temp.idealMax !== undefined ? temp.idealMax : temp2.idealMax ?? undefined}
+          unit={temp.unit ? temp.unit : temp2.unit ?? undefined}
+          isLive={
+            (temp.lastTimeStamp === latestTimestamp || temp2.lastTimeStamp === latestTimestamp) &&
+            isLive
+          }
+        />
+        <QTInterval
+          color={colors[6]}
+          qtcValue={qtc.currentValue}
+          idealQtc={qtc.idealMax}
+          qtcUnit={qtc.unit}
+          deltaQtcValue={deltaQtc.currentValue}
+          idealDeltaQtc={deltaQtc.idealMax}
+          deltaQtcUnit={deltaQtc.unit}
+          qtValue={qt.currentValue}
+          idealQt={qt.idealMax}
+          qtUnit={qt.unit}
+          isLive={
+            Math.max(qtc.lastTimeStamp, deltaQtc.lastTimeStamp, qt.lastTimeStamp) ===
+              latestTimestamp && isLive
+          }
+        />
+        <STsegment
+          unit={st1.unit}
+          color={colors[1]}
+          st1Value={st1.currentValue}
+          st2Value={st2.currentValue}
+          st3Value={st3.currentValue}
+          stAVRValue={staVR.currentValue}
+          stAVLValue={staVL.currentValue}
+          stAVFValue={staVF.currentValue}
+          stVvalue={staV.currentValue}
+          isLive={
+            Math.max(
+              st1.lastTimeStamp,
+              st2.lastTimeStamp,
+              st3.lastTimeStamp,
+              staV.lastTimeStamp,
+              staVR.lastTimeStamp,
+              staVL.lastTimeStamp,
+              staVF.lastTimeStamp
+            ) === latestTimestamp && isLive
+          }
+        />
+      </div>
     </div>
   );
 };

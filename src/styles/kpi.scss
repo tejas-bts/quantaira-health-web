@@ -2,22 +2,25 @@
   background-color: $background2;
   border: 1px solid $background5;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  grid-gap: 0rem 1rem;
-  flex-wrap: wrap;
+  width: 100vw;
+  overflow: hidden;
 }
 .kpi-item {
+  flex:1;
   color: white;
   display: flex;
   border: 1px solid #0a7aeb;
   padding: 1%;
-  height: 18rem;
+  // height: 18rem;
   width: 18rem;
   background-color: #02162c;
 }
 
 .qt-kpi-item {
+  flex:2;
   width: 37rem;
   grid-gap: 2rem;
 
@@ -33,6 +36,7 @@
 }
 
 .st-segment {
+  flex:2;
   width: 37rem;
   .kpi-grid {
     grid-template-areas: unset;

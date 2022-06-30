@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { Analytics } from '../../types/Core.types';
 
-const AccordionItem = ({ description, heading, icon, deviceType, browserType, os }: any) => {
+const AccordionItem = ({
+  description,
+  heading,
+  icon,
+  deviceType,
+  browserType,
+  os,
+  actionInfo,
+  sessionip,
+}: any) => {
   const [show, setShow] = useState(false);
   const toggleShow = () => {
     setShow(!show);
@@ -16,16 +25,31 @@ const AccordionItem = ({ description, heading, icon, deviceType, browserType, os
       </div>
       {show && (
         <div className="drop-item-description">
-          <p>{description}</p>
-          <p>
-            Device Type : <strong>{deviceType}</strong>
-          </p>
-          <p>
-            Browser Type : <strong>{browserType}</strong>
-          </p>
-          <p>
-            Operating System : <strong>{os}</strong>
-          </p>
+          <table style={{ width: '100%', margin: '1rem', textAlign: 'center' }}>
+            <tr>
+              <td>{description}</td>
+              <td>{actionInfo}</td>
+            </tr>
+            <tr>
+              <th>Action Type</th>
+              <th>Action Payload</th>
+            </tr>
+          </table>
+          <hr />
+          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+            <p style={{ textAlign: 'center' }}>
+              Device Type : <strong>{deviceType}</strong>
+            </p>
+            <p>
+              Browser Type : <strong>{browserType}</strong>
+            </p>
+            <p>
+              Operating System : <strong>{os}</strong>
+            </p>
+            <p>
+              Session IP : <strong>{sessionip}</strong>
+            </p>
+          </div>
         </div>
       )}
       {/* {show && productName && <div className="drop-item-description">{productName}</div>} */}
@@ -48,6 +72,8 @@ const AnalyticsDropdown = ({ show, data }: { show: boolean; data: Array<Analytic
       browserType: item.browserType,
       deviceType: item.deviceType,
       os: item.os,
+      actionInfo: item.actionInfo,
+      sessionip: item.ipAddress,
     };
   });
 
@@ -64,6 +90,8 @@ const AnalyticsDropdown = ({ show, data }: { show: boolean; data: Array<Analytic
             browserType={item.browserType}
             deviceType={item.deviceType}
             os={item.os}
+            actionInfo={item.actionInfo}
+            sessionip={item.sessionip}
           />
         ))}
     </div>

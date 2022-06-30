@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import MultiLingualLabel from '../../components/core/MultiLingualLabel';
 import { logIn } from '../../reducers/auth';
@@ -82,62 +82,6 @@ const Login = () => {
           <div className="login-card-header">
             <MultiLingualLabel id="LOGIN_TO_YOUR_ACCOUNT" />
           </div>
-          {/* <p className="field-label">
-            <MultiLingualLabel id="SELECT_WHO_YOU_ARE" />
-          </p>
-          <div className="user-role">
-            <div className="user-role-item">
-              <input type="radio" name="role" value="doctors" id="doctors" checked />
-              <label htmlFor="doctors">
-                <div
-                  className="role-icon"
-                  style={{
-                    backgroundImage: 'url("/images/login/doctors.svg")',
-                  }}
-                />
-                <span>
-                  <MultiLingualLabel id="ROLE_DOCTOR" />
-                </span>
-              </label>
-            </div>
-            <div className="user-role-item">
-              <input type="radio" name="role" value="nurses" id="nurses" checked />
-              <label htmlFor="nurses">
-                <div
-                  className="role-icon"
-                  style={{
-                    backgroundImage: 'url("/images/login/nurses.svg")',
-                  }}
-                />
-                <span>
-                  <MultiLingualLabel id="ROLE_NURSE" />
-                </span>
-              </label>
-            </div>
-            <div className="user-role-item">
-              <input type="radio" name="role" value="clinicians" id="clinicians" checked />
-              <label htmlFor="clinicians">
-                <div
-                  className="role-icon"
-                  style={{
-                    backgroundImage: 'url("/images/login/clinicians.svg")',
-                  }}
-                />
-                <span>
-                  <MultiLingualLabel id="ROLE_CLINICIAN" />
-                </span>
-              </label>
-            </div>
-          </div>
-          <p className="field-label">
-            <MultiLingualLabel id="LOG_IN_INTO" />
-          </p>
-          <div className="justify-content-start">
-            <span className="btn btn-1" style={{ marginLeft: '-15px' }}>
-              <input type="checkbox" name="" id="switch" checked={true} readOnly />
-              <label htmlFor="switch"></label>
-            </span>
-          </div> */}
           <p className="field-label">
             <MultiLingualLabel id="EMAIL_ADDRESS" />
           </p>
@@ -151,11 +95,6 @@ const Login = () => {
           <div className="d-flex">
             <p className="field-label">
               <MultiLingualLabel id="PASSWORD" />
-            </p>
-            <p className="field-label text-right">
-              <Link to="reset-password">
-                <MultiLingualLabel id="FORGOT_PASSWORD" />
-              </Link>
             </p>
           </div>
           <div>

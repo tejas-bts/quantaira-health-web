@@ -23,6 +23,9 @@ export const resetUserPassword = async (parameters: {
   cpassword: string;
 }) => {
   return new Promise<void>((resolve, reject) => {
+    axios.defaults.headers.common = {
+      Authorization: parameters.token,
+    };
     axios
       .post(resetPassword, {
         token: parameters.token,

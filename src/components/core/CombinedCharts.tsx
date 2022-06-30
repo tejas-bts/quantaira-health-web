@@ -8,16 +8,19 @@ import {
   SelectedChartItem,
 } from '../../types/Chart.propsType';
 
-import { isSameArray, timeToLocal } from '../../utils/utilities';
+import { isSameArray, localToTime, timeToLocal } from '../../utils/utilities';
 import {
   createChart,
   IChartApi,
   ISeriesApi,
   ITimeScaleApi,
   LineStyle,
+  Logical,
+  LogicalRange,
   Time,
   // Time,
 } from 'lightweight-charts';
+import { debounce } from 'lodash';
 
 const DEBUG = true;
 const CHART_BACKGROUND_COLOR = '#02162c';
@@ -28,7 +31,7 @@ class Data {
   static isLive = true;
 }
 
-const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
+const Chart = ({ combinedChartData, onDataDemand }: CombinedChartPropsType) => {
   const [isLive] = useState(true);
 
   const [leftScroll] = useState(0);
@@ -66,6 +69,48 @@ const Chart = ({ combinedChartData }: CombinedChartPropsType) => {
       },
     },
   };
+
+  const debouncedDataDemand = debounce((timeStamp, direction) => {
+    if (onDataDemand != undefined) {
+      if (direction == 'to') onDataDemand(localToTime(timeStamp), 'to');
+      if (direction == 'from') onDataDemand(localToTime(timeStamp), 'from');
+    }
+  }, 1000);
+
+  useEffect(() => {
+    if (timeScale !== undefined) {
+      const handleRangeChange = (e: LogicalRange | null) => {
+        const scrolledDistance = timeScale.scrollPosition();
+        if (e != null && scrolledDistance != null) {
+          const { from, to }: { from: any; to: any } = e;
+
+          const range = to - from;
+
+          // if (to < range) {
+          //   const co_ordinate = timeScale.logicalToCoordinate(0 as Logical);
+          //   if (co_ordinate != null) {
+          //     const time = timeScale.coordinateToTime(co_ordinate);
+          //     if (onDataDemand != undefined && time != null) {
+          //       debouncedDataDemand(time, 'to');
+          //     }
+          //   }
+          // }
+          if (scrolledDistance > 0) {
+            const timeRange = timeScale.getVisibleRange();
+            if (timeRange != null) {
+              debouncedDataDemand(timeRange.to, 'from');
+            }
+          }
+        }
+      };
+      timeScale.subscribeVisibleLogicalRangeChange(handleRangeChange);
+      return () => {
+        if (handleRangeChange != undefined) {
+          timeScale.unsubscribeVisibleLogicalRangeChange(handleRangeChange);
+        }
+      };
+    }
+  }, [timeScale]);
 
   useEffect(() => {
     if (chartDiv != null && chartDiv.current != null) {

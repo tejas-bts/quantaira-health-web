@@ -34,7 +34,7 @@ const QTInterval = (props: QTIntervalProps) => {
           <div className="kpi-ideal-min">{idealQtc ?? '?'}</div>
         </div>
       </div>
-      <div className="flex-2 ml-3">
+      <div className="flex-2 ml-3 d-flex flex-column">
         <div className="kpi-grid mb-3">
           <div className="kpi-meta">
             <div className="kpi-title">&#916;QTc</div>
