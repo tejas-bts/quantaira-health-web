@@ -223,7 +223,7 @@ const Chart = ({
 
   useEffect(() => {
     if (chartDiv !== null && chartDiv.current != null) {
-      console.log('Chart Div True', chartDiv);
+      // console.log('Chart Div True', chartDiv);
       const chart = createChart(chartDiv.current, options);
       const handleResize = () => {
         if (chartDiv !== null && chartDiv.current != null) {
@@ -237,13 +237,13 @@ const Chart = ({
       window.addEventListener('resize', handleResize);
       setChart(chart);
     } else {
-      console.log('Chart Div False');
+      // console.log('Chart Div False');
     }
   }, []);
 
   useEffect(() => {
     if (chart !== undefined) {
-      console.log('Chart Component True');
+      // console.log('Chart Component True');
       chart.subscribeClick(myClickHandler);
       const timeScale = chart.timeScale();
 
@@ -308,12 +308,12 @@ const Chart = ({
 
       setTimeScale(timeScale);
     } else {
-      console.log('Chart Component False');
+      // console.log('Chart Component False');
     }
 
     // return () => {
     //   if (chart != undefined && lineSeries != undefined && dummySeries != undefined) {
-    //     console.log('Resetting Data');
+    //     // console.log('Resetting Data');
     //     lineSeries.setData([]);
     //     dummySeries.setData([]);
     //     chart.removeSeries(lineSeries);

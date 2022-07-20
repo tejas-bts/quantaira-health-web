@@ -49,7 +49,7 @@ const QuantairaSwitch = ({
           <div
             ref={(item1: any) => {
               if (item1) {
-                // console.log('Item1 %j', item1.height);
+                // // console.log('Item1 %j', item1.height);
               }
             }}
           >

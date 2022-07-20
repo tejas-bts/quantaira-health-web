@@ -110,7 +110,7 @@ class MinMaxSeries {
   };
 
   constructor(chart: IChartApi, color: string, idealMin?: number, idealMax?: number) {
-    console.log('Contructor called');
+    // console.log('Contructor called');
     this.chart = chart;
     this.idealMax = idealMax;
     this.idealMin = idealMin;
@@ -225,6 +225,7 @@ const Chart = ({
     if (onClick !== undefined && param.time != undefined) {
       const targetTime = param.time;
       const markerId = param.hoveredMarkerId;
+      console.log('Marker vals from Simple Charts 2 ', markerId);
 
       if (markerId == undefined) {
         onClick(targetTime * 1000 + new Date().getTimezoneOffset() * 60 * 1000);
@@ -244,7 +245,7 @@ const Chart = ({
 
   const getChart = (): IChartApi => {
     if (chart == undefined) {
-      console.log('getChart : : : Generating new Chart');
+      // console.log('getChart : : : Generating new Chart');
       const newChart = createChart(chartDiv!.current!, options);
       const handleResize = () => {
         if (chartDiv !== null && chartDiv.current != null) {
@@ -258,7 +259,7 @@ const Chart = ({
       setChart(newChart);
       return newChart;
     } else {
-      console.log('getChart : : : Providing old Chart');
+      // console.log('getChart : : : Providing old Chart');
     }
     return chart;
   };
@@ -268,22 +269,22 @@ const Chart = ({
     const chart = getChart();
 
     if (minMaxSeries == undefined) {
-      console.log('getSeriesAndTimeScale : : : Generating new Series');
+      // console.log('getSeriesAndTimeScale : : : Generating new Series');
       const newMinMaxSeries = new MinMaxSeries(chart, color, idealMin, idealMax);
       setSeries(newMinMaxSeries);
       series = newMinMaxSeries;
     } else {
-      console.log('getSeriesAndTimeScale : : : Using old Series');
+      // console.log('getSeriesAndTimeScale : : : Using old Series');
       series = minMaxSeries;
     }
 
     if (timeScale == undefined) {
-      console.log('getSeriesAndTimeScale : : : Generating new Scale');
+      // console.log('getSeriesAndTimeScale : : : Generating new Scale');
       const newTimeScale = chart.timeScale();
       setTimeScale(newTimeScale);
       scale = newTimeScale;
     } else {
-      console.log('getSeriesAndTimeScale : : : Using old Scale');
+      // console.log('getSeriesAndTimeScale : : : Using old Scale');
       scale = timeScale;
     }
 
@@ -427,12 +428,12 @@ const Chart = ({
   }, [chart]);
 
   useEffect(() => {
-    console.log('History', title, history);
+    // console.log('History', title, history);
   }, [history]);
 
   // useEffect(() => {
   //   if (history != undefined && history.length > 0) {
-  //     console.log('history', isTimeInOrder(history), history.length);
+  //     // console.log('history', isTimeInOrder(history), history.length);
   //     const newTime = timeToLocal(history[0][0]);
   //     const oldestTime = buffer[0] ? buffer[0].time : Infinity;
   //     const newestTime = buffer.length > 0 ? buffer[buffer.length - 1] : -Infinity;

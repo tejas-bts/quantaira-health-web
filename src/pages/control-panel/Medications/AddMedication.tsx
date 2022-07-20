@@ -45,7 +45,7 @@ const AddMedication = ({ onUpdate }: { onUpdate: any }) => {
     navigate(`/app/charts/medications/add/${timeStamp}`, {
       replace: true,
     });
-    console.log('Date Changed', timeStamp);
+    // console.log('Date Changed', timeStamp);
   };
 
   const handleSave = async () => {

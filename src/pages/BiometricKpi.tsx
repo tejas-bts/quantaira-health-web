@@ -63,7 +63,7 @@ const BiometricKpi = () => {
   const [selectedPastTime, setPastTime] = useState(Math.floor(new Date().getTime() / 1000));
 
   useEffect(() => {
-    console.log('Selected Past Time', selectedPastTime);
+    // console.log('Selected Past Time', selectedPastTime);
   }, []);
 
   const isLive = useSelector((state: any) => state.time.isLive);
@@ -493,7 +493,7 @@ const BiometricKpi = () => {
   useEffect(() => {
     if (pastKpiData[slider]) {
       pastKpiData[slider];
-      console.log('Past KPI data sadasd', new Date(pastKpiTime[slider]), pastKpiData[slider]);
+      // console.log('Past KPI data sadasd', new Date(pastKpiTime[slider]), pastKpiData[slider]);
       setPastTime(pastKpiTime[slider]);
       setBiometricData(pastKpiData[slider]);
     }

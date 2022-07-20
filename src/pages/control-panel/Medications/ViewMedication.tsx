@@ -10,7 +10,7 @@ const ViewMedication = () => {
 
   const medications: Array<Medication> = useSelector((state: any) => state.medications.data);
 
-  console.log('Medication Id', selectedTime, medications);
+  // console.log('Medication Id', selectedTime, medications);
 
   useEffect(() => {
     if (selectedTime !== undefined && medications !== undefined) {

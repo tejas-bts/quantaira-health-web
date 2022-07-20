@@ -38,6 +38,11 @@ export interface CombinedChartData {
 export interface CombinedChartPropsType {
   combinedChartData?: Array<CombinedChartData>;
   onDataDemand?: (time: number, direction: 'to' | 'from') => Promise<void>;
+  notes?: Array<any>;
+  medications?: Array<any>;
+  onClick?: any;
+  onNoteClick?: any;
+  onMedicationClick?: any;
 }
 
 export interface SelectedChartItem {

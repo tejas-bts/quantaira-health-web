@@ -10,7 +10,7 @@ const About = () => {
   useEffect(() => {
     setTimeout(() => {
       axios.get('http://192.168.1.29:7071/api/CheckStatus').then((response) => {
-        console.log('response::::', response.data);
+        // console.log('response::::', response.data);
         setDbstatus(response.data.database);
         setApiStatus(response.data.api);
       });

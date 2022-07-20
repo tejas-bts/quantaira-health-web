@@ -21,7 +21,7 @@ export const history = createSlice({
         ...state,
         historicData: newData,
       };
-      console.log('Clear History Retvalue', retValue);
+      // console.log('Clear History Retvalue', retValue);
       return retValue;
     },
 
@@ -56,7 +56,7 @@ export const history = createSlice({
     },
 
     setHistoricData: (state, action) => {
-      console.log('New Data', action.payload.data);
+      // console.log('New Data', action.payload.data);
       const oldData: any = [...current(state).historicData];
       const newData: any = [...action.payload.data];
       for (const newItem of newData) {
@@ -74,7 +74,7 @@ export const history = createSlice({
         }
       }
 
-      console.log('Setting Hostoric Data', oldData);
+      // console.log('Setting Hostoric Data', oldData);
 
       return {
         ...state,

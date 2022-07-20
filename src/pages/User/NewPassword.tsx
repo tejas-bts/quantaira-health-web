@@ -13,7 +13,7 @@ const NewPassword = () => {
   const { state }: any = useLocation();
   const { token } = state;
 
-  console.log('Token', token);
+  // console.log('Token', token);
 
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState<string>('');
@@ -53,7 +53,7 @@ const NewPassword = () => {
         cpassword,
       });
 
-      console.log('User Data', userData);
+      // console.log('User Data', userData);
 
       dispatch(logIn({ userName: 'tejas', permissions: [1, 2, 3, 4] }));
       dispatch(selectHospital(userData.userAccess));
@@ -61,7 +61,7 @@ const NewPassword = () => {
 
       navigate('/app', { replace: true });
     } catch (e: any) {
-      console.log('Erorororro %j', e.message);
+      // console.log('Erorororro %j', e.message);
       // console.error('Error loging in', e);
       toast('Oops! The credentials are not correct');
     } finally {

@@ -17,7 +17,7 @@ const QuantairaAutoSuggest = ({
   const [showDrop, setShow] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined);
 
-  console.log('AutoSuggest Value', value);
+  // console.log('AutoSuggest Value', value);
 
   useEffect(() => {
     if (options.length > 0) {

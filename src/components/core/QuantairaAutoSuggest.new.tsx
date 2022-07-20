@@ -46,7 +46,7 @@ const QuantairaAutoSuggest = ({
                   className="drop-item-header"
                   onClick={() => {
                     setShow(false);
-                    console.log('Selected Item', item);
+                    // console.log('Selected Item', item);
                     if (onSelect) onSelect(item.value);
                     setInputValue(item.label);
                   }}

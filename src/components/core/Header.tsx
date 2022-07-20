@@ -52,7 +52,7 @@ const Header = ({ onDateTimeChange }: any) => {
       {/* <div className="m-2">
         <QuantairaSwitch
           disabled
-          onChange={() => console.log('Changed')}
+          onChange={() => // console.log('Changed')}
           label1={<MultiLingualLabel id="CLOUD_DATA" />}
           label2={<MultiLingualLabel id="REAL_TIME" />}
         />

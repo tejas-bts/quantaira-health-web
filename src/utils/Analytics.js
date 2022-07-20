@@ -19,7 +19,7 @@ const getIpV6 = () => {
         resolve(response.data.IPv4);
       })
       .catch(function (error) {
-        // console.log(error);
+        // // console.log(error);
         reject(error);
       })
       .finally(function () {
@@ -47,7 +47,7 @@ let getDeviceInfo = () => {
     let deviceDetector = new DeviceDetector();
     let userAgent = navigator.userAgent;
     let device = deviceDetector.parse(userAgent);
-    // console.log('Device :: ', device);
+    // // console.log('Device :: ', device);
     let deviceDetails = {
       deviceType: device.device.type,
       browser: device.client.name,
@@ -90,22 +90,22 @@ const Session = () => {
 
           let config = {
             method: 'post',
-            url: 'https://demo-quantio-funcapp-eus.azurewebsites.net/api/SessionCreate?',
+            url: 'https://demo-quantio-bts-funcapp-eus.azurewebsites.net/api/SessionCreate?',
             headers: {
               'Content-Type': 'application/json',
             },
             data: dataToSend,
           };
 
-          // console.log('Config ::::::', config);
+          // // console.log('Config ::::::', config);
 
           axios(config)
             .then(() => {
-              // console.log(JSON.stringify(response.data));
+              // // console.log(JSON.stringify(response.data));
               resolve('OK');
             })
             .catch((error) => {
-              console.log('Session Call Error :: ', error);
+              // console.log('Session Call Error :: ', error);
               reject(error);
             });
         });
@@ -153,7 +153,7 @@ let manageSession = () => {
             });
           })
           .catch((err) => {
-            console.log('Error V6');
+            // console.log('Error V6');
             reject(err);
           });
       });
@@ -165,9 +165,9 @@ let manageSession = () => {
 
 let init = (baseURL) => {
   if (!!baseURL) {
-    // console.log('Init called');
+    // // console.log('Init called');
     localStorage.setItem('baseUrl', baseURL);
-    // console.log(localStorage.getItem('baseUrl'));
+    // // console.log(localStorage.getItem('baseUrl'));
   } else {
     return 'Requires Base Url';
   }
@@ -219,7 +219,7 @@ let track = (action, action_info) => {
 
       let config = {
         method: 'post',
-        url: 'https://demo-quantio-funcapp-eus.azurewebsites.net/api/Track?',
+        url: 'https://demo-quantio-bts-funcapp-eus.azurewebsites.net/api/Track?',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -228,7 +228,7 @@ let track = (action, action_info) => {
 
       axios(config)
         .then(() => {
-          console.log('Tracked');
+          // console.log('Tracked');
         })
         .catch((error) => {
           console.log(error);

@@ -43,7 +43,7 @@ const Login = () => {
 
       if (userData.resetPassword) {
         const token = userData.token;
-        console.log('Redirection', token);
+        // console.log('Redirection', token);
         navigate('/new-password', { replace: false, state: { token } });
         toast('You need to reset the password', { position: 'top-center', autoClose: 10000 });
         return;

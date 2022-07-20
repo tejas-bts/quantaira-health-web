@@ -2,14 +2,13 @@ import axios from './authenticatedAxios';
 
 import { baseURLhttp } from '../utils/constants';
 
-
 const getHospitalData = `${baseURLhttp}/FetchUserPatients`;
 
-
-export const fetchHospitalData = async (hospitalId: number) => {
-  console.log(hospitalId);
+export const fetchHospitalData = async () => {
+  // console.log(hospitalId);
   return new Promise<void>((resolve, reject) => {
-    axios.get(getHospitalData)
+    axios
+      .get(getHospitalData)
       .then((response) => {
         resolve(response.data.data);
       })

@@ -42,7 +42,7 @@ export const saveNote = async (parameters: {
 };
 
 export const fetchNotes = async (parameters: { patientId: string; deviceId: string }) => {
-  console.log('Fetch Notes called');
+  // console.log('Fetch Notes called');
   return new Promise<undefined | Array<Note>>((resolve, reject) => {
     axios
       .get(getNotesAndMedications, {

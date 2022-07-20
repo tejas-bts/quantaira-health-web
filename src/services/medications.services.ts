@@ -93,7 +93,7 @@ export const searchMedicines = async (searchTerm: string, isNDC: boolean) => {
 };
 
 export const searchPatientsMedications = async (patientId: string | number, query: string) => {
-  console.log('Query', query);
+  // console.log('Query', query);
   return new Promise<Array<Medication> | undefined>((resolve, reject) => {
     axios
       .get(searchAddedMedications, {

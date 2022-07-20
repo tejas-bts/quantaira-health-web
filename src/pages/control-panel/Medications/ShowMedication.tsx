@@ -25,7 +25,7 @@ const ShowNotes = () => {
   const bed: Bed = useSelector((state: any) => state.patient.bed);
 
   const searchMedications = async () => {
-    console.log('Search Term', searchTerm);
+    // console.log('Search Term', searchTerm);
     try {
       setLoading(true);
       if (searchTerm.length < 3) {
@@ -41,7 +41,7 @@ const ShowNotes = () => {
           searchTerm
         );
         dispatch(addToMedications({ medications: results }));
-        console.log('Results', results);
+        // console.log('Results', results);
       }
     } catch (e) {
       console.error('Error', e);
@@ -52,7 +52,7 @@ const ShowNotes = () => {
   };
 
   useEffect(() => {
-    console.log('Bed', bed);
+    // console.log('Bed', bed);
   }, [bed]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +60,7 @@ const ShowNotes = () => {
   };
 
   useEffect(() => {
-    console.log('Search Terms', searchTerm);
+    // console.log('Search Terms', searchTerm);
     searchMedications();
   }, [searchTerm]);
 

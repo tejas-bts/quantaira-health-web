@@ -33,7 +33,11 @@ export const userPermissions = {
 
 export const colors = ['#94d699', '#e7d57d', '#c0f7ff', '#fff59d', '#FFAB91', '#CE93D8', '#80CBC4'];
 
-export const baseURLws = 'https://socketdemo.quantaira.io:3001';
+// export const baseURLws = 'https://socketdemo.quantaira.io:3001';
+// export const baseURLws = 'https://20.120.85.39:3001';
+
+export const baseURLws = 'https://socketdemobts.quantaira.io:3001';
 // export const baseURLws = 'https://40.76.196.190:3001';
 // export const baseURLws = 'http://localhost:3001';
-export const baseURLhttp = 'https://demo-quantio-funcapp-eus.azurewebsites.net/api';
+// export const baseURLhttp = 'https://demo-quantio-funcapp-eus.azurewebsites.net/api';
+export const baseURLhttp = 'https://demo-quantio-bts-funcapp-eus.azurewebsites.net/api';

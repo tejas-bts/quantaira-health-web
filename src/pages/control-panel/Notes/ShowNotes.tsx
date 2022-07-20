@@ -39,7 +39,7 @@ const ShowNotes = () => {
           searchTerm
         );
         dispatch(addToNotes({ notes: results ? results : [] }));
-        console.log('Results', results);
+        // console.log('Results', results);
       }
     } catch (e) {
       console.error('Error', e);

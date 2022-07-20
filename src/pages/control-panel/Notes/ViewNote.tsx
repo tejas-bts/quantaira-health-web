@@ -10,7 +10,7 @@ const ViewNote = () => {
   const [targetNotes, setTargetNotes] = useState<Array<Note>>([]);
 
   useEffect(() => {
-    console.log('Target Notes', targetNotes);
+    // console.log('Target Notes', targetNotes);
   }, [targetNotes]);
 
   useEffect(() => {

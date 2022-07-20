@@ -131,7 +131,7 @@ const BiometricCharts = () => {
 
       fetchPastChartData(params)
         .then((data) => {
-          console.log('Past Chart Data', data);
+          // console.log('Past Chart Data', data);
           if (data[0].patientId === bed.patientID) {
             if (direction == 'from' && !isLive) {
               dispatch(appendToHistoricData({ data }));
@@ -144,6 +144,10 @@ const BiometricCharts = () => {
         .catch((e) => console.error(e));
     });
   };
+
+  useEffect(() => {
+    console.log('Chart Selection', chartSelections);
+  }, [chartSelections]);
 
   return (
     <div className="chart-grid">
@@ -185,13 +189,17 @@ const BiometricCharts = () => {
         )}
       </div>
       <div className="overflow-hidden">
-        <div className="h-100 w-100 p-3 controls-box">
-          <Routes>
-            <Route path="/notes/*" element={<Notes />} />
-            <Route path="/medications/*" element={<Medications />} />
-            <Route path="/alarms/*" element={<Alarms />} />
-            <Route path="/" element={<ChartSelector />} />
-          </Routes>
+        <div style={{ width: '100%', height: '100%' }}>
+          <div style={{ height: '100%' }}>
+            <div className="h-100 w-100 p-3 controls-box">
+              <Routes>
+                <Route path="/notes/*" element={<Notes />} />
+                <Route path="/medications/*" element={<Medications />} />
+                <Route path="/alarms/*" element={<Alarms />} />
+                <Route path="/" element={<ChartSelector />} />
+              </Routes>
+            </div>
+          </div>
         </div>
       </div>
       <div className="overflow-hidden">

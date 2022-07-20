@@ -17,10 +17,13 @@ import {
   LineStyle,
   Logical,
   LogicalRange,
+  SeriesMarker,
   Time,
   // Time,
 } from 'lightweight-charts';
 import { debounce } from 'lodash';
+import { Medication, Note } from '../../types/Core.types';
+import { toast } from 'react-toastify';
 
 const DEBUG = true;
 const CHART_BACKGROUND_COLOR = '#02162c';
@@ -31,7 +34,15 @@ class Data {
   static isLive = true;
 }
 
-const Chart = ({ combinedChartData, onDataDemand }: CombinedChartPropsType) => {
+const Chart = ({
+  combinedChartData,
+  onDataDemand,
+  notes,
+  medications,
+  onClick,
+  onNoteClick,
+  onMedicationClick,
+}: CombinedChartPropsType) => {
   const [isLive] = useState(true);
 
   const [leftScroll] = useState(0);
@@ -43,6 +54,7 @@ const Chart = ({ combinedChartData, onDataDemand }: CombinedChartPropsType) => {
   const [selectedCharts, setSelectedCharts] = useState<Array<SelectedChartItem>>([]);
 
   const [timeScale, setTimeScale] = useState<ITimeScaleApi | undefined>(undefined);
+  const [markerSeries, setMarkerSeries] = useState<ISeriesApi<'Histogram'> | undefined>(undefined);
 
   const chartDiv = useRef<HTMLDivElement>(null);
 
@@ -76,6 +88,42 @@ const Chart = ({ combinedChartData, onDataDemand }: CombinedChartPropsType) => {
       if (direction == 'from') onDataDemand(localToTime(timeStamp), 'from');
     }
   }, 1000);
+
+  const myClickHandler: any = (param: { point: any; time: any; hoveredMarkerId: any }) => {
+    console.log('Clicked Params', param);
+    if (!param.point) {
+      return;
+    }
+    console.log('Here 2', onClick !== undefined && param.time != undefined);
+    if (onClick !== undefined && param.time != undefined) {
+      const targetTime = param.time;
+      const markerId = param.hoveredMarkerId;
+
+      console.log('Clicked Target Time', targetTime, markerId, param);
+
+      if (markerId == undefined) {
+        onClick(targetTime * 1000 + new Date().getTimezoneOffset() * 60 * 1000);
+      } else if (markerId == 'medication') {
+        const time = targetTime + new Date().getTimezoneOffset() * 60;
+        const medication = medications?.find((item) => item.timeStamp == time);
+        console.log('Medication Clicked', medications, medication);
+        // toast(medication)
+        onMedicationClick(medication);
+      } else if (markerId == 'note') {
+        const time = targetTime + new Date().getTimezoneOffset() * 60;
+        const note = notes?.find((item) => item.timeStamp == time);
+        console.log('Note Clicked', notes, note);
+        onNoteClick(note);
+        toast(note.note);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (chart !== undefined) {
+      chart.subscribeClick(myClickHandler);
+    }
+  }, [chart]);
 
   useEffect(() => {
     if (timeScale !== undefined) {
@@ -123,12 +171,77 @@ const Chart = ({ combinedChartData, onDataDemand }: CombinedChartPropsType) => {
   useEffect(() => {
     if (chart != undefined) {
       const timeScale = chart.timeScale();
+      const markerSeries = chart.addHistogramSeries({
+        color: 'transparent',
+        priceFormat: {
+          type: 'volume',
+        },
+        priceScaleId: '',
+        scaleMargins: {
+          top: 0.5,
+          bottom: 0.5,
+        },
+      });
       setTimeScale(timeScale);
+      setMarkerSeries(markerSeries);
     }
   }, [chart]);
 
   useEffect(() => {
-    if (DEBUG) console.log('Combined Chart Data', combinedChartData);
+    if (markerSeries != undefined) {
+      const markerPoints: SeriesMarker<Time>[] = [];
+      const dataPoints = [];
+
+      for (let i = 0; medications != undefined && i < medications.length; i++) {
+        const item = medications[i];
+        console.log('Item', item);
+        dataPoints.push({ time: timeToLocal(item.timeStamp), value: 0, color: 'transparent' });
+        markerPoints.push({
+          id: 'medication',
+          time: timeToLocal(item.timeStamp),
+          color: 'red',
+          position: 'aboveBar',
+          shape: 'square',
+          text: '💊 Medication',
+          size: 2,
+        });
+      }
+
+      for (let i = 0; notes != undefined && i < notes.length; i++) {
+        const item = notes[i];
+        console.log('Item', item);
+        dataPoints.push({ time: timeToLocal(item.timeStamp), value: 0, color: 'transparent' });
+        markerPoints.push({
+          id: 'note',
+          time: timeToLocal(item.timeStamp),
+          color: 'green',
+          position: 'belowBar',
+          shape: 'circle',
+          text: '📝 Notes',
+          size: 2,
+        });
+      }
+
+      console.log('Data and Marker Points', notes?.length, medications?.length);
+
+      dataPoints.sort((a, b) => {
+        return (a.time as number) - (b.time as number);
+      });
+
+      markerPoints.sort((a, b) => {
+        return (a.time as number) - (b.time as number);
+      });
+
+      // markerSeries.setData(dataPoints);
+
+      // markerSeries.setMarkers(markerPoints);
+
+      console.log('Data and Marker Points', dataPoints, markerPoints);
+    }
+  }, [markerSeries, medications, notes]);
+
+  useEffect(() => {
+    // if (DEBUG) console.log('Combined Chart Data', combinedChartData);
     if (combinedChartData !== undefined && selectedCharts != undefined && chart != undefined) {
       combinedChartData
         .filter((combinedChartItem: CombinedChartData) => combinedChartItem.showOnchart)
@@ -137,7 +250,7 @@ const Chart = ({ combinedChartData, onDataDemand }: CombinedChartPropsType) => {
           const targetIndex = selectedCharts.findIndex(
             (item) => item.title == combinedChartItem.title
           );
-          if (DEBUG) console.log('Combined Chart Data', 'index', targetIndex);
+          // if (DEBUG) console.log('Combined Chart Data', 'index', targetIndex);
           if (targetIndex < 0) {
             // Series does not Exist Create new
             const newSeries = chart.addLineSeries({ color: combinedChartItem.color });
@@ -161,7 +274,7 @@ const Chart = ({ combinedChartData, onDataDemand }: CombinedChartPropsType) => {
   }, [combinedChartData, chart]);
 
   useEffect(() => {
-    if (DEBUG) console.log('New SElected Chart', selectedCharts);
+    if (DEBUG) console.log('New Selected Chart', selectedCharts);
     selectedCharts.map((selectedChart) => {
       const series = selectedChart.series;
       const values = selectedChart.chart.values;

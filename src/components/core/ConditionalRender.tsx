@@ -8,7 +8,7 @@ const ConditionalRender = (props: { children: unknown; permission: string }) => 
   const isPermitted =
     permissions.find((item: Permission) => item.permissionId === props.permission) !== undefined;
 
-  console.log('User is not permitted for permission id', permissions);
+  // console.log('User is not permitted for permission id', permissions);
 
   return isPermitted ? <>{props.children}</> : null;
 };

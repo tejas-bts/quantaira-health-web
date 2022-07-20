@@ -37,7 +37,7 @@ const AddNote = ({ onUpdate }: { onUpdate: () => void }) => {
     navigate(`/app/charts/notes/add/${timeStamp}`, {
       replace: true,
     });
-    console.log('Date Changed', timeStamp);
+    // console.log('Date Changed', timeStamp);
   };
 
   const handleSaveAndRefresh = async () => {

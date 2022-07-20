@@ -40,7 +40,7 @@ const ShowNotes = () => {
 
   useEffect(() => {
     searchMedications();
-    analyticsData ? console.log('Analytics Data :::::: ', analyticsData) : null;
+    // analyticsData ? // console.log('Analytics Data :::::: ', analyticsData) : null;
   }, []);
 
   return (

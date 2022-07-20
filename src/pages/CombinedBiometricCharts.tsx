@@ -1,14 +1,18 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Time } from 'lightweight-charts';
 import React, { useEffect, useState } from 'react';
 import { FaNotesMedical } from 'react-icons/fa';
 import { GiHeartOrgan, GiZipper } from 'react-icons/gi';
 import { IoMdCloseCircle } from 'react-icons/io';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import Chart from '../components/core/CombinedCharts';
 import Dropdown from '../components/core/Dropdown';
+import MultiLingualLabel from '../components/core/MultiLingualLabel';
 import { addChartToScreen, removeChartFromScreen, selectScreen } from '../reducers/charts';
 import { CombinedChartData } from '../types/Chart.propsType';
+import { Medication } from '../types/Core.types';
 import { BiometricData } from '../types/WebsocketData';
 
 import { colors } from '../utils/constants';
@@ -17,6 +21,8 @@ const CombinedBiometricCharts = () => {
   const chartSelections = useSelector((state: any) => state.chart.selectedCharts);
   const selectedScreen = useSelector((state: any) => state.chart.selectedScreen);
   const biometricData: any = useSelector((state: any) => state.biometrics.biometricData);
+  const notes = useSelector((state: any) => state.notes.data);
+  const medications = useSelector((state: any) => state.medications.data);
 
   const [availableCharts, setAvailableCharts] = useState<Array<string>>([]);
   const [combinedData, setData] = useState<Array<CombinedChartData>>([]);
@@ -107,7 +113,18 @@ const CombinedBiometricCharts = () => {
         </div>
       </div>
       <div className="flex-1">
-        <Chart combinedChartData={combinedData} />
+        <Chart
+          combinedChartData={combinedData}
+          medications={medications}
+          notes={notes}
+          onMedicationClick={(medication: Medication) => {
+            console.log('Toasting', medication);
+            toast(medication.note);
+          }}
+          onClick={() => {
+            console.log();
+          }}
+        />
       </div>
     </div>
   );

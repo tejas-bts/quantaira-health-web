@@ -92,11 +92,18 @@ export const isTimeInOrder = (data: Array<[number, number]>): boolean => {
   for (let i = 0; i < data.length; i++) {
     const currentTime = data[i][0];
     if (currentTime <= lastTime) {
-      console.error('Time out of order at', i, data[i - 1], data[i], data[i + 1], data);
+      // console.error('Time out of order at', i, data[i - 1], data[i], data[i + 1], data);
       return false;
     } else {
       lastTime = currentTime;
     }
   }
   return true;
+};
+
+export const toLocalDateString = (inputDate: Date) => {
+  const date = inputDate.getDate();
+  const month = inputDate.getMonth() + 1;
+  const year = inputDate.getFullYear();
+  return `${month}/${date}/${year}`;
 };

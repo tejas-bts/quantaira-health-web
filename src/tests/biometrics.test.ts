@@ -67,8 +67,8 @@ test('Appended items should not be in a non-sorted order', () => {
     ],
   };
 
-  console.log('Expected Data %j', expectedData);
-  console.log('Received Data %j', reducer(previousState, appendToBiometricData({ data })));
+  // console.log('Expected Data %j', expectedData);
+  // console.log('Received Data %j', reducer(previousState, appendToBiometricData({ data })));
 
   expect(reducer(previousState, appendToBiometricData({ data }))).not.toEqual(expectedData);
 });

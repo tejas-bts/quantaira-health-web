@@ -5,7 +5,7 @@ import Analytics from '../utils/Analytics';
 const getPatientData = `${baseURLhttp}/PatientDetails`;
 
 export const fetchPatientData = async (patientId: string) => {
-  console.log('Fetch Patient called');
+  // console.log('Fetch Patient called');
   return new Promise<void>((resolve, reject) => {
     axios
       .get(getPatientData, { params: { pid: patientId } })

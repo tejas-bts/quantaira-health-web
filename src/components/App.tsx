@@ -34,7 +34,6 @@ class StaticData {
 }
 
 const App = () => {
-
   Analytics.init('https://demo-quantio-funcapp-eus.azurewebsites.net');
   const location = useLocation();
   const user: any = useSelector((state: StateReducer) => state.auth);
@@ -47,14 +46,14 @@ const App = () => {
   const dispatch = useDispatch();
 
   if (!user) {
-    console.log('User Not found', user);
+    // console.log('User Not found', user);
     navigate('/user', { replace: true });
   }
 
   const loadHospitalData = async () => {
     let userData: any = localStorage.getItem('user');
     if (userData) userData = JSON.parse(userData);
-    const hospitalData = userData ? userData.userAccess : await fetchHospitalData(1);
+    const hospitalData = userData ? userData.userAccess : await fetchHospitalData();
     dispatch(selectHospital(hospitalData));
   };
 
@@ -104,8 +103,8 @@ const App = () => {
       });
 
       socket.on('disconnect', () => {
-        console.log(socket.id);
-        console.log(socket.connected); // true
+        // console.log(socket.id);
+        // console.log(socket.connected); // true
       });
 
       loadNotesAndMedication();
@@ -119,10 +118,8 @@ const App = () => {
   const locale = useSelector((state: any) => state.language.selectedLocale);
 
   useEffect(() => {
-    Analytics.track('selectionviewchanged',`Switched to ${location.pathname}`);
-  
+    Analytics.track('selectionviewchanged', `Switched to ${location.pathname}`);
   }, [location]);
-  
 
   return (
     <IntlProvider locale="en" messages={locale}>
@@ -139,7 +136,11 @@ const App = () => {
       />
       <div className="d-flex flex-column h-100">
         <div className={`app-header ${headerBlur ? 'blur' : ''}`}>
-          <Header onDateTimeChange={() => console.log('')} />
+          <Header
+            onDateTimeChange={() => {
+              console.log();
+            }}
+          />
         </div>
         <div className={`main-container ${contentBlur ? 'blur' : ''}`}>
           <Routes>

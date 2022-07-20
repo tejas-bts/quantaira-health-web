@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchPatientData } from '../../services/patient.services';
 import { Bed } from '../../types/Core.types';
+import { toLocalDateString } from '../../utils/utilities';
 
 const PatientIdInput = ({ value, ...props }: { value?: string | number }) => {
   const [isDisabled, setDisabled] = useState(true);
@@ -26,7 +27,7 @@ const PatientIdInput = ({ value, ...props }: { value?: string | number }) => {
 
   useEffect(() => {
     if (inputRef && inputRef.current && !isDisabled) {
-      console.log('Input Ref', inputRef);
+      // console.log('Input Ref', inputRef);
       inputRef.current.focus();
       inputRef.current.select();
     }
@@ -70,7 +71,8 @@ const PatientIdInput = ({ value, ...props }: { value?: string | number }) => {
               </p>
               <div className="d-flex justify-content-between gap-2">
                 <p className="mb-0 flex-1">
-                  Date of Birth : <strong>{patient.dob}</strong>
+                  Date of Birth :{' '}
+                  <strong>{patient.dob ? toLocalDateString(new Date(patient.dob)) : 'N/A'}</strong>
                 </p>
                 <p className="mb-0 flex-1">
                   Gender : <strong>{patient.gender}</strong>
