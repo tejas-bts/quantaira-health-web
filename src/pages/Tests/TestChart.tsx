@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { GiFlamethrowerSoldier } from 'react-icons/gi';
-import Chart from '../../components/core/SimpleChart.2';
+import Chart from '../../components/core/SimpleChart';
 
 const TestChart = () => {
   const [data, setData] = useState<Array<any>>([]);

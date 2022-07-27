@@ -3,6 +3,7 @@ import axios from 'axios';
 import DeviceDetector from 'device-detector-js';
 import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'js-cookie';
+import { baseURLhttp } from './constants';
 
 // Check Cookie if exisits (expired)
 // !cookie then create one and save to DB
@@ -90,7 +91,7 @@ const Session = () => {
 
           let config = {
             method: 'post',
-            url: 'https://demo-quantio-bts-funcapp-eus.azurewebsites.net/api/SessionCreate?',
+            url: `${baseURLhttp}/SessionCreate?`,
             headers: {
               'Content-Type': 'application/json',
             },
@@ -219,7 +220,7 @@ let track = (action, action_info) => {
 
       let config = {
         method: 'post',
-        url: 'https://demo-quantio-bts-funcapp-eus.azurewebsites.net/api/Track?',
+        url: `${baseURLhttp}/Track?`,
         headers: {
           'Content-Type': 'application/json',
         },

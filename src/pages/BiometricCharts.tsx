@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import Chart from '../components/core/SimpleChart.2';
+import Chart from '../components/core/SimpleChart';
 import { GiLungs, GiHeartOrgan, GiMedicalThermometer } from 'react-icons/gi';
 import { FaNotesMedical } from 'react-icons/fa';
 import { BiPulse } from 'react-icons/bi';
@@ -116,7 +116,7 @@ const BiometricCharts = () => {
   }
 
   const onDemand = (biometricId: any, time: number, direction: 'to' | 'from') => {
-    console.log('On Demand', biometricId, direction);
+    // console.log('On Demand', biometricId, direction);
     return new Promise<void>((resolve) => {
       const params = new URLSearchParams();
       params.append('bedId', bed.bedId);
